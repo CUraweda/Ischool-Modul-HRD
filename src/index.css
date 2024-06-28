@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: 'INTER';
+	src: url('assets/fonts/Inter-Regular.woff2');
+}
+
+@layer base {
+	* {
+		@apply font-inter;
+	}
+	h1,
+	.text-h1 {
+		@apply scroll-m-20 text-4xl font-extrabold leading-none tracking-normal lg:text-5xl;
+	}
+
+	h2,
+	.text-h2 {
+		@apply scroll-m-20 text-3xl font-semibold leading-9 first:mt-0;
+	}
+
+	h3,
+	.text-h3 {
+		@apply scroll-m-20 text-2xl font-semibold leading-8;
+	}
+
+	h4,
+	.text-h4 {
+		@apply scroll-m-20 text-xl font-semibold leading-7;
+	}
+
+	.text-large {
+		@apply text-lg font-semibold leading-7;
+	}
+
+	.text-lead {
+		@apply text-xl font-medium leading-7;
+	}
+
+	p,
+	.text-p {
+		@apply text-base font-medium leading-7;
+	}
+
+	.text-body {
+		@apply text-sm font-medium leading-6;
+	}
+
+	.text-subtle {
+		@apply text-sm font-medium leading-5;
+	}
+
+	.text-small {
+		@apply text-sm font-medium leading-none;
+	}
+
+	.text-detail {
+		@apply text-xs font-medium leading-5;
+	}
+
+	th,
+	.text-th {
+		@apply text-base font-bold leading-6;
+	}
+
+	blockquote,
+	.text-blockquote {
+		@apply mt-6 border-l-2 pl-6 italic leading-6;
+	}
+
+	ul {
+		@apply my-6 ml-6 list-disc [&>li]:mt-2;
+	}
+
+	code,
+	.text-code {
+		@apply relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+	}
+}
