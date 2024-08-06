@@ -7,9 +7,9 @@ const hrdRoutes: RouteObject[] = [
 	{
 		path: '',
 		element: (
-			<ProtectedRoute roles={[1, 5]}>
-				<HrdLayout />
-			</ProtectedRoute>
+			// <ProtectedRoute roles={[1, 5]}>
+			<HrdLayout />
+			// </ProtectedRoute>
 		),
 		children: [
 			{

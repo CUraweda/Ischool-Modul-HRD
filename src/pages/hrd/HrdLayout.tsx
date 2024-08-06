@@ -5,7 +5,7 @@ function HrdLayout() {
 	const drawerId = 'hrd-drawer';
 
 	return (
-		<div className="bg-sky drawer min-h-screen lg:drawer-open">
+		<div className="drawer min-h-screen bg-sky lg:drawer-open">
 			<input id={drawerId} type="checkbox" className="drawer-toggle" />
 			<div className="drawer-content">
 				<Navbar drawerId={drawerId} />
