@@ -10,6 +10,9 @@ import DashboardPage from '../pages/hrd/DashboardPage';
 import RekapPresensiPage from '../pages/hrd/RekapPresensi';
 import PengajuanCutiPage from '../pages/hrd/PengajuanCuti';
 import DinasLuarPage from '@/pages/hrd/DinasLuarPage';
+import RekapPenilaianPage from '@/pages/hrd/RekapPenilaian';
+import DetailRekapPage from '@/pages/hrd/DetailRekap';
+import PelatihanPage from '@/pages/hrd/PelatihanPage';
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
@@ -40,14 +43,6 @@ const AppRoutes: React.FC = () => {
 						</AuthLayout>
 					}
 				/>
-				{/* <Route
-					path="/dashboard"
-					element={
-						<HrdLayout>
-							<DashboardPage />
-						</HrdLayout>
-					}
-				/> */}
 				<Route
 					path="/hrd/"
 					element={
@@ -60,6 +55,9 @@ const AppRoutes: React.FC = () => {
 					<Route path="rekap-presensi" element={<RekapPresensiPage />} />
 					<Route path="pengajuan-cuti" element={<PengajuanCutiPage />} />
 					<Route path="dinas-luar" element={<DinasLuarPage />} />
+					<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
+					<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
+					<Route path="pelatihan" element={<PelatihanPage />} />
 				</Route>
 				<Route path="*" element={<ForbiddenPage />} />
 			</Routes>

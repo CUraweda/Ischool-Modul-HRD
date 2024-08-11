@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import TestCuti from '@/data/ListPengajuanCuti.json';
 import DetailCard from '@/components/DetailCard';
 import ConfirmationDialog from '@/components/AlertConfirm';
 import { MdOutlineEventNote } from 'react-icons/md';
@@ -18,6 +17,54 @@ interface CutiData {
 		};
 	};
 }
+
+const TestCuti: CutiData[] = [
+	{
+		id: 1,
+		data: {
+			nama: 'Douglas Williams',
+			tipe: 'Cuti Lainnya',
+			tanggal: '2024-03-22',
+			deskripsi: 'Executive walk standard store media experience civil.',
+			status: 'Menunggu Persetujuan',
+			catatan: {
+				image: 'https://dummyimage.com/12x250',
+				hari: 'Selasa',
+				jam: '19:38:32',
+			},
+		},
+	},
+	{
+		id: 2,
+		data: {
+			nama: 'Lori Quinn',
+			tipe: 'Cuti Bersalin',
+			tanggal: '2024-05-28',
+			deskripsi: 'Action medical response culture fish.',
+			status: 'Disetujui',
+			catatan: {
+				image: 'https://dummyimage.com/83x181',
+				hari: 'Jumat',
+				jam: '04:00:42',
+			},
+		},
+	},
+	{
+		id: 3,
+		data: {
+			nama: 'Deborah Smith',
+			tipe: 'Cuti Lainnya',
+			tanggal: '2024-03-04',
+			deskripsi: 'Other front alone mission occur purpose recent.',
+			status: 'Menunggu Persetujuan',
+			catatan: {
+				image: 'https://dummyimage.com/83x181',
+				hari: 'Jumat',
+				jam: '10:47:41',
+			},
+		},
+	},
+];
 
 const pengajuanCutiPage: React.FC<{}> = () => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -154,11 +201,11 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.data.tipe === 'Izin'
-												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.data.tipe === 'Cuti'
-													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: ''
+											// item.data.tipe === 'Izin'
+											'bg-[#8ef96ac2] text-[#3d6b2e]'
+											// : item.data.tipe === 'Cuti'
+											// ? 'bg-[#f96a6a] text-[#6b2e2e]'
+											// : ''
 										}`}
 									>
 										{item.data.tipe}
@@ -173,7 +220,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
 												: item.data.status === 'Tidak Disetujui'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: item.data.status === 'Menunggu'
+													: item.data.status === 'Menunggu Persetujuan'
 														? 'bg-[#f9f46a] text-[#6b2e2e]'
 														: ''
 										}`}
