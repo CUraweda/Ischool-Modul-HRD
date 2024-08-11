@@ -9,7 +9,7 @@ import {
 	Legend,
 	Tooltip,
 } from 'chart.js';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Legend, Tooltip);
 
