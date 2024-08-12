@@ -7,7 +7,7 @@ const Probationpage = () => {
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">
-				<h3 className="font-bold">Rekrutmen</h3>
+				<h3 className="font-bold">Probation</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input type="text" className="grow" placeholder="Search" />
 					<svg
