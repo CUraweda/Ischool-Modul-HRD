@@ -1,16 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import { Karyawan } from '@/middlewares/api';
 
 const DataKaryawanPage = () => {
+	const [search, setSearch] = useState('');
+	const [dataKaryawan, setDataKaryawan] = useState<any[]>([]);
 	const handleDialog = () => {
 		openModal('addKaryawan');
 	};
+
+	const fetchData = async () => {
+		try {
+			const response = await Karyawan.DataKaryawan(1, 20, search);
+			setDataKaryawan(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, [search]);
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">
 				<h3 className="font-bold">Data Karyawan</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Search" />
+					<input type="text" className="grow" placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -71,7 +87,19 @@ const DataKaryawanPage = () => {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
+								{dataKaryawan.map((item, index) => (
+									<tr key={index}>
+										<td className="px-4 py-2">{index + 1}</td>
+										<td className="px-4 py-2">{item.full_name}</td>
+										<td className="px-4 py-2">
+											<span className="rounded-md bg-[#DBEAFF] p-2 text-xs font-semibold text-gray-500">Guru</span>
+										</td>
+										<td className="px-4 py-2">Guru SD 2 Azzaitun</td>
+										<td className="px-4 py-2">{item.employee_status}</td>
+										<td className="relative px-4 py-2">test</td>
+									</tr>
+								))}
+								{/* <tr>
 									<td className="px-4 py-2">1</td>
 									<td className="px-4 py-2">Alya Putri Azzahra</td>
 									<td className="px-4 py-2">
@@ -80,7 +108,7 @@ const DataKaryawanPage = () => {
 									<td className="px-4 py-2">Guru SD 2 Azzaitun</td>
 									<td className="px-4 py-2">Tetap</td>
 									<td className="relative px-4 py-2">test</td>
-								</tr>
+								</tr> */}
 								{/* Additional rows can go here */}
 							</tbody>
 						</table>

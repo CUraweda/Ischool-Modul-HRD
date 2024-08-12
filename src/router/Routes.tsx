@@ -20,6 +20,7 @@ import ProbationPage from '@/pages/hrd/ProbationPage';
 import DetailProbationPage from '@/pages/hrd/DetailProbationPage';
 import DetailCardProbationPage from '@/pages/hrd/DetailCardProbationPage';
 import DataKaryawanPage from '@/pages/hrd/DataKaryawanPage';
+import PenggajianPage from '@/pages/hrd/PenggajianPage';
 import DetailProfilKaryawanPage from '@/pages/hrd/DetailProfilKaryawanPage';
 import FormPage from '@/pages/public/FormPage';
 import FormDataPage from '@/pages/public/FormDataPage';
@@ -75,6 +76,7 @@ const AppRoutes: React.FC = () => {
 					<Route path="probation/1/1" element={<DetailCardProbationPage />} />
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />
 					<Route path="data-karyawan/1" element={<DetailProfilKaryawanPage />} />
+					<Route path="penggajian" element={<PenggajianPage />} />
 				</Route>
 				<Route
 					path="/public/"
