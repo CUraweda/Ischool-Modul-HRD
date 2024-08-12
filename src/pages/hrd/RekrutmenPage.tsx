@@ -1,9 +1,26 @@
+import { useEffect, useState } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import { Rekrutmen } from '@/middlewares/api';
 
 const RekrutmenPage = () => {
+	const [datarekrutmen, setDataRekrutmen] = useState<any[]>([]);
 	const handleDialog = () => {
 		openModal('addRekrutmen');
 	};
+
+	const fetchData = async () => {
+		try {
+			const response = await Rekrutmen.DataRekrutmen(1, 20);
+			setDataRekrutmen(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
+
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">

@@ -1,8 +1,17 @@
-import { SettingCfg } from '@/config';
-import { api } from '@/lib';
-import { TapiResponse, Tuser } from '@/types';
+import { getSessionStorageItem } from '@/utils/storageUtils';
+import axios, { AxiosPromise } from 'axios';
+const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
+const token = getSessionStorageItem('access_token');
 
-const baseURL = SettingCfg.servers.main;
+const Rekrutmen = {
+	DataRekrutmen: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `job-vacancy?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 
-export const loginUser = (email: string, password: string) =>
-	api.post<TapiResponse<Tuser>>('/auth/login', { email, password }, { baseURL });
+export { Rekrutmen };
