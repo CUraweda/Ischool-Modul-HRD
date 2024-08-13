@@ -25,4 +25,17 @@ const Karyawan = {
 		}),
 };
 
-export { Rekrutmen, Karyawan };
+const Form = {
+	PostDataPelamar: (data: any): AxiosPromise<any> =>
+		instance({
+			method: 'POST',
+			url: `applicant-form/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'multipart/form-data',
+			},
+		}),
+};
+
+export { Rekrutmen, Karyawan, Form };

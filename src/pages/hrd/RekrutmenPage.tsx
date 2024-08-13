@@ -94,7 +94,7 @@ const RekrutmenPage = () => {
 					<div className="card-body">
 						<div className="flex items-center justify-between">
 							<div>
-								<h4 className="font-bold">{item.title}</h4>
+								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
 							<div>
@@ -280,7 +280,7 @@ const RekrutmenPage = () => {
 
 						<div className="mt-2">
 							<label className="mb-1 block text-sm font-medium">Note</label>
-							<textarea className="w-full rounded border border-gray-300 p-2" rows="4"></textarea>
+							<textarea className="w-full rounded border border-gray-300 p-2" rows={4}></textarea>
 						</div>
 
 						<div className="flex justify-end">

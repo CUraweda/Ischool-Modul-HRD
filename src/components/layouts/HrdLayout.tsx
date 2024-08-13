@@ -12,7 +12,7 @@ const HrdLayout: React.FC<{}> = () => {
 	console.log('Access Token:', token);
 	return (
 		<>
-			<div className="flex h-screen w-full flex-col" data-theme="light">
+			<div className="flex h-screen w-full flex-col overflow-hidden" data-theme="light">
 				<div className="flex flex-grow">
 					<div className="z-50">
 						<Sidebar />

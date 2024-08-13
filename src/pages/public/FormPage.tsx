@@ -1,20 +1,17 @@
 import { Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
+import Modal, { openModal, closeModal } from '@/components/ModalProps';
 
 function formatRelativeDate(createdAt: string) {
 	const createdDate = new Date(createdAt);
 	const currentDate = new Date();
 
-	// Hitung selisih waktu dalam milidetik
 	const timeDifference = currentDate.getTime() - createdDate.getTime();
 
-	// Konversi selisih waktu menjadi hari
 	const daysDifference = Math.floor(timeDifference / (1000 * 3600 * 24));
 
 	if (daysDifference === 0) {
 		return 'Hari ini';
-	} else if (daysDifference === 1) {
-		return '1 hari yang lalu';
 	} else {
 		return `${daysDifference} hari yang lalu`;
 	}
@@ -26,7 +23,6 @@ function formatDateRange(startDate: any, endDate: any) {
 	const start = new Date(startDate).toLocaleDateString('id-ID', options);
 	const end = new Date(endDate).toLocaleDateString('id-ID', options);
 
-	// Jika bulan dan tahun sama, hanya tampilkan tanggal akhir berbeda
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
@@ -36,6 +32,10 @@ function formatDateRange(startDate: any, endDate: any) {
 
 	return `${start} - ${end}`;
 }
+
+const handleDialog = () => {
+	openModal('detailForm');
+};
 
 const FormPage = () => {
 	const [dataJob, setDataJob] = useState<any[]>([]);
@@ -58,7 +58,11 @@ const FormPage = () => {
 			<h1 className="mb-4 text-lg font-bold text-gray-700">Lowongan Pekerjaan</h1>
 			<div>
 				{dataJob.map((item, index) => (
-					<div key={index} className="flex flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow">
+					<div
+						key={index}
+						className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow"
+						onClick={handleDialog}
+					>
 						<div>
 							<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
 							<p className="text-gray-600">{item.sub_title}</p>
@@ -75,6 +79,50 @@ const FormPage = () => {
 					</div>
 				))}
 			</div>
+
+			<Modal id="detailForm">
+				<div className="flex justify-between">
+					<div>
+						<div>
+							<h3 className="font-bold">Spesifikasi</h3>
+							<div className="mt-4">
+								<span>Posisi:</span> Guru Bahasa Indonesia
+							</div>
+							<div>
+								<span>Lokasi:</span> Sekolah Alam Depok
+							</div>
+
+							<div>
+								<span>Status:</span> Pekerjaan Paruh Waktu
+							</div>
+
+							<div>
+								<span>Periode Pendaftaran:</span> 25 Mei2023
+							</div>
+						</div>
+
+						<div className="mt-5">
+							<h3 className="font-bold">Tugas dan Tanggung Jawab</h3>
+							<div className="mt-4">
+								<span>Posisi:</span> Guru Bahasa Indonesia
+							</div>
+							<div>
+								<span>Lokasi:</span> Sekolah Alam Depok
+							</div>
+
+							<div>
+								<span>Status:</span> Pekerjaan Paruh Waktu
+							</div>
+
+							<div>
+								<span>Periode Pendaftaran:</span> 25 Mei2023
+							</div>
+						</div>
+					</div>
+
+					<button className="btn btn-primary mt-4 text-white">Lamar Sekarang</button>
+				</div>
+			</Modal>
 		</div>
 	);
 };
