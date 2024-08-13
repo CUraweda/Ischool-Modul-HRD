@@ -90,7 +90,7 @@ const RekrutmenPage = () => {
 				</div>
 			</div>
 			{dataRekrutmen.map((item, index) => (
-				<div className="card mt-10 w-full bg-base-100 shadow-xl" key={index}>
+				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex items-center justify-between">
 							<div>
