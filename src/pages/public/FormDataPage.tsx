@@ -170,7 +170,7 @@ const FormDataPage = () => {
 
 		const data = {
 			user_id: 1,
-			vacancy_id: 1,
+			vacancy_id: 5,
 			full_name: fullName,
 			email: email,
 			phone: phone,
@@ -183,7 +183,7 @@ const FormDataPage = () => {
 			city: city,
 			applicant_description: profilDesc,
 			details: {
-				academy: educationData,
+				academic: educationData,
 				job: workExperienceData,
 				unformal: nonFormalEducationData,
 				appreciation: achievementsData,
