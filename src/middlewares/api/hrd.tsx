@@ -29,11 +29,11 @@ const Form = {
 	PostDataPelamar: (data: any): AxiosPromise<any> =>
 		instance({
 			method: 'POST',
-			url: `applicant-form/create`,
+			url: `applicant-form/send`,
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
-				'Content-Type': 'multipart/form-data',
+				'Content-Type': "multipart/form-data"
 			},
 		}),
 };
