@@ -1,5 +1,5 @@
 function HomePage() {
-	return <div>HomePage</div>;
+	return <div>Fucking Nigga</div>;
 }
 
 export default HomePage;
