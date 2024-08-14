@@ -3,6 +3,7 @@ import { Form } from '@/middlewares/api';
 const FormDataPage = () => {
 	const [files, setFiles] = useState<any[]>([]);
 	const [profilePhoto, setProfilePhoto] = useState<any>(null);
+	const [profilePhotoFile, setProfilePhotoFile] = useState<any>(null);
 	const [educationCards, setEducationCards] = useState([
 		{ degree: '', city: '', school: '', startMonth: '', startYear: '', endMonth: '', endYear: '', description: '' },
 	]);
@@ -38,15 +39,27 @@ const FormDataPage = () => {
 	const [reasonDesc, setReasonDesc] = useState('');
 	const [questionDesc, setQuestionDesc] = useState('');
 
+	const createFileDesc = (identifier: string, fileList: any[]) => {
+		return fileList.map((_, index) => ({
+			Identifier: identifier,
+			index: index,
+		}));
+	};
+
 	const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files) {
-			setFiles([...files, ...Array.from(event.target.files)]);
+			const uploadedFiles = Array.from(event.target.files);
+			setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
+
+			createFileDesc('appreciation', uploadedFiles);
 		}
 	};
 
 	const handleProfilePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.files) {
 			const file = event.target.files[0];
+			setProfilePhotoFile(file);
+
 			const reader = new FileReader();
 			reader.onloadend = () => {
 				setProfilePhoto(reader.result);
@@ -168,9 +181,12 @@ const FormDataPage = () => {
 			level: card.level,
 		}));
 
+		const profilePhotoDesc = profilePhotoFile ? createFileDesc('applicant_profile', [profilePhotoFile]) : [];
+		const achievementsFileDescs = createFileDesc('appreciation', files);
+
 		const data = {
 			user_id: 1,
-			vacancy_id: 1,
+			vacancy_id: 5,
 			full_name: fullName,
 			email: email,
 			phone: phone,
@@ -183,7 +199,7 @@ const FormDataPage = () => {
 			city: city,
 			applicant_description: profilDesc,
 			details: {
-				academy: educationData,
+				academic: educationData,
 				job: workExperienceData,
 				unformal: nonFormalEducationData,
 				appreciation: achievementsData,
@@ -192,7 +208,8 @@ const FormDataPage = () => {
 			applicant_vision: visionDesc,
 			applicant_reason: reasonDesc,
 			applicant_question: questionDesc,
-			files: files,
+			files: [...(profilePhotoFile ? [profilePhotoFile] : []), ...files],
+			file_desc: [...profilePhotoDesc, ...achievementsFileDescs],
 		};
 		try {
 			await Form.PostDataPelamar(data);
