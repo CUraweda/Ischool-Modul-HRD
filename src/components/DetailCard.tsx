@@ -1,121 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface CreateAttendanceInput {
-	worktime_id: number;
-	employee_id: number;
-	uid: string;
-	description: string;
-	status: string;
-	is_outstation: boolean;
-}
-
-interface CreateAttendanceProps {
-	isOpen: boolean;
+interface DetailDialogProps {
+	dataProps: any;
 	onClose: () => void;
-	onCreate: (input: CreateAttendanceInput) => void;
 }
 
-const CreateAttendance: React.FC<CreateAttendanceProps> = ({ isOpen, onClose, onCreate }) => {
-	const [formInput, setFormInput] = useState<CreateAttendanceInput>({
-		worktime_id: 1,
-		employee_id: 59,
-		uid: '',
-		description: '',
-		status: 'Tepat Waktu',
-		is_outstation: false,
-	});
+const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
+	const [date, setDate] = useState('');
+	const [hour, setHour] = useState('');
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-		const { name, value } = e.target;
-		setFormInput({
-			...formInput,
-			[name]: value,
-		});
-	};
-
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		onCreate(formInput);
-		onClose(); // Close modal after submission
-	};
+	useEffect(() => {
+		if (dataProps.start_date) {
+			setDate(dataProps.start_date.split('T')[0]);
+			setHour(dataProps.start_date.split('T')[1].split('.')[0]);
+		} else if (dataProps.createdAt) {
+			setDate(dataProps.createdAt.split('T')[0]);
+			setHour(dataProps.createdAt.split('T')[1].split('.')[0]);
+		}
+	}, [dataProps]);
 
 	return (
 		<>
-			{isOpen && (
-				<>
-					<div className="fixed inset-0 z-30 bg-black bg-opacity-50"></div>
-					<dialog open className="modal modal-open">
-						<div className="modal-box max-w-[450px] overflow-y-auto">
-							<form method="dialog" onSubmit={handleSubmit}>
-								<div className="flex items-center justify-between font-bold">
-									<h1 className="text-xl">Create Attendance</h1>
-									<button type="button" className="btn btn-circle btn-ghost btn-sm" onClick={onClose}>
-										✕
-									</button>
-								</div>
-								<div className="mt-5">
-									<div className="mb-4">
-										<label className="block text-sm font-medium text-gray-700">UID</label>
-										<input
-											type="text"
-											name="uid"
-											value={formInput.uid}
-											onChange={handleInputChange}
-											className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-
-									<div className="mb-4">
-										<label className="block text-sm font-medium text-gray-700">Description</label>
-										<textarea
-											name="description"
-											value={formInput.description}
-											onChange={handleInputChange}
-											className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-
-									<div className="mb-4">
-										<label className="block text-sm font-medium text-gray-700">Status</label>
-										<select
-											name="status"
-											value={formInput.status}
-											onChange={handleInputChange}
-											className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										>
-											<option value="Tepat Waktu">Tepat Waktu</option>
-											<option value="Diluar Jadwal">Diluar Jadwal</option>
-											<option value="Terlambat">Terlambat</option>
-										</select>
-									</div>
-
-									<div className="mb-4">
-										<label className="block text-sm font-medium text-gray-700">Is Outstation</label>
-										<input
-											type="checkbox"
-											name="is_outstation"
-											checked={formInput.is_outstation}
-											onChange={handleInputChange}
-											className="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-										/>
-									</div>
-
-									<div className="flex justify-end">
-										<button
-											type="submit"
-											className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-										>
-											Create Attendance
-										</button>
-									</div>
-								</div>
-							</form>
+			<div className="fixed inset-0 z-30 bg-black bg-opacity-50"></div>
+			<dialog open className="modal modal-open">
+				<div className="modal-box w-[90%] overflow-y-auto md:w-[900px]">
+					<form method="dialog">
+						<div className="flex items-center justify-between align-middle font-bold">
+							<h1 className="text-xl">{dataProps?.title}</h1>
+							<button type="button" className="btn btn-circle btn-ghost btn-sm" onClick={onClose}>
+								✕
+							</button>
 						</div>
-					</dialog>
-				</>
-			)}
+					</form>
+					<div className="mt-5">
+						<figure className="rounded-xl">
+							<img
+								src={
+									dataProps?.file_path ||
+									`https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png`
+								}
+								alt="Detail Image"
+								className="h-[200px] w-full object-cover"
+							/>
+						</figure>
+						<div className="text-md card-body">
+							<h2 className="card-title font-semibold">
+								{dataProps?.employee.full_name} {'*' + dataProps?.status}
+							</h2>
+							<div className="my-2 grid grid-cols-2">
+								<div className="w-1/2">
+									<p className="font-semibold">Tanggal</p>
+									<p>{date}</p>
+								</div>
+								<div className="w-1/2">
+									<p className="font-semibold">Hari/ Jam</p>
+									<p>{hour}</p>
+								</div>
+							</div>
+							<ul className="my-2">
+								<li className="font-semibold">Deskripsi</li>
+								<li>{dataProps?.description}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</dialog>
 		</>
 	);
 };
 
-export default CreateAttendance;
+export default DetailCard;

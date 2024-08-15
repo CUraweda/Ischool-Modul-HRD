@@ -81,19 +81,23 @@ const PresensiPage: React.FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [datatoupdate, setDataToUpdate] = useState<any>(null);
 	const [typemodal, setTypeModal] = useState<string>('');
+	const [currentPage, setCurrentPage] = useState<number>(0);
+	const [limit, setLimit] = useState<number>(10);
+	const [totalRows, setTotalRows] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 	const fetchAttendanceData = async () => {
 		try {
-			const result = await getEmployeeAttendance(0, 10);
-			console.log(result.data.data);
+			const result = await getEmployeeAttendance(0, limit, searchQuery);
 			setAttendanceData(result.data.data.result);
+			setTotalRows(result.data.data.totalRows);
+			setTotalPages(result.data.data.totalPage);
 		} catch (error) {
 			console.error('Error fetching attendance data:', error);
 		}
 	};
 	const createAttendance = async (input: CreateAttendanceInput) => {
 		try {
-			const result = await createEmployeeAttendance(input);
-			console.log(result);
+			await createEmployeeAttendance(input);
 			fetchAttendanceData();
 		} catch (error) {
 			console.error('Error creating attendance:', error);
@@ -108,18 +112,25 @@ const PresensiPage: React.FC = () => {
 			console.error('Error updating attendance:', error);
 		}
 	};
+	const handlePageChange = (newPage: number) => {
+		setCurrentPage(newPage);
+	};
+
+	const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
+
 	useEffect(() => {
 		fetchAttendanceData();
 	}, []);
+
+	useEffect(() => {
+		fetchAttendanceData();
+	}, [searchQuery]);
 
 	const [dialogTime, setDialogTime] = useState(false);
 
 	const handleOpenDialogTime = () => setDialogTime(true);
 	const handleCloseDialogTime = () => setDialogTime(false);
 
-	const handleSaveTime = (jamMasuk: string, jamKeluar: string) => {
-		console.log(`Jam Masuk: ${jamMasuk}, Jam Keluar: ${jamKeluar}`);
-	};
 	const handleCreate = (props: CreateAttendanceInput) => {
 		if (typemodal === 'create') {
 			createAttendance(props);
@@ -189,7 +200,7 @@ const PresensiPage: React.FC = () => {
 				<div className="flex gap-4">
 					<button className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
 						Semua
-						<div className="pl-5">{attendanceData.length}</div>
+						<div className="pl-5">{totalRows}</div>
 					</button>
 
 					<button
@@ -228,7 +239,7 @@ const PresensiPage: React.FC = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{attendanceData.map((item, index) => (
+						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
 								<td>{item.employee.division}</td>
@@ -285,8 +296,42 @@ const PresensiPage: React.FC = () => {
 					</tbody>
 				</table>
 			</div>
-
-			{dialogTime && <TimeEntryDialog isOpen={dialogTime} onClose={handleCloseDialogTime} onSave={handleSaveTime} />}
+			<div className="join m-5">
+				<button
+					className="btn join-item btn-sm"
+					onClick={() => handlePageChange(currentPage - 1)}
+					disabled={currentPage === 0}
+				>
+					Previous
+				</button>
+				<button className="btn join-item btn-sm">
+					<div className="flex justify-between">
+						<span>
+							Page {currentPage + 1} of {totalPages}
+						</span>
+					</div>
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(10)}>
+					10
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(50)}>
+					50
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(100)}>
+					100
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(0)}>
+					All
+				</button>
+				<button
+					className="btn join-item btn-sm"
+					onClick={() => handlePageChange(currentPage + 1)}
+					disabled={currentPage + 1 === totalPages}
+				>
+					Next
+				</button>
+			</div>
+			{dialogTime && <TimeEntryDialog isOpen={dialogTime} onClose={handleCloseDialogTime} />}
 			{isModalOpen && (
 				<CreateAttendance
 					isOpen={isModalOpen}

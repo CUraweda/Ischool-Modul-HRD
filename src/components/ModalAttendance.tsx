@@ -37,7 +37,6 @@ const CreateAttendance: React.FC<Props> = ({ isOpen, onClose, onCreate, dataToUp
 			setStatus(dataToUpdate.status);
 			setIsOutstation(dataToUpdate.is_outstation);
 			setSelectedValueEmployee(dataToUpdate.employee_id);
-			console.log('test', dataToUpdate);
 		}
 	}, [dataToUpdate]);
 
@@ -53,9 +52,7 @@ const CreateAttendance: React.FC<Props> = ({ isOpen, onClose, onCreate, dataToUp
 		onCreate(input);
 		onClose();
 	};
-	useEffect(() => {
-		console.log(selectedValueWorkTime);
-	}, [selectedValueWorkTime]);
+	useEffect(() => {}, [selectedValueWorkTime]);
 	const getEmployee = async () => {
 		try {
 			const result = await getAllEmployee();

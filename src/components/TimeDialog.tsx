@@ -7,7 +7,6 @@ import { IoMdClose } from 'react-icons/io';
 interface TimeEntryDialogProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onSave: (jamMasuk: string, jamKeluar: string) => void;
 }
 interface dialog {
 	onClose: () => void;
@@ -67,7 +66,7 @@ const DialogAdd: React.FC<dialog> = ({
 					<header className="flex items-center justify-between">
 						<h3 className="text-lg font-bold">Add Time Entry</h3>
 						<div>
-							<button className="btn btn-circle btn-ghost" onClick={() => onClose()}>
+							<button className="btn btn-circle" onClick={() => onClose()}>
 								<IoMdClose className="text-2xl" />
 							</button>
 						</div>
@@ -175,27 +174,15 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 	const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const value = event.target.value;
 		setSelectedValue(value);
-		console.log(value);
 	};
 	const handleChangeType = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const value = event.target.value;
 		setSelectedValueType(value);
-		console.log(value);
 	};
 	const handleChangeDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		const value = event.target.value;
 		setSelectedValueDay(value);
-		console.log(value);
 	};
-	const [optionDivision, setOptionDivision] = useState<any[]>([]);
-	const getDataDivision = async () => {
-		const response = await getAllDivision();
-		setOptionDivision(response.data.data.result);
-	};
-	useEffect(() => {
-		getDataDivision();
-	}, []);
-
 	const onSaveData = () => {
 		const Data = {
 			division_id: selectedValue,
@@ -240,23 +227,9 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 	useEffect(() => {
 		getAllWorkTime();
 	}, []);
-
-	const contohData: any = [
-		{
-			id: 1,
-			name: 'Masuk',
-			start_time: '08:00',
-			end_time: '17:00',
-			hari: 'Senin',
-		},
-		{
-			id: 2,
-			name: 'Keluar',
-			start_time: '08:00',
-			end_time: '17:00',
-			hari: 'Selasa',
-		},
-	];
+	const filteredWorkTime = dataWorkTime.filter((option) =>
+		activeTab ? option.type.toLowerCase() === activeTab : true
+	);
 
 	const handleEdit: any = (type: string, data: any) => {
 		setId(data.id);
@@ -321,74 +294,39 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 						</button>
 					</div>
 					<div className="my-4 text-slate-500">
-						{activeTab === 'masuk' ? (
-							<label className="block">
-								{dataWorkTime.map((option) => (
-									<div className="card w-full rounded-sm p-5" key={option.id}>
-										<div className="card-body rounded-xl shadow-lg">
-											<div className="flex justify-between">
-												<div className="text-xl">
-													{option.weekday.name} -{' '}
-													{optionDivision.map((option) => (option.id === option.division_id ? option.name : ''))}
-												</div>
-												<div className="block">
-													<section className="text-3xl">
-														{option.start_time.slice(0, 5)} - {option.end_time.slice(0, 5)}
-													</section>
-													<section>{option.type.charAt(0).toUpperCase() + option.type.slice(1).toLowerCase()}</section>
-												</div>
-												<div className="flex items-end gap-5 self-center">
-													<button
-														className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
-														onClick={() => handleEdit('edit', option)}
-													>
-														<LuPencil className="text-2xl" />
-													</button>
-													<button
-														className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
-														onClick={() => handleEdit('delete', option)}
-													>
-														<MdOutlineDelete className="text-2xl" />
-													</button>
-												</div>
+						<label className="block">
+							{filteredWorkTime.map((option) => (
+								<div className="card w-full rounded-sm p-5" key={option.id}>
+									<div className="card-body rounded-xl shadow-lg">
+										<div className="flex justify-between">
+											<div className="text-xl">
+												{option.weekday.name} - {option.division.name}
+											</div>
+											<div className="block">
+												<section className="text-3xl">
+													{option.start_time.slice(0, 5)} - {option.end_time.slice(0, 5)}
+												</section>
+												<section>{option.type.charAt(0).toUpperCase() + option.type.slice(1).toLowerCase()}</section>
+											</div>
+											<div className="flex items-end gap-5 self-center">
+												<button
+													className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
+													onClick={() => handleEdit('edit', option)}
+												>
+													<LuPencil className="text-2xl" />
+												</button>
+												<button
+													className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
+													onClick={() => handleEdit('delete', option)}
+												>
+													<MdOutlineDelete className="text-2xl" />
+												</button>
 											</div>
 										</div>
 									</div>
-								))}
-							</label>
-						) : (
-							<label className="block">
-								{contohData.map((data: any, index: number) => (
-									<div key={index} className="card w-full rounded-sm p-5">
-										<div className="card-body rounded-xl shadow-lg">
-											<div className="flex justify-between">
-												<div className="text-xl">{data.hari}</div>
-												<div className="block">
-													<section className="text-3xl">
-														{data.start_time} - {data.end_time}
-													</section>
-													<section>{activeTab}</section>
-												</div>
-												<div className="flex items-end gap-5 self-center">
-													<button
-														className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
-														onClick={() => handleEdit('edit', data)}
-													>
-														<LuPencil className="text-2xl" />
-													</button>
-													<button
-														className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
-														onClick={() => handleEdit('delete', data)}
-													>
-														<MdOutlineDelete className="text-2xl" />
-													</button>
-												</div>
-											</div>
-										</div>
-									</div>
-								))}
-							</label>
-						)}
+								</div>
+							))}
+						</label>
 					</div>
 				</div>
 			</dialog>
