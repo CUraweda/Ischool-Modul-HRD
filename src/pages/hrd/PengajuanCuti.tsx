@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getVacation, createVacation, updateVacation, deleteVacation } from '@/middlewares/api/hrd';
+import { getVacation, updateVacation } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import { MdOutlineEventNote } from 'react-icons/md';
 import Swal from 'sweetalert2';
