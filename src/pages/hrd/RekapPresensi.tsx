@@ -141,6 +141,7 @@ const PresensiPage: React.FC = () => {
 		setTypeModal(type);
 		if (type === 'update') {
 			setDataToUpdate(data);
+			setIsModalOpen(true);
 		} else if (type === 'create') {
 			setDataToUpdate(null);
 			setIsModalOpen(true);
