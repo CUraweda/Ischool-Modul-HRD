@@ -280,19 +280,6 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 				</div>
 			</div>
 
-			{selectedItem && (
-				<DetailCard
-					id="detail-modal"
-					onClose={handleDetailClose}
-					title="Detail Catatan"
-					nama={selectedItem.data.nama}
-					image={selectedItem.data.catatan.image}
-					deskripsi={selectedItem.data.deskripsi}
-					status={selectedItem.data.status}
-					tanggal={selectedItem.data.catatan.hari}
-				/>
-			)}
-
 			{isDialogOpen && (
 				<ConfirmationDialog
 					id="confirmation-dialog"
