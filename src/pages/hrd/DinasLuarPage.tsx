@@ -4,8 +4,11 @@ import DetailCard from '@/components/DetailCard';
 import { TbFaceId } from 'react-icons/tb';
 
 const DinasLuarPage: React.FC<{}> = () => {
-	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [filterType, setFilterType] = useState<string>('');
+	const [filterStatus, setFilterStatus] = useState<string>('');
+	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
+	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
@@ -14,7 +17,15 @@ const DinasLuarPage: React.FC<{}> = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const getAllAttendance = async () => {
 		try {
-			const result = await getEmployeeAttendance(0, limit, searchQuery);
+			const result = await getEmployeeAttendance(
+				currentPage,
+				limit,
+				filterType,
+				searchQuery,
+				filterStatus,
+				filterDivision,
+				filterDate
+			);
 			setDataAttendance(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
 			setTotalPages(result.data.data.totalPage);
@@ -34,7 +45,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 
 	useEffect(() => {
 		getAllAttendance();
-	}, [searchQuery, limit]);
+	}, [searchQuery, limit, filterType, filterStatus, filterDivision, filterDate]);
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(e.target.value);
@@ -82,15 +93,44 @@ const DinasLuarPage: React.FC<{}> = () => {
 					<div className="pl-5">{totalRows}</div>
 				</button>
 				<div className="my-auto flex gap-4">
-					<label className="text-md input input-xs input-bordered my-auto flex w-fit items-center gap-2 rounded-full">
-						<input
-							type="date"
-							className="grow"
-							value={filterDate}
-							onChange={(e) => setFilterDate(e.target.value)}
-							placeholder="Search"
-						/>
-					</label>
+					<select
+						className="select select-bordered select-xs"
+						onChange={(e) => {
+							const selectedValue = e.target.value;
+							if (selectedValue == 'MASUK' || selectedValue == 'KELUAR') {
+								setFilterType(e.target.value);
+							} else {
+								setFilterStatus(e.target.value);
+							}
+						}}
+					>
+						<option value="" disabled selected>
+							Tipe dan Status yang dipilih
+						</option>
+						<optgroup label="Tipe">
+							<option value="MASUK">Masuk</option>
+							<option value="KELUAR">Keluar</option>
+						</optgroup>
+						<optgroup label="Status">
+							<option value="Tepat Waktu">Tepat Waktu</option>
+							<option value="Terlambat">Terlambat</option>
+							<option value="Diluar Jadwal">Diluar Jadwal</option>
+						</optgroup>
+					</select>
+					<select
+						className="select select-bordered select-xs"
+						value={filterDivision}
+						onChange={(e) => setFilterDivision(e.target.value)}
+					>
+						<option value="HRD">HRD</option>
+						<option value="GURU">Guru</option>
+					</select>
+					<input
+						type="date"
+						className="input input-xs input-bordered"
+						value={filterDate}
+						onChange={(e) => setFilterDate(e.target.value)}
+					/>
 				</div>
 			</div>
 			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">

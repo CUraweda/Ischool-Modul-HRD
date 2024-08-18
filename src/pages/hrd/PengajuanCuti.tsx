@@ -68,6 +68,9 @@ const TestCuti: CutiData[] = [
 ];
 
 const pengajuanCutiPage: React.FC<{}> = () => {
+	const [filterType, setFilterType] = useState<string>('');
+	const [filterStatus, setFilterStatus] = useState<string>('');
+	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
@@ -99,7 +102,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const [limit, setLimit] = useState<number>(10);
 
 	const getAllVacation = async () => {
-		const response = await getVacation(0, limit, searchQuery);
+		const response = await getVacation(0, limit, searchQuery, filterType, filterStatus, filterDate);
 		setDataVacation(response.data.data.result);
 		setTotalPages(response.data.data.totalPage);
 		setTotalRows(response.data.data.totalRows);
@@ -122,7 +125,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	useEffect(() => {
 		getAllVacation();
-	}, [searchQuery, limit]);
+	}, [searchQuery, limit, filterType, filterStatus, filterDate]);
 
 	const handleDetailClose = () => {
 		setSelectedItem(null);
@@ -203,15 +206,47 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 					<div className="pl-5">{totalRows}</div>
 				</button>
 				<div className="my-auto flex gap-4">
-					<label className="text-md input input-xs input-bordered my-auto flex w-fit items-center gap-2 rounded-full">
-						<input
-							type="date"
-							className="grow"
-							value={filterDate}
-							onChange={(e) => setFilterDate(e.target.value)}
-							placeholder="Search"
-						/>
-					</label>
+					<select
+						className="select select-bordered select-xs"
+						onChange={(e) => {
+							const selectedValue = e.target.value;
+							if (selectedValue === 'CUTI' || selectedValue === 'IZIN') {
+								setFilterType(selectedValue); // Mengatur filter type
+							} else {
+								setFilterStatus(selectedValue); // Mengatur filter status
+							}
+						}}
+					>
+						<option value="" disabled selected>
+							Tipe dan Status yang dipilih
+						</option>
+						<optgroup label="Tipe">
+							<option value="CUTI">Cuti</option>
+							<option value="IZIN">Izin</option>
+						</optgroup>
+						<optgroup label="Status">
+							<option value="Disetujui">Disetujui</option>
+							<option value="Menunggu">Menunggu</option>
+							<option value="Tidak Disetujui">Tidak Disetujui</option>
+						</optgroup>
+					</select>
+					<select
+						className="select select-bordered select-xs"
+						value={filterDivision}
+						onChange={(e) => setFilterDivision(e.target.value)}
+					>
+						<option value="" disabled>
+							Pilih Divisi
+						</option>
+						<option value="HRD">HRD</option>
+						<option value="GURU">Guru</option>
+					</select>
+					<input
+						type="date"
+						className="input input-xs input-bordered"
+						value={filterDate}
+						onChange={(e) => setFilterDate(e.target.value)}
+					/>
 				</div>
 			</div>
 			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 pb-28 shadow-xl">

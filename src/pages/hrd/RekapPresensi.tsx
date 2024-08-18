@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TimeEntryDialog from '@/components/TimeDialog';
-import {
-	getEmployeeAttendance,
-	createEmployeeAttendance,
-	updateEmployeeAttendance,
-	deleteEmployeeAttendance,
-} from '@/middlewares/api/hrd';
-import { MdOutlineDelete } from 'react-icons/md';
-import CreateAttendance from '../../components/ModalAttendance';
-import { LuPencil } from 'react-icons/lu';
+import { getEmployeeAttendance } from '@/middlewares/api/hrd';
 
 interface Worktime {
 	id: number;
@@ -65,29 +57,28 @@ interface Attendance {
 	employee: Employee;
 }
 
-interface CreateAttendanceInput {
-	worktime_id: number;
-	employee_id: number;
-	uid: string;
-	description: string;
-	status: string;
-	is_outstation: boolean;
-}
-
 const PresensiPage: React.FC = () => {
-	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [filterType, setFilterType] = useState<string>('');
+	const [filterStatus, setFilterStatus] = useState<string>('');
+	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
+	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
-	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-	const [datatoupdate, setDataToUpdate] = useState<any>(null);
-	const [typemodal, setTypeModal] = useState<string>('');
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const fetchAttendanceData = async () => {
 		try {
-			const result = await getEmployeeAttendance(0, limit, searchQuery);
+			const result = await getEmployeeAttendance(
+				currentPage,
+				limit,
+				filterType,
+				searchQuery,
+				filterStatus,
+				filterDivision,
+				filterDate
+			);
 			setAttendanceData(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
 			setTotalPages(result.data.data.totalPage);
@@ -95,28 +86,11 @@ const PresensiPage: React.FC = () => {
 			console.error('Error fetching attendance data:', error);
 		}
 	};
-	const createAttendance = async (input: CreateAttendanceInput) => {
-		try {
-			await createEmployeeAttendance(input);
-			fetchAttendanceData();
-		} catch (error) {
-			console.error('Error creating attendance:', error);
-		}
-	};
-
-	const updateAttendance = async (id: number, data: CreateAttendanceInput) => {
-		try {
-			await updateEmployeeAttendance(id, data);
-			fetchAttendanceData();
-		} catch (error) {
-			console.error('Error updating attendance:', error);
-		}
-	};
 	const handlePageChange = (newPage: number) => {
 		setCurrentPage(newPage);
 	};
 
-	const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
+	// const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
 
 	useEffect(() => {
 		fetchAttendanceData();
@@ -124,42 +98,13 @@ const PresensiPage: React.FC = () => {
 
 	useEffect(() => {
 		fetchAttendanceData();
-	}, [searchQuery]);
+	}, [searchQuery, filterType, filterStatus, filterDivision, filterDate, currentPage, limit]);
 
 	const [dialogTime, setDialogTime] = useState(false);
 
 	const handleOpenDialogTime = () => setDialogTime(true);
 	const handleCloseDialogTime = () => setDialogTime(false);
 
-	const handleCreate = (props: CreateAttendanceInput) => {
-		if (typemodal === 'create') {
-			createAttendance(props);
-		} else {
-			updateAttendance(datatoupdate.id, props);
-		}
-		setIsModalOpen(false);
-	};
-
-	const deleteData = async (id: number) => {
-		try {
-			await deleteEmployeeAttendance(id);
-			fetchAttendanceData();
-		} catch (error) {
-			console.error('Error deleting attendance:', error);
-		}
-	};
-	const handleOption = (type: string, data: any) => {
-		setTypeModal(type);
-		if (type === 'update') {
-			setDataToUpdate(data);
-			setIsModalOpen(true);
-		} else if (type === 'create') {
-			setDataToUpdate(null);
-			setIsModalOpen(true);
-		} else if (type === 'delete') {
-			deleteData(data.id);
-		}
-	};
 	return (
 		<div className="w-full p-2">
 			<div className="w-full flex-wrap md:flex">
@@ -202,13 +147,6 @@ const PresensiPage: React.FC = () => {
 						Semua
 						<div className="pl-5">{totalRows}</div>
 					</button>
-
-					<button
-						className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
-						onClick={() => handleOption('create', null)}
-					>
-						Create Attendance
-					</button>
 					<button
 						className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
 						onClick={handleOpenDialogTime}
@@ -217,9 +155,44 @@ const PresensiPage: React.FC = () => {
 					</button>
 				</div>
 				<div className="my-auto flex gap-4">
-					<label className="text-md input input-xs input-bordered my-auto flex w-fit items-center gap-2 rounded-full">
-						<input type="date" className="grow" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} />
-					</label>
+					<select
+						className="select select-bordered select-xs"
+						onChange={(e) => {
+							const selectedValue = e.target.value;
+							if (selectedValue == 'MASUK' || selectedValue == 'KELUAR') {
+								setFilterType(e.target.value);
+							} else {
+								setFilterStatus(e.target.value);
+							}
+						}}
+					>
+						<option value="" disabled selected>
+							Tipe dan Status yang dipilih
+						</option>
+						<optgroup label="Tipe">
+							<option value="MASUK">Masuk</option>
+							<option value="KELUAR">Keluar</option>
+						</optgroup>
+						<optgroup label="Status">
+							<option value="Tepat Waktu">Tepat Waktu</option>
+							<option value="Terlambat">Terlambat</option>
+							<option value="Diluar Jadwal">Diluar Jadwal</option>
+						</optgroup>
+					</select>
+					<select
+						className="select select-bordered select-xs"
+						value={filterDivision}
+						onChange={(e) => setFilterDivision(e.target.value)}
+					>
+						<option value="HRD">HRD</option>
+						<option value="GURU">Guru</option>
+					</select>
+					<input
+						type="date"
+						className="input input-xs input-bordered"
+						value={filterDate}
+						onChange={(e) => setFilterDate(e.target.value)}
+					/>
 				</div>
 			</div>
 
@@ -235,11 +208,10 @@ const PresensiPage: React.FC = () => {
 							<th>Keterangan</th>
 							<th>Status</th>
 							<th>Tipe</th>
-							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						{filterData.map((item, index) => (
+						{attendanceData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
 								<td>{item.employee.division}</td>
@@ -273,22 +245,6 @@ const PresensiPage: React.FC = () => {
 										}`}
 									>
 										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
-									</div>
-								</td>
-								<td>
-									<div className="flex h-full items-center gap-2">
-										<button
-											className="btn btn-circle btn-outline btn-primary btn-sm h-full rounded-full"
-											onClick={() => handleOption('update', item)}
-										>
-											<LuPencil className="text-xl" />
-										</button>
-										<button
-											className="btn btn-circle btn-outline btn-primary btn-sm rounded-full"
-											onClick={() => handleOption('delete', item)}
-										>
-											<MdOutlineDelete className="text-xl" />
-										</button>
 									</div>
 								</td>
 							</tr>
@@ -332,14 +288,6 @@ const PresensiPage: React.FC = () => {
 				</button>
 			</div>
 			{dialogTime && <TimeEntryDialog isOpen={dialogTime} onClose={handleCloseDialogTime} />}
-			{isModalOpen && (
-				<CreateAttendance
-					isOpen={isModalOpen}
-					onClose={() => setIsModalOpen(false)}
-					onCreate={handleCreate}
-					dataToUpdate={datatoupdate}
-				/>
-			)}
 		</div>
 	);
 };
