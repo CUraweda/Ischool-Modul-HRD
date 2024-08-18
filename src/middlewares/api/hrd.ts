@@ -1,17 +1,4 @@
 import { hrd } from '@/lib';
-
-// export const getEmployeeAttendance = (
-// 	page: number,
-// 	limit: number,
-// 	type: string,
-// 	search: any,
-// 	status: any,
-// 	division: any,
-// 	date: any
-// ) =>
-// 	hrd.get(
-// 		`employee-attendance?search=${search}&type=${type}&status=${status}&division=${division}&date=${date}&page=${page}&limit=${limit}`
-// 	);
 export const getEmployeeAttendance = (
 	page: number,
 	limit: number,
