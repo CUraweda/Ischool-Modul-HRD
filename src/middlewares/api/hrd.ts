@@ -166,4 +166,55 @@ const EmployeeDivision = {
 		}),
 };
 
-export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision };
+const CustomerCare = {
+	getUserChats: (token: string | null, id: string | null) =>
+		instance.get(`user-chat/show-by-user/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	createUserChats: (token: string | null, data: any) =>
+		instance.post(`customer-care/create`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	getDataChat: (token: string | null, limit: number) =>
+		instance.get(`user`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+			},
+		}),
+
+	getMessages: (token: string | null, id: string | null, idUser: number | string) =>
+		instance.get(`user-chat/show-conversation`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				userid: id,
+				withid: idUser,
+			},
+		}),
+
+	sendMessage: (token: string | null, currentReceiverId: number | string, inputMessage: any, id: string | null) =>
+		instance.post(
+			`/message/create`,
+			{
+				user_id: id,
+				with_id: currentReceiverId,
+				message: inputMessage,
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		),
+};
+export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare };
