@@ -1,6 +1,6 @@
 import { Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
-import Modal, { openModal, closeModal } from '@/components/ModalProps';
+import Modal, { openModal } from '@/components/ModalProps';
 
 function formatRelativeDate(createdAt: string) {
 	const createdDate = new Date(createdAt);
@@ -18,17 +18,19 @@ function formatRelativeDate(createdAt: string) {
 }
 
 function formatDateRange(startDate: any, endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
-
-	const start = new Date(startDate).toLocaleDateString('id-ID', options);
-	const end = new Date(endDate).toLocaleDateString('id-ID', options);
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
+	// When startDate and endDate are in the same month and year
 	if (startDateObj.getMonth() === endDateObj.getMonth() && startDateObj.getFullYear() === endDateObj.getFullYear()) {
-		return `${startDateObj.getDate()} - ${end}`;
+		return `${startDateObj.getDate()} - ${endDateObj.toLocaleDateString('id-ID', options)}`;
 	}
+
+	// Otherwise, show the full date range
+	const start = startDateObj.toLocaleDateString('id-ID', options);
+	const end = endDateObj.toLocaleDateString('id-ID', options);
 
 	return `${start} - ${end}`;
 }
@@ -56,7 +58,7 @@ const FormPage = () => {
 	return (
 		<div>
 			<h1 className="mb-4 text-lg font-bold text-gray-700">Lowongan Pekerjaan</h1>
-			<div>
+			<div className="flex flex-col gap-2">
 				{dataJob.map((item, index) => (
 					<div
 						key={index}

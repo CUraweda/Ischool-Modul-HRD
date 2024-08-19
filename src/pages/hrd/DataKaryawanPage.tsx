@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
 
 const DataKaryawanPage = () => {

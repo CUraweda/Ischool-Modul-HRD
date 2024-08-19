@@ -10,8 +10,8 @@ interface DinasLuarData {
 	nama: string;
 	tanggal: string;
 	jam: string;
-	tipe: string; // Tipe (misalnya, 'Izin', 'Cuti', dll.)
-	status: string; // Status (misalnya, 'Disetujui', 'Tidak Disetujui', dll.)
+	tipe: string;
+	status: string;
 	keterangan: string;
 	buktiDinas: string;
 }

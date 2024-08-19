@@ -8,7 +8,7 @@ interface RekapPresensiData {
 	tanggal: string;
 	keterangan: string;
 	pukul: string;
-	status: string; // Status (misalnya, 'Disetujui', 'Tidak Disetujui', dll.)
+	status: string;
 	tipe: string;
 }
 

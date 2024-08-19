@@ -21,6 +21,8 @@ import DetailProbationPage from '@/pages/hrd/DetailProbationPage';
 import DetailCardProbationPage from '@/pages/hrd/DetailCardProbationPage';
 import DataKaryawanPage from '@/pages/hrd/DataKaryawanPage';
 import PenggajianPage from '@/pages/hrd/PenggajianPage';
+import DetailPenggajianPage from '@/pages/hrd/DetailPenggajianPage';
+import DetailPenggajianUser from '@/pages/hrd/DetailPenggajianUserPage';
 import DetailProfilKaryawanPage from '@/pages/hrd/DetailProfilKaryawanPage';
 import FormPage from '@/pages/public/FormPage';
 import FormDataPage from '@/pages/public/FormDataPage';
@@ -70,13 +72,15 @@ const AppRoutes: React.FC = () => {
 					<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
 					<Route path="pelatihan" element={<PelatihanPage />} />
 					<Route path="rekrutmen" element={<RekrutmenPage />} />
-					<Route path="rekrutmen/1" element={<DetailRekrutmenPage />} />
+					<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
 					<Route path="probation" element={<ProbationPage />} />
-					<Route path="probation/1" element={<DetailProbationPage />} />
-					<Route path="probation/1/1" element={<DetailCardProbationPage />} />
+					<Route path="probation/:id" element={<DetailProbationPage />} />
+					<Route path="probation/:id/:id2" element={<DetailCardProbationPage />} />
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />
 					<Route path="data-karyawan/1" element={<DetailProfilKaryawanPage />} />
 					<Route path="penggajian" element={<PenggajianPage />} />
+					<Route path="penggajian/1" element={<DetailPenggajianPage />} />
+					<Route path="penggajian/1/1" element={<DetailPenggajianUser />} />
 				</Route>
 				<Route
 					path="/public/"

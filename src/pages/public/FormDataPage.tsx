@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form } from '@/middlewares/api';
 const FormDataPage = () => {
 	const [files, setFiles] = useState<any[]>([]);

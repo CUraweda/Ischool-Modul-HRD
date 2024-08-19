@@ -1,14 +1,14 @@
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import { useEffect, useState } from 'react';
 import { Rekrutmen } from '@/middlewares/api';
+import { useNavigate } from 'react-router-dom';
 
 function formatStartDate(startDate: any, endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
-	// Jika bulan dan tahun sama, hanya tampilkan tanggalnya saja
 	if (startDateObj.getMonth() === endDateObj.getMonth() && startDateObj.getFullYear() === endDateObj.getFullYear()) {
 		return `${startDateObj.getDate()}`;
 	}
@@ -17,7 +17,7 @@ function formatStartDate(startDate: any, endDate: any) {
 }
 
 function formatEndDate(endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const endDateObj = new Date(endDate);
 
@@ -27,6 +27,7 @@ function formatEndDate(endDate: any) {
 const Probationpage = () => {
 	const [dataProbation, setDataProbation] = useState<any[]>([]);
 	const [search, setSearch] = useState('');
+	const navigate = useNavigate();
 
 	const handleDialog = () => {
 		openModal('addRekrutmen');
@@ -44,6 +45,10 @@ const Probationpage = () => {
 	useEffect(() => {
 		fetchData();
 	}, [search]);
+
+	const handleCardClick = (id: number) => {
+		navigate(`/hrd/probation/${id}`);
+	};
 
 	return (
 		<div className="h-screen">
@@ -96,10 +101,10 @@ const Probationpage = () => {
 				</div>
 			</div>
 			{dataProbation.map((item, index) => (
-				<div className="card mt-10 w-full bg-base-100 shadow-xl" key={index}>
+				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex items-center justify-between">
-							<div>
+							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<h4 className="font-bold">{item.title}</h4>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
@@ -127,7 +132,7 @@ const Probationpage = () => {
 
 								<div>
 									<div className="text-xs">Tanggal Mulai</div>
-									<div className="text-xs font-bold">{formatStartDate(item.start_date)}</div>
+									<div className="text-xs font-bold">{formatStartDate(item.start_date, item.end_date)}</div>
 								</div>
 							</div>
 
@@ -255,7 +260,7 @@ const Probationpage = () => {
 
 						<div className="mt-2">
 							<label className="mb-1 block text-sm font-medium">Note</label>
-							<textarea className="w-full rounded border border-gray-300 p-2" rows="4"></textarea>
+							<textarea className="w-full rounded border border-gray-300 p-2" rows={4}></textarea>
 						</div>
 
 						<div className="flex justify-end">

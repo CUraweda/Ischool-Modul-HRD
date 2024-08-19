@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const PenggajianPage: React.FC = () => {
-	// State untuk menyimpan pilihan yang dipilih
+const PenggajianPage = () => {
 	const [selectedOption, setSelectedOption] = useState<'Kehadiran' | 'Lainnya'>('Kehadiran');
 
-	// Dummy data for the bar chart
 	const barChartData = {
 		labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep'],
 		datasets: [
@@ -21,14 +19,13 @@ const PenggajianPage: React.FC = () => {
 		],
 	};
 
-	// Dummy data for the donut chart
 	const donutChartData = {
 		labels: ['Total Jam Kerja', 'Total Jam Istirahat'],
 		datasets: [
 			{
 				data: [320, 120],
-				backgroundColor: ['#3b82f6', '#f59e0b'], // Tailwind's blue-500 and yellow-500 colors
-				hoverBackgroundColor: ['#1e40af', '#d97706'], // Tailwind's blue-900 and yellow-700 colors
+				backgroundColor: ['#3b82f6', '#f59e0b'],
+				hoverBackgroundColor: ['#1e40af', '#d97706'],
 			},
 		],
 	};
@@ -54,7 +51,7 @@ const PenggajianPage: React.FC = () => {
 				display: false,
 			},
 		},
-		cutout: '87%', // This will make the donut chart look more like in the design
+		cutout: '87%',
 	};
 
 	return (
