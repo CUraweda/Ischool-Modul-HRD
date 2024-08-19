@@ -1,4 +1,4 @@
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import { Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';

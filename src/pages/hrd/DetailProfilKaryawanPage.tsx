@@ -24,12 +24,12 @@ const DetailProfilKaryawanPage = () => {
 		mulaiBekerja: '',
 	});
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: any) => {
 		const { name, value } = e.target;
 		setFormData({ ...formData, [name]: value });
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: any) => {
 		e.preventDefault();
 		// Handle form submission
 		closeModal('editProfilKaryawan');

@@ -1,5 +1,5 @@
 import { Bar } from 'react-chartjs-2';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal from '../../components/ModalProps';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -65,7 +65,7 @@ const DetailProbationPage = () => {
 					<div className="text-sm">Karyawan</div>
 				</div>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Search" />
+					<input type="text" className="grow" placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"

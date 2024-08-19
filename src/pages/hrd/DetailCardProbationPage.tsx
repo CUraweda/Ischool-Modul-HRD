@@ -1,14 +1,13 @@
-import React from 'react';
 import image from '../../assets/images/blueAbstractPattern.png';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const DetailCardProbationPage = () => {
-	const { id } = useParams<{ id: string }>();
-	const { id2 } = useParams<{ id2: string }>();
+	// const { id } = useParams<{ id: string }>();
+	// const { id2 } = useParams<{ id2: string }>();
 
 	// Data for the chart
 	const data = {

@@ -1,15 +1,14 @@
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import { useEffect, useState } from 'react';
 import { Rekrutmen } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
 
 function formatStartDate(startDate: any, endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
-	// Jika bulan dan tahun sama, hanya tampilkan tanggalnya saja
 	if (startDateObj.getMonth() === endDateObj.getMonth() && startDateObj.getFullYear() === endDateObj.getFullYear()) {
 		return `${startDateObj.getDate()}`;
 	}
@@ -18,7 +17,7 @@ function formatStartDate(startDate: any, endDate: any) {
 }
 
 function formatEndDate(endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const endDateObj = new Date(endDate);
 
@@ -133,7 +132,7 @@ const Probationpage = () => {
 
 								<div>
 									<div className="text-xs">Tanggal Mulai</div>
-									<div className="text-xs font-bold">{formatStartDate(item.start_date)}</div>
+									<div className="text-xs font-bold">{formatStartDate(item.start_date, item.end_date)}</div>
 								</div>
 							</div>
 
@@ -261,7 +260,7 @@ const Probationpage = () => {
 
 						<div className="mt-2">
 							<label className="mb-1 block text-sm font-medium">Note</label>
-							<textarea className="w-full rounded border border-gray-300 p-2" rows="4"></textarea>
+							<textarea className="w-full rounded border border-gray-300 p-2" rows={4}></textarea>
 						</div>
 
 						<div className="flex justify-end">

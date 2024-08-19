@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
 
 function formatDateRange(startDate: any, endDate: any) {
-	const options = { day: 'numeric', month: 'long', year: 'numeric' };
+	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
 
 	const start = new Date(startDate).toLocaleDateString('id-ID', options);
 	const end = new Date(endDate).toLocaleDateString('id-ID', options);
@@ -214,10 +214,15 @@ const RekrutmenPage = () => {
 							<div className="flex items-center gap-2">
 								<div
 									className="radial-progress text-xs text-primary"
-									style={{ '--value': Math.floor(item.max_applicant / item.applicant_count), '--size': '3rem' }}
+									style={
+										{
+											'--value': Math.floor((item.applicant_count / item.max_applicant) * 100),
+											'--size': '3rem',
+										} as React.CSSProperties
+									}
 									role="progressbar"
 								>
-									{Math.floor(item.max_applicant / item.applicant_count)}%
+									{Math.floor((item.applicant_count / item.max_applicant) * 100)}%
 								</div>
 								<div className="text-xs">
 									<span className="font-bold">{item.applicant_count}</span>/{item.max_applicant} Pendaftar

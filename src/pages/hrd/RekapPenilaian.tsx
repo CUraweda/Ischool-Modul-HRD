@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface EmployeeData {
@@ -16,7 +16,7 @@ interface EmployeeData {
 		image: string;
 	};
 }
-const RekapPenilaianPage: React.FC = () => {
+const RekapPenilaianPage = () => {
 	const Navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);

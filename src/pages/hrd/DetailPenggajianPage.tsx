@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const DetailPenggajianPage: React.FC = () => {
+const DetailPenggajianPage = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const handleModal = () => {
