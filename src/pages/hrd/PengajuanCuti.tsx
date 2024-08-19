@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getVacation, updateVacation } from '@/middlewares/api/hrd';
+import { Attendance } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import { MdOutlineEventNote } from 'react-icons/md';
 import Swal from 'sweetalert2';
@@ -102,7 +102,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const [limit, setLimit] = useState<number>(10);
 
 	const getAllVacation = async () => {
-		const response = await getVacation(0, limit, searchQuery, filterType, filterStatus, filterDate);
+		const response = await Attendance.getVacation(0, limit, searchQuery, filterType, filterStatus, filterDate);
 		setDataVacation(response.data.data.result);
 		setTotalPages(response.data.data.totalPage);
 		setTotalRows(response.data.data.totalRows);
@@ -137,7 +137,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	const updateStatus = async (id: number, status: string) => {
 		try {
-			await updateVacation(id, { status });
+			await Attendance.updateVacation(id, { status });
 			getAllVacation();
 		} catch (error) {
 			console.error('Error updating status:', error);

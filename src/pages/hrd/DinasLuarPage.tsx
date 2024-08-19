@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getEmployeeAttendance } from '@/middlewares/api/hrd';
+import { Attendance } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import { TbFaceId } from 'react-icons/tb';
 
@@ -17,7 +17,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const getAllAttendance = async () => {
 		try {
-			const result = await getEmployeeAttendance(
+			const result = await Attendance.getEmployeeAttendance(
 				currentPage,
 				limit,
 				filterType,

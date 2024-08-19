@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TimeEntryDialog from '@/components/TimeDialog';
-import { getEmployeeAttendance } from '@/middlewares/api/hrd';
+import { Attendance } from '@/middlewares/api/hrd';
 
 interface Worktime {
 	id: number;
@@ -70,7 +70,7 @@ const PresensiPage: React.FC = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const fetchAttendanceData = async () => {
 		try {
-			const result = await getEmployeeAttendance(
+			const result = await Attendance.getEmployeeAttendance(
 				currentPage,
 				limit,
 				filterType,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createWorkTime, getWorkTime, updateWorkTime, getAllDivision, deleteWorkTime } from '@/middlewares/api/hrd';
+import { WorkTime, EmployeeDivision } from '@/middlewares/api/hrd';
 
 import { LuPencil } from 'react-icons/lu';
 import { MdOutlineDelete } from 'react-icons/md';
@@ -38,7 +38,7 @@ const DialogAdd: React.FC<dialog> = ({
 }) => {
 	const [optionDivision, setOptionDivision] = useState<any[]>([]);
 	const getDataDivision = async () => {
-		const response = await getAllDivision();
+		const response = await EmployeeDivision.getAllDivision();
 		setOptionDivision(response.data.data.result);
 	};
 	const handleSave = () => {
@@ -205,21 +205,21 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 		setShowDialog((showDialog) => !showDialog);
 	};
 	const getAllWorkTime = async () => {
-		const result = await getWorkTime();
+		const result = await WorkTime.getWorkTime();
 		setDataWorkTime(result.data.data.result);
 	};
 	const addWorkTime = async (data: any) => {
-		await createWorkTime(data);
+		await WorkTime.createWorkTime(data);
 		getAllWorkTime();
 		setId(0);
 	};
 	const changeWorkTime = async (data: any, id: number) => {
-		await updateWorkTime(data, id);
+		await WorkTime.updateWorkTime(data, id);
 		getAllWorkTime();
 		setId(0);
 	};
 	const removeWorkTime = async (id: number) => {
-		await deleteWorkTime(id);
+		await WorkTime.deleteWorkTime(id);
 		getAllWorkTime();
 		setId(0);
 	};
