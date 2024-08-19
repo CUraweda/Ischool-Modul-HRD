@@ -1,6 +1,10 @@
 import { Bar } from 'react-chartjs-2';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Rekrutmen } from '@/middlewares/api';
+import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -29,9 +33,29 @@ const options = {
 };
 
 const DetailProbationPage = () => {
-	const handleDialog = () => {
-		openModal('previewProbation');
+	const [search, setSearch] = useState('');
+	const { id } = useParams<{ id: string }>();
+	const navigate = useNavigate();
+	const [dataDetailProbation, setDataDetailProbation] = useState<any[]>([]);
+
+	const fetchData = async () => {
+		try {
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id);
+			setDataDetailProbation(response.data.data);
+		} catch (error) {
+			console.error(error);
+		}
 	};
+
+	const handleNavigation = (id2: number) => {
+		navigate(`/hrd/probation/${id}/${id2}`);
+	};
+
+	useEffect(() => {
+		if (id) {
+			fetchData();
+		}
+	}, [id, search]);
 
 	return (
 		<div>
@@ -101,38 +125,39 @@ const DetailProbationPage = () => {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th>
-										<label>
-											<input type="checkbox" className="checkbox" />
-										</label>
-									</th>
-									<td>
-										<div className="flex items-center gap-3">
-											<div className="avatar">
-												<div className="mask mask-squircle h-12 w-12">
-													<img
-														src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-														alt="Avatar Tailwind CSS Component"
-													/>
+								{dataDetailProbation.map((item, index) => (
+									<tr key={index}>
+										<th>
+											<label>
+												<input type="checkbox" className="checkbox" />
+											</label>
+										</th>
+										<td>
+											<div className="flex items-center gap-3">
+												<div className="avatar">
+													<div className="mask mask-squircle h-12 w-12">
+														<img
+															src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+															alt="Avatar Tailwind CSS Component"
+														/>
+													</div>
+												</div>
+												<div>
+													<div className="font-bold">{item.full_name}</div>
 												</div>
 											</div>
-											<div>
-												<div className="font-bold">Razan Mfs</div>
-												<div className="text-sm opacity-50">Pengalaman lebih dari 3 Tahun</div>
-											</div>
-										</div>
-									</td>
-									<td>
-										<span className="badge badge-ghost badge-sm">razanmfs507@gmail.com</span>
-									</td>
-									<td className="text-center">Masa Percobaan</td>
-									<th>
-										<button className="btn btn-primary btn-sm" onClick={handleDialog}>
-											Buka
-										</button>
-									</th>
-								</tr>
+										</td>
+										<td>
+											<span className="badge badge-ghost badge-sm">{item.email}</span>
+										</td>
+										<td className="text-center">{item.status}</td>
+										<th>
+											<button className="btn btn-primary btn-sm" onClick={() => handleNavigation(item.id)}>
+												...
+											</button>
+										</th>
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

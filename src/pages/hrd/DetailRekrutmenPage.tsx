@@ -1,10 +1,29 @@
-import React from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import { Rekrutmen } from '@/middlewares/api';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const DetailRekrutmenPage = () => {
 	const handleDialog = () => {
 		openModal('previewCv');
 	};
+	const [DataDetailRekrutmen, setDataDetailRekrutmen] = useState<any[]>([]);
+	const { id } = useParams<{ id: string }>();
+	const [search, setSearch] = useState('');
+	const fetchData = async () => {
+		try {
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id);
+			setDataDetailRekrutmen(response.data.data);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		if (id) {
+			fetchData();
+		}
+	}, [id, search]);
 
 	return (
 		<div>
@@ -14,7 +33,7 @@ const DetailRekrutmenPage = () => {
 					<div className="text-sm">Keuangan</div>
 				</div>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Search" />
+					<input type="text" className="grow" placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -69,45 +88,51 @@ const DetailRekrutmenPage = () => {
 									</th>
 									<th className="text-sm text-black">Nama</th>
 									<th className="text-sm text-black">Email</th>
-									<th className="text-sm text-black">Tanggal</th>
+									<th className="text-sm text-black">Nomor Hp</th>
 									<th className="text-sm text-black">Status</th>
 									<th className="text-sm text-black"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th>
-										<label>
-											<input type="checkbox" className="checkbox" />
-										</label>
-									</th>
-									<td>
-										<div className="flex items-center gap-3">
-											<div className="avatar">
-												<div className="mask mask-squircle h-12 w-12">
-													<img
-														src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-														alt="Avatar Tailwind CSS Component"
-													/>
+								{DataDetailRekrutmen.map((item, index) => (
+									<tr key={index}>
+										<th>
+											<label>
+												<input type="checkbox" className="checkbox" />
+											</label>
+										</th>
+										<td>
+											<div className="flex items-center gap-3">
+												<div className="avatar">
+													<div className="mask mask-squircle h-12 w-12">
+														<img
+															src={
+																item.user.avatar != null
+																	? item.user.avatar
+																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
+															}
+															alt="Avatar Tailwind CSS Component"
+														/>
+													</div>
+												</div>
+												<div>
+													<div className="font-bold">{item.full_name}</div>
+													{/* <div className="text-sm opacity-50"></div> */}
 												</div>
 											</div>
-											<div>
-												<div className="font-bold">Razan Mfs</div>
-												<div className="text-sm opacity-50">Pengalaman lebih dari 3 Tahun</div>
-											</div>
-										</div>
-									</td>
-									<td>
-										<span className="badge badge-ghost badge-sm">razanmfs507@gmail.com</span>
-									</td>
-									<td>25/03/2004</td>
-									<td className="text-center">-</td>
-									<th>
-										<button className="btn btn-primary btn-sm" onClick={handleDialog}>
-											Buka
-										</button>
-									</th>
-								</tr>
+										</td>
+										<td>
+											<span className="badge badge-ghost badge-sm">{item.email}</span>
+										</td>
+										<td>{item.phone}</td>
+										<td className="text-center">{item.status}</td>
+										<th>
+											<button className="btn btn-primary btn-sm" onClick={handleDialog}>
+												Buka
+											</button>
+										</th>
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

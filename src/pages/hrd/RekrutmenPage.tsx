@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
 
 function formatDateRange(startDate: any, endDate: any) {
@@ -21,23 +22,80 @@ function formatDateRange(startDate: any, endDate: any) {
 
 const RekrutmenPage = () => {
 	const [dataRekrutmen, setDataRekrutmen] = useState<any[]>([]);
+	const [dropdownDivision, setDropdownDivision] = useState<any[]>([]);
 	const [search, setSearch] = useState('');
+	const navigate = useNavigate();
 	const handleDialog = () => {
 		openModal('addRekrutmen');
+	};
+	const [titleRekrutmen, setTitleRekrutmen] = useState('');
+	const [role, setRole] = useState('');
+	const [division, setDivision] = useState<number>();
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+	const [maxApplicant, setMaxApplicant] = useState<number>();
+	const [academic, setAcademic] = useState('');
+	const [note, setNote] = useState('');
+	const [statusCards, setStatusCards] = useState([{ title: '', description: '' }]);
+
+	const addStatusCards = () => {
+		setStatusCards([...statusCards, { title: '', description: '' }]);
+	};
+
+	const handleStatusChange = (index: number, field: string, value: string) => {
+		const updatedCards = statusCards.map((card, i) => (i === index ? { ...card, [field]: value } : card));
+		setStatusCards(updatedCards);
 	};
 
 	const fetchData = async () => {
 		try {
 			const response = await Rekrutmen.DataRekrutmen(0, 20, search);
 			setDataRekrutmen(response.data.data.result);
+			const responseDropdownDivison = await Rekrutmen.DropdownDivision();
+			setDropdownDivision(responseDropdownDivison.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
+	const PostRekrutmen = async () => {
+		const statusData = statusCards.map((card) => ({
+			title: card.title,
+			description: card.description,
+		}));
+
+		const data = {
+			title: titleRekrutmen,
+			division_id: division,
+			start_date: startDate,
+			end_date: endDate,
+			max_applicant: maxApplicant,
+			min_academic: academic,
+			notes: note,
+			details: statusData,
+		};
+		try {
+			await Rekrutmen.AddRekrutmen(data);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const divisionMap = dropdownDivision.reduce(
+		(map, division) => {
+			map[division.id] = division.name;
+			return map;
+		},
+		{} as Record<number, string>
+	);
+
 	useEffect(() => {
 		fetchData();
 	}, [search]);
+
+	const handleCardClick = (id: number) => {
+		navigate(`/hrd/rekrutmen/${id}`);
+	};
 
 	return (
 		<div className="h-screen">
@@ -93,13 +151,13 @@ const RekrutmenPage = () => {
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex items-center justify-between">
-							<div>
+							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
 							<div>
 								<div className="text-xs">Divisi</div>
-								<div className="badge badge-primary text-xs">{item.sub_title}</div>
+								<div className="badge badge-primary text-xs">{divisionMap[item.division_id]}</div>
 							</div>
 							<div className="flex items-center gap-2">
 								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#BFDCFE]">
@@ -235,60 +293,158 @@ const RekrutmenPage = () => {
 			<Modal id="addRekrutmen">
 				<div>
 					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
-					<form>
-						<div className="mb-4 grid grid-cols-2 gap-4">
-							<div>
-								<label className="mb-1 block text-sm font-medium">Role</label>
-								<select className="w-full rounded border border-gray-300 p-2" required>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									{/* Add role options here */}
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Divisi</label>
-								<select className="w-full rounded border border-gray-300 p-2" required>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									{/* Add division options here */}
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Periode Pendaftaran</label>
-								<input type="text" className="w-full rounded border border-gray-300 p-2" required />
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Pendaftar yang Dibutuhkan</label>
-								<input type="number" className="w-full rounded border border-gray-300 p-2" required />
-							</div>
-						</div>
-
+					<div className="mb-4 grid grid-cols-2 gap-4">
 						<div>
-							<label className="mb-1 block text-sm font-medium">Jenjang Pendidikan</label>
-							<select className="w-full rounded border border-gray-300 p-2" required>
+							<label className="mb-1 block text-sm font-medium">Judul Rekrutmen</label>
+							<input
+								type="text"
+								className="w-full rounded border border-gray-300 p-2"
+								placeholder="Masukkan judul rekrutmen"
+								onChange={(e) => setTitleRekrutmen(e.target.value)}
+							/>
+						</div>
+						<div>
+							<label className="mb-1 block text-sm font-medium">Role</label>
+							<select
+								className="w-full rounded border border-gray-300 p-2"
+								value={role}
+								onChange={(e) => setRole(e.target.value)}
+							>
 								<option value="" disabled>
 									-Pilih-
 								</option>
-								{/* Add education level options here */}
+								<option value="Karyawan">Karyawan</option>
+								<option value="Guru">Guru</option>
 							</select>
 						</div>
 
-						<div className="mt-2">
-							<label className="mb-1 block text-sm font-medium">Note</label>
-							<textarea className="w-full rounded border border-gray-300 p-2" rows={4}></textarea>
+						<div>
+							<label className="mb-1 block text-sm font-medium">Divisi</label>
+							<select
+								className="w-full rounded border border-gray-300 p-2"
+								value={division}
+								onChange={(e) => setDivision(parseInt(e.target.value))}
+							>
+								<option value="" disabled>
+									-Pilih-
+								</option>
+								{dropdownDivision.map((item, index) => (
+									<option value={item.id} key={index}>
+										{item.name}
+									</option>
+								))}
+							</select>
 						</div>
 
-						<div className="flex justify-end">
-							<button type="submit" className="btn btn-primary">
+						<div>
+							<label className="mb-1 block text-sm font-medium">Tanggal Mulai</label>
+							<input
+								type="date"
+								className="w-full rounded border border-gray-300 p-2"
+								value={startDate}
+								onChange={(e) => setStartDate(e.target.value)}
+								required
+							/>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium">Tanggal Akhir</label>
+							<input
+								type="date"
+								className="w-full rounded border border-gray-300 p-2"
+								value={endDate}
+								onChange={(e) => setEndDate(e.target.value)}
+								required
+							/>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium">Pendaftar yang Dibutuhkan</label>
+							<input
+								type="number"
+								className="w-full rounded border border-gray-300 p-2"
+								placeholder="Masukkan jumlah pendaftar"
+								onChange={(e) => setMaxApplicant(parseInt(e.target.value))}
+							/>
+						</div>
+
+						<div className="col-span-2">
+							<label className="mb-1 block text-sm font-medium">Jenjang Pendidikan</label>
+							<select
+								className="w-full rounded border border-gray-300 p-2"
+								value={academic}
+								onChange={(e) => setAcademic(e.target.value)}
+							>
+								<option value="" disabled>
+									-Pilih-
+								</option>
+								<option value="SMA/SMK">SMA/SMK</option>
+								<option value="S1">S1</option>
+								<option value="S2">S2</option>
+								<option value="S3">S3</option>
+							</select>
+						</div>
+
+						<div className="col-span-2">
+							<label className="mb-1 block text-sm font-medium">Note</label>
+							<textarea
+								className="w-full rounded border border-gray-300 p-2"
+								rows={4}
+								placeholder="Masukkan catatan tambahan"
+								onChange={(e) => setNote(e.target.value)}
+							></textarea>
+						</div>
+
+						{statusCards.map((card, index) => (
+							<div key={index} className="col-span-2">
+								<div className="mb-4">
+									<label className="mb-1 block text-sm font-medium">Judul</label>
+									<input
+										type="text"
+										className="w-full rounded border border-gray-300 p-2"
+										value={card.title}
+										onChange={(e) => handleStatusChange(index, 'title', e.target.value)}
+									/>
+								</div>
+								<div>
+									<label className="mb-1 block text-sm font-medium">Deskripsi</label>
+									<textarea
+										className="w-full rounded border border-gray-300 p-2"
+										rows={4}
+										value={card.description}
+										onChange={(e) => handleStatusChange(index, 'description', e.target.value)}
+									></textarea>
+								</div>
+							</div>
+						))}
+
+						<div className="col-span-2 flex justify-end">
+							<button
+								className="btn btn-primary btn-xs flex h-12 w-12 items-center justify-center rounded-full p-0"
+								onClick={addStatusCards}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									className="h-3 w-3"
+								>
+									<line x1="12" y1="5" x2="12" y2="19" />
+									<line x1="5" y1="12" x2="19" y2="12" />
+								</svg>
+							</button>
+						</div>
+
+						<div className="col-span-2 mt-4 flex justify-end">
+							<button type="submit" className="btn btn-primary" onClick={PostRekrutmen}>
 								Tambah
 							</button>
 						</div>
-					</form>
+					</div>
 				</div>
 			</Modal>
 		</div>

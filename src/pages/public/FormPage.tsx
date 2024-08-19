@@ -56,7 +56,7 @@ const FormPage = () => {
 	return (
 		<div>
 			<h1 className="mb-4 text-lg font-bold text-gray-700">Lowongan Pekerjaan</h1>
-			<div>
+			<div className="flex flex-col gap-2">
 				{dataJob.map((item, index) => (
 					<div
 						key={index}

@@ -1,6 +1,7 @@
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useEffect, useState } from 'react';
 import { Rekrutmen } from '@/middlewares/api';
+import { useNavigate } from 'react-router-dom';
 
 function formatStartDate(startDate: any, endDate: any) {
 	const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -27,6 +28,7 @@ function formatEndDate(endDate: any) {
 const Probationpage = () => {
 	const [dataProbation, setDataProbation] = useState<any[]>([]);
 	const [search, setSearch] = useState('');
+	const navigate = useNavigate();
 
 	const handleDialog = () => {
 		openModal('addRekrutmen');
@@ -44,6 +46,10 @@ const Probationpage = () => {
 	useEffect(() => {
 		fetchData();
 	}, [search]);
+
+	const handleCardClick = (id: number) => {
+		navigate(`/hrd/probation/${id}`);
+	};
 
 	return (
 		<div className="h-screen">
@@ -96,10 +102,10 @@ const Probationpage = () => {
 				</div>
 			</div>
 			{dataProbation.map((item, index) => (
-				<div className="card mt-10 w-full bg-base-100 shadow-xl" key={index}>
+				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex items-center justify-between">
-							<div>
+							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<h4 className="font-bold">{item.title}</h4>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
