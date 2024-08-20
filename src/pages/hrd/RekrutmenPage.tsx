@@ -120,7 +120,7 @@ const RekrutmenPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="items-cente mt-6 flex justify-between">
+			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -150,7 +150,7 @@ const RekrutmenPage = () => {
 			{dataRekrutmen.map((item, index) => (
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
-						<div className="flex items-center justify-between">
+						<div className="flex flex-wrap items-center justify-between gap-2">
 							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
