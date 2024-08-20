@@ -1,107 +1,62 @@
 import React, { useEffect, useState } from 'react';
+import { Attendance } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
-import ConfirmationDialog from '@/components/AlertConfirm';
 import { TbFaceId } from 'react-icons/tb';
 
-// Interface untuk data table
-interface DinasLuarData {
-	id: number;
-	divisi: string;
-	nama: string;
-	tanggal: string;
-	jam: string;
-	tipe: string;
-	status: string;
-	keterangan: string;
-	buktiDinas: string;
-}
-
-// Contoh data
-const contohData: DinasLuarData[] = [
-	{
-		id: 1,
-		divisi: 'IT',
-		nama: 'John Doe',
-		tanggal: '2024-08-10',
-		jam: '09:00',
-		tipe: 'Cuti',
-		status: 'Disetujui',
-		keterangan: 'Cuti tahunan',
-		buktiDinas: 'https://example.com/bukti-dinas.jpg',
-	},
-	{
-		id: 2,
-		divisi: 'HR',
-		nama: 'Jane Smith',
-		tanggal: '2024-08-12',
-		jam: '10:00',
-		tipe: 'Izin',
-		status: 'Menunggu',
-		keterangan: 'Izin sakit',
-		buktiDinas: 'https://example.com/bukti-dinas2.jpg',
-	},
-];
-
 const DinasLuarPage: React.FC<{}> = () => {
-	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [filterType, setFilterType] = useState<string>('');
+	const [filterStatus, setFilterStatus] = useState<string>('');
+	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
-	const [selectedItem, setSelectedItem] = useState<DinasLuarData | null>(null);
-
-	const filteredData = contohData.filter(
-		(item) =>
-			(item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				item.tipe.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				item.keterangan.toLowerCase().includes(searchQuery.toLowerCase())) &&
-			(filterDate === '' || item.tanggal === filterDate)
-	);
-
-	const [currentPage, setCurrentPage] = useState<number>(1);
-	const itemsPerPage = 5;
-
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [searchQuery, filterDate]);
-
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-
-	const pageNumbers = [];
-	for (let i = 1; i <= Math.ceil(filteredData.length / itemsPerPage); i++) {
-		pageNumbers.push(i);
-	}
-
-	const handlePageChange = (pageNumber: number) => {
-		setCurrentPage(pageNumber);
+	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [selectedItem, setSelectedItem] = useState<any>(null);
+	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
+	const [currentPage, setCurrentPage] = useState<number>(0);
+	const [limit, setLimit] = useState<number>(10);
+	const [totalRows, setTotalRows] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const getAllAttendance = async () => {
+		try {
+			const result = await Attendance.getEmployeeAttendance(
+				currentPage,
+				limit,
+				filterType,
+				searchQuery,
+				filterStatus,
+				filterDivision,
+				filterDate
+			);
+			setDataAttendance(result.data.data.result);
+			setTotalRows(result.data.data.totalRows);
+			setTotalPages(result.data.data.totalPage);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const handlePageChange = (newPage: number) => {
+		setCurrentPage(newPage);
 	};
 
+	const filterData = DataAttendance.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
+
+	useEffect(() => {
+		getAllAttendance();
+	}, []);
+
+	useEffect(() => {
+		getAllAttendance();
+	}, [searchQuery, limit, filterType, filterStatus, filterDivision, filterDate]);
+
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery(e.target.value);
+		setCurrentPage(0);
+	};
 	const handleDetailClose = () => {
 		setSelectedItem(null);
 	};
 
-	const handleOpenDetailModal = (item: DinasLuarData) => {
+	const handleOpenDetailModal = (item: any) => {
 		setSelectedItem(item);
-	};
-
-	// const handleOpenDialog = () => {
-	// 	setIsDialogOpen(true);
-	// };
-
-	const handleCloseDialog = () => {
-		setIsDialogOpen(false);
-	};
-
-	const handleConfirm = () => {
-		// Handle the confirm action here
-		console.log('Confirmed');
-		handleCloseDialog();
-	};
-
-	const handleCancel = () => {
-		// Handle the cancel action here
-		console.log('Cancelled');
-		handleCloseDialog();
 	};
 	return (
 		<div className="w-full p-2">
@@ -127,13 +82,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 							clipRule="evenodd"
 						/>
 					</svg>
-					<input
-						type="text"
-						className="grow"
-						placeholder="Search"
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-					/>
+					<input type="text" className="grow" placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
 				</label>
 			</div>
 
@@ -141,18 +90,47 @@ const DinasLuarPage: React.FC<{}> = () => {
 			<div className="flex w-full justify-between">
 				<button className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
 					Semua
-					<div className="pl-5">{filteredData.length}</div>
+					<div className="pl-5">{totalRows}</div>
 				</button>
 				<div className="my-auto flex gap-4">
-					<label className="text-md input input-sm input-bordered my-auto flex w-fit items-center gap-2 rounded-full">
-						<input
-							type="date"
-							className="grow"
-							value={filterDate}
-							onChange={(e) => setFilterDate(e.target.value)}
-							placeholder="Search"
-						/>
-					</label>
+					<select
+						className="select select-bordered select-xs"
+						onChange={(e) => {
+							const selectedValue = e.target.value;
+							if (selectedValue == 'MASUK' || selectedValue == 'KELUAR') {
+								setFilterType(e.target.value);
+							} else {
+								setFilterStatus(e.target.value);
+							}
+						}}
+					>
+						<option value="" disabled selected>
+							Tipe dan Status yang dipilih
+						</option>
+						<optgroup label="Tipe">
+							<option value="MASUK">Masuk</option>
+							<option value="KELUAR">Keluar</option>
+						</optgroup>
+						<optgroup label="Status">
+							<option value="Tepat Waktu">Tepat Waktu</option>
+							<option value="Terlambat">Terlambat</option>
+							<option value="Diluar Jadwal">Diluar Jadwal</option>
+						</optgroup>
+					</select>
+					<select
+						className="select select-bordered select-xs"
+						value={filterDivision}
+						onChange={(e) => setFilterDivision(e.target.value)}
+					>
+						<option value="HRD">HRD</option>
+						<option value="GURU">Guru</option>
+					</select>
+					<input
+						type="date"
+						className="input input-xs input-bordered"
+						value={filterDate}
+						onChange={(e) => setFilterDate(e.target.value)}
+					/>
 				</div>
 			</div>
 			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">
@@ -171,35 +149,35 @@ const DinasLuarPage: React.FC<{}> = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{currentItems.map((item, index) => (
+						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
-								<td>{indexOfFirstItem + index + 1}</td>
-								<td>{item.divisi}</td>
-								<td>{item.nama}</td>
-								<td>{item.tanggal}</td>
-								<td>{item.jam}</td>
+								<td>{index + 1}</td>
+								<td>{item.employee.division || '-'}</td>
+								<td>{item.employee.full_name}</td>
+								<td>{item.createdAt.split('T')[0]}</td>
+								<td>{item.createdAt.split('T')[1].split('.')[0]}</td>
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.tipe === 'Izin'
+											item.worktime.type === 'MASUK' || 'MASUK'
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.tipe === 'Cuti'
+												: item.worktime.type === 'Keluar' || 'KELUAR'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
 													: ''
 										}`}
 									>
-										{item.tipe}
+										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
 									</div>
 								</td>
-								<td>{item.keterangan}</td>
+								<td>{item.status}</td>
 								<td>
 									<div
-										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.status === 'Disetujui'
+										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
+											item.status === 'Tepat Waktu'
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.status === 'Tidak Disetujui'
+												: item.status === 'Diluar Jadwal'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: item.status === 'Menunggu'
+													: item.status === 'Terlambat'
 														? 'bg-[#f9f46a] text-[#6b2e2e]'
 														: ''
 										}`}
@@ -217,43 +195,43 @@ const DinasLuarPage: React.FC<{}> = () => {
 					</tbody>
 				</table>
 			</div>
-
-			<div className="my-5 flex justify-center">
-				<div className="join">
-					{pageNumbers.map((number) => (
-						<button
-							key={number}
-							onClick={() => handlePageChange(number)}
-							className={`btn join-item btn-sm ${currentPage === number ? 'btn-active' : ''}`}
-						>
-							{number}
-						</button>
-					))}
-				</div>
+			<div className="join m-5">
+				<button
+					className="btn join-item btn-sm"
+					onClick={() => handlePageChange(currentPage - 1)}
+					disabled={currentPage === 0}
+				>
+					Previous
+				</button>
+				<button className="btn join-item btn-sm">
+					<div className="flex justify-between">
+						<span>
+							Page {currentPage + 1} of {totalPages}
+						</span>
+					</div>
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(10)}>
+					10
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(50)}>
+					50
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(100)}>
+					100
+				</button>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(0)}>
+					All
+				</button>
+				<button
+					className="btn join-item btn-sm"
+					onClick={() => handlePageChange(currentPage + 1)}
+					disabled={currentPage + 1 === totalPages}
+				>
+					Next
+				</button>
 			</div>
 
-			{selectedItem && (
-				<DetailCard
-					id="detail-modal"
-					onClose={handleDetailClose}
-					title="Detail Catatan"
-					nama={selectedItem.nama}
-					image={''}
-					deskripsi={selectedItem.keterangan}
-					status={selectedItem.status}
-					tanggal={selectedItem.tanggal}
-				/>
-			)}
-
-			{isDialogOpen && (
-				<ConfirmationDialog
-					id="confirmation-dialog"
-					title="Apakah Anda yakin?"
-					message="Data yang Anda masukkan akan disimpan."
-					onConfirm={handleConfirm}
-					onCancel={handleCancel}
-				/>
-			)}
+			{selectedItem && <DetailCard dataProps={selectedItem} onClose={handleDetailClose} />}
 		</div>
 	);
 };

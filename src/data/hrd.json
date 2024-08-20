@@ -75,5 +75,13 @@
 		"icon": "<AiOutlineIdcard />",
 		"url": "/hrd/penggajian",
 		"subtitle": []
+	},
+
+	{
+		"submenu": false,
+		"title": "Customer Care",
+		"icon": "<AiOutlineIdcard />",
+		"url": "/hrd/customer-care",
+		"subtitle": []
 	}
 ]
