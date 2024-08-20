@@ -13,12 +13,12 @@
 		"url": "",
 		"subtitle": [
 			{
-				"name": "Rekrutmen",
+				"name": "Data Rekrutmen",
 				"url": "/hrd/rekrutmen"
 			},
 			{
-				"name": "Probation",
-				"url": "/hrd/probation"
+				"name": "Data Probation",
+				"url": "/hrd/employee"
 			}
 		]
 	},
@@ -50,18 +50,6 @@
 		"url": "",
 		"subtitle": [
 			{
-				"name": "Daftar Assesor",
-				"url": "/hrd/daftar-assesor"
-			},
-			{
-				"name": "Jenis Pembayaran",
-				"url": "/hrd/daftar-penilaian"
-			},
-			{
-				"name": "Daftar Karyawan",
-				"url": "/hrd/daftar-karyawan"
-			},
-			{
 				"name": "Data Karayawan",
 				"url": "/hrd/data-karyawan"
 			}
@@ -86,6 +74,14 @@
 		"title": "Penggajian",
 		"icon": "<AiOutlineIdcard />",
 		"url": "/hrd/penggajian",
+		"subtitle": []
+	},
+
+	{
+		"submenu": false,
+		"title": "Customer Care",
+		"icon": "<AiOutlineIdcard />",
+		"url": "/hrd/customer-care",
 		"subtitle": []
 	}
 ]

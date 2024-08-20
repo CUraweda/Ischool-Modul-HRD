@@ -95,6 +95,11 @@ const FormDataPage = () => {
 		setEducationCards(updatedCards);
 	};
 
+	const removeEducationCard = (index: number) => {
+		const updatedCards = educationCards.filter((_, i) => i !== index);
+		setEducationCards(updatedCards);
+	};
+
 	const addWorkExperienceCard = () => {
 		setWorkExperienceCards([
 			...workExperienceCards,
@@ -111,6 +116,11 @@ const FormDataPage = () => {
 		]);
 	};
 
+	const removeExperienceCard = (index: number) => {
+		const updatedCards = workExperienceCards.filter((_, i) => i !== index);
+		setWorkExperienceCards(updatedCards);
+	};
+
 	const handleWorkExperienceChange = (index: number, field: string, value: string) => {
 		const updatedCards = workExperienceCards.map((card, i) => (i === index ? { ...card, [field]: value } : card));
 		setWorkExperienceCards(updatedCards);
@@ -118,6 +128,11 @@ const FormDataPage = () => {
 
 	const addNonFormalEducationCard = () => {
 		setNonFormalEducationCards([...nonFormalEducationCards, { description: '' }]);
+	};
+
+	const removeNonFormalCard = (index: number) => {
+		const updatedCards = nonFormalEducationCards.filter((_, i) => i !== index);
+		setNonFormalEducationCards(updatedCards);
 	};
 
 	const handleNonFormalEducationChange = (index: number, field: string, value: string) => {
@@ -129,6 +144,11 @@ const FormDataPage = () => {
 		setAchievementsCards([...achievementsCards, { description: '', periodeMonth: '', periodeYear: '' }]);
 	};
 
+	const removeAchievementCard = (index: number) => {
+		const updatedCards = achievementsCards.filter((_, i) => i !== index);
+		setAchievementsCards(updatedCards);
+	};
+
 	const handleAchievementsChange = (index: number, field: string, value: string) => {
 		const updatedCards = achievementsCards.map((card, i) => (i === index ? { ...card, [field]: value } : card));
 		setAchievementsCards(updatedCards);
@@ -136,6 +156,11 @@ const FormDataPage = () => {
 
 	const addSkillsCard = () => {
 		setSkillsCards([...skillsCards, { skills: '', level: '' }]);
+	};
+
+	const removeSkillsCard = (index: number) => {
+		const updatedCards = skillsCards.filter((_, i) => i !== index);
+		setSkillsCards(updatedCards);
 	};
 
 	const handleSkillsChange = (index: number, field: string, value: string) => {
@@ -217,6 +242,25 @@ const FormDataPage = () => {
 			console.error(error);
 		}
 	};
+
+	const months = [
+		'Januari',
+		'Februari',
+		'Maret',
+		'April',
+		'Mei',
+		'Juni',
+		'Juli',
+		'Agustus',
+		'September',
+		'Oktober',
+		'November',
+		'Desember',
+	];
+
+	// Generate years, e.g., from 1980 to the current year
+	const currentYear = new Date().getFullYear();
+	const years = Array.from({ length: currentYear - 1980 + 1 }, (_, index) => 1980 + index);
 
 	return (
 		<div className="flex flex-col items-center space-y-6">
@@ -368,7 +412,13 @@ const FormDataPage = () => {
 
 			{/* Education Cards */}
 			{educationCards.map((card, index) => (
-				<div key={index} className="card mb-4 w-full rounded-lg bg-white p-6 shadow">
+				<div key={index} className="card relative mb-4 w-full rounded-lg bg-white p-6 shadow">
+					{educationCards.length > 1 && index !== 0 && (
+						<button className="absolute right-2 top-2" onClick={() => removeEducationCard(index)}>
+							✕
+						</button>
+					)}
+
 					<h2 className="mb-4 text-lg font-bold text-gray-700">Pendidikan</h2>
 					<div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
@@ -407,39 +457,59 @@ const FormDataPage = () => {
 							<div>
 								<label className="label text-gray-700">Tanggal mulai</label>
 								<div className="grid grid-cols-2 gap-2">
-									<input
-										type="text"
-										placeholder="Bulan"
-										className="input input-bordered w-full"
+									<select
+										className="select select-bordered w-full"
 										value={card.startMonth}
 										onChange={(e) => handleEducationChange(index, 'startMonth', e.target.value)}
-									/>
-									<input
-										type="text"
-										placeholder="Tahun"
-										className="input input-bordered w-full"
+									>
+										<option value="">Bulan</option>
+										{months.map((month, idx) => (
+											<option key={idx} value={month}>
+												{month}
+											</option>
+										))}
+									</select>
+									<select
+										className="select select-bordered w-full"
 										value={card.startYear}
 										onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
-									/>
+									>
+										<option value="">Tahun</option>
+										{years.map((year, idx) => (
+											<option key={idx} value={year}>
+												{year}
+											</option>
+										))}
+									</select>
 								</div>
 							</div>
 							<div>
 								<label className="label text-gray-700">Tanggal selesai</label>
 								<div className="grid grid-cols-2 gap-2">
-									<input
-										type="text"
-										placeholder="Bulan"
-										className="input input-bordered w-full"
+									<select
+										className="select select-bordered w-full"
 										value={card.endMonth}
 										onChange={(e) => handleEducationChange(index, 'endMonth', e.target.value)}
-									/>
-									<input
-										type="text"
-										placeholder="Tahun"
-										className="input input-bordered w-full"
+									>
+										<option value="">Bulan</option>
+										{months.map((month, idx) => (
+											<option key={idx} value={month}>
+												{month}
+											</option>
+										))}
+									</select>
+									<select
+										className="select select-bordered w-full"
 										value={card.endYear}
 										onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
-									/>
+									>
+										<option value="">Tahun</option>
+										{years.map((year, idx) => (
+											<option key={idx} value={year}>
+												{year}
+											</option>
+										))}
+									</select>
 								</div>
 							</div>
 						</div>
@@ -461,7 +531,12 @@ const FormDataPage = () => {
 
 			{/* Work Experience Cards */}
 			{workExperienceCards.map((card, index) => (
-				<div key={index} className="card mb-4 w-full rounded-lg bg-white p-6 shadow">
+				<div key={index} className="card relative mb-4 w-full rounded-lg bg-white p-6 shadow">
+					{workExperienceCards.length > 1 && index !== 0 && (
+						<button className="absolute right-2 top-2" onClick={() => removeExperienceCard(index)}>
+							✕
+						</button>
+					)}
 					<h2 className="mb-4 text-lg font-bold text-gray-700">Pengalaman Kerja</h2>
 					<div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
@@ -500,39 +575,59 @@ const FormDataPage = () => {
 							<div>
 								<label className="label text-gray-700">Tanggal mulai</label>
 								<div className="grid grid-cols-2 gap-2">
-									<input
-										type="text"
-										placeholder="Bulan"
-										className="input input-bordered w-full"
+									<select
+										className="select select-bordered w-full"
 										value={card.startMonth}
 										onChange={(e) => handleWorkExperienceChange(index, 'startMonth', e.target.value)}
-									/>
-									<input
-										type="text"
-										placeholder="Tahun"
-										className="input input-bordered w-full"
+									>
+										<option value="">Bulan</option>
+										{months.map((month, idx) => (
+											<option key={idx} value={month}>
+												{month}
+											</option>
+										))}
+									</select>
+									<select
+										className="select select-bordered w-full"
 										value={card.startYear}
 										onChange={(e) => handleWorkExperienceChange(index, 'startYear', e.target.value)}
-									/>
+									>
+										<option value="">Tahun</option>
+										{years.map((year, idx) => (
+											<option key={idx} value={year}>
+												{year}
+											</option>
+										))}
+									</select>
 								</div>
 							</div>
 							<div>
 								<label className="label text-gray-700">Tanggal selesai</label>
 								<div className="grid grid-cols-2 gap-2">
-									<input
-										type="text"
-										placeholder="Bulan"
-										className="input input-bordered w-full"
+									<select
+										className="select select-bordered w-full"
 										value={card.endMonth}
 										onChange={(e) => handleWorkExperienceChange(index, 'endMonth', e.target.value)}
-									/>
-									<input
-										type="text"
-										placeholder="Tahun"
-										className="input input-bordered w-full"
+									>
+										<option value="">Bulan</option>
+										{months.map((month, idx) => (
+											<option key={idx} value={month}>
+												{month}
+											</option>
+										))}
+									</select>
+									<select
+										className="select select-bordered w-full"
 										value={card.endYear}
 										onChange={(e) => handleWorkExperienceChange(index, 'endYear', e.target.value)}
-									/>
+									>
+										<option value="">Tahun</option>
+										{years.map((year, idx) => (
+											<option key={idx} value={year}>
+												{year}
+											</option>
+										))}
+									</select>
 								</div>
 							</div>
 						</div>
@@ -554,7 +649,12 @@ const FormDataPage = () => {
 
 			{/* Non-Formal Education Cards */}
 			{nonFormalEducationCards.map((card, index) => (
-				<div className="card w-full rounded-lg bg-white p-6 shadow" key={index}>
+				<div className="card relative w-full rounded-lg bg-white p-6 shadow" key={index}>
+					{nonFormalEducationCards.length > 1 && index !== 0 && (
+						<button className="absolute right-2 top-2" onClick={() => removeNonFormalCard(index)}>
+							✕
+						</button>
+					)}
 					<h2 className="mb-4 text-lg font-bold text-gray-700">Pendidikan Non-Formal</h2>
 					<div className="mb-4">
 						<label className="label text-gray-700">Deskripsi</label>
@@ -573,7 +673,13 @@ const FormDataPage = () => {
 
 			{/* Achievements Cards */}
 			{achievementsCards.map((card, index) => (
-				<div className="card w-full rounded-lg bg-white p-6 shadow" key={index}>
+				<div className="card relative w-full rounded-lg bg-white p-6 shadow" key={index}>
+					{/* Conditionally render the remove button */}
+					{achievementsCards.length > 1 && (
+						<button className="absolute right-2 top-2 text-red-500" onClick={() => removeAchievementCard(index)}>
+							✕
+						</button>
+					)}
 					<h2 className="mb-4 text-lg font-bold text-gray-700">Prestasi/Penghargaan</h2>
 					<div className="mb-4">
 						<label className="label text-gray-700">Deskripsi</label>
@@ -584,26 +690,41 @@ const FormDataPage = () => {
 							onChange={(e) => handleAchievementsChange(index, 'description', e.target.value)}
 						></textarea>
 					</div>
-					<div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-						<div>
-							<label className="label text-gray-700">Periode</label>
-							<input
-								type="text"
-								placeholder="Bulan"
-								className="input input-bordered w-full"
-								value={card.periodeMonth}
-								onChange={(e) => handleAchievementsChange(index, 'periodeMonth', e.target.value)}
-							/>
-						</div>
-						<div>
-							<label className="label text-gray-700">&nbsp;</label>
-							<input
-								type="text"
-								placeholder="Tahun"
-								className="input input-bordered w-full"
-								value={card.periodeYear}
-								onChange={(e) => handleAchievementsChange(index, 'periodeYear', e.target.value)}
-							/>
+					<div className="mb-4">
+						<label className="label text-gray-700">Periode</label>
+						<div className="grid grid-cols-1 gap-4">
+							<div>
+								<select
+									className="input input-bordered w-full"
+									value={card.periodeMonth}
+									onChange={(e) => handleAchievementsChange(index, 'periodeMonth', e.target.value)}
+								>
+									<option value="" disabled>
+										Pilih Bulan
+									</option>
+									{months.map((month, i) => (
+										<option key={i} value={month}>
+											{month}
+										</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<select
+									className="input input-bordered w-full"
+									value={card.periodeYear}
+									onChange={(e) => handleAchievementsChange(index, 'periodeYear', e.target.value)}
+								>
+									<option value="" disabled>
+										Pilih Tahun
+									</option>
+									{years.map((year, i) => (
+										<option key={i} value={year}>
+											{year}
+										</option>
+									))}
+								</select>
+							</div>
 						</div>
 					</div>
 					<div className="mb-4">
@@ -641,7 +762,12 @@ const FormDataPage = () => {
 
 			{/* Skills Cards */}
 			{skillsCards.map((card, index) => (
-				<div className="card w-full rounded-lg bg-white p-6 shadow" key={index}>
+				<div className="card relative w-full rounded-lg bg-white p-6 shadow" key={index}>
+					{skillsCards.length > 1 && index !== 0 && (
+						<button className="absolute right-2 top-2" onClick={() => removeSkillsCard(index)}>
+							✕
+						</button>
+					)}
 					<h2 className="mb-4 text-lg font-bold text-gray-700">Keahlian</h2>
 					<div className="mb-4">
 						<label className="label text-gray-700">Keahlian</label>
