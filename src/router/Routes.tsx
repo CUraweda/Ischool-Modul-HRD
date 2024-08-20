@@ -26,6 +26,7 @@ import DetailPenggajianUser from '@/pages/hrd/DetailPenggajianUserPage';
 import DetailProfilKaryawanPage from '@/pages/hrd/DetailProfilKaryawanPage';
 import FormPage from '@/pages/public/FormPage';
 import FormDataPage from '@/pages/public/FormDataPage';
+import CustomerCarePage from '@/pages/hrd/CustomerPage';
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
@@ -81,6 +82,7 @@ const AppRoutes: React.FC = () => {
 					<Route path="penggajian" element={<PenggajianPage />} />
 					<Route path="penggajian/1" element={<DetailPenggajianPage />} />
 					<Route path="penggajian/1/1" element={<DetailPenggajianUser />} />
+					<Route path="customer-care" element={<CustomerCarePage />} />
 				</Route>
 				<Route
 					path="/public/"
