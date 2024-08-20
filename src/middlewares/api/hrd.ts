@@ -1,6 +1,7 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
 const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
+const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
 
 const Rekrutmen = {
@@ -168,21 +169,21 @@ const EmployeeDivision = {
 
 const CustomerCare = {
 	getUserChats: (token: string | null, id: string | null) =>
-		instance.get(`user-chat/show-by-user/${id}`, {
+		apics.get(`user-chat/show-by-user/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
 
 	createUserChats: (token: string | null, data: any) =>
-		instance.post(`customer-care/create`, data, {
+		apics.post(`customer-care/create`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
 
 	getDataChat: (token: string | null, limit: number) =>
-		instance.get(`user`, {
+		apics.get(`user`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -192,7 +193,7 @@ const CustomerCare = {
 		}),
 
 	getMessages: (token: string | null, id: string | null, idUser: number | string) =>
-		instance.get(`user-chat/show-conversation`, {
+		apics.get(`user-chat/show-conversation`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
