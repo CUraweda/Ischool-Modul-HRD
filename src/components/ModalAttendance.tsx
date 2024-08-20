@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllEmployee, getWorkTime } from '@/middlewares/api/hrd';
+import { WorkTime, EmployeeDivision } from '@/middlewares/api/hrd';
 interface CreateAttendanceInput {
 	worktime_id: number;
 	employee_id: number;
@@ -55,7 +55,7 @@ const CreateAttendance: React.FC<Props> = ({ isOpen, onClose, onCreate, dataToUp
 	useEffect(() => {}, [selectedValueWorkTime]);
 	const getEmployee = async () => {
 		try {
-			const result = await getAllEmployee();
+			const result = await EmployeeDivision.getAllEmployee();
 			setOptionEmployee(result.data.data.result);
 		} catch (error) {
 			console.error('Error creating attendance:', error);
@@ -63,7 +63,7 @@ const CreateAttendance: React.FC<Props> = ({ isOpen, onClose, onCreate, dataToUp
 	};
 	const getAllTime = async () => {
 		try {
-			const result = await getWorkTime();
+			const result = await WorkTime.getWorkTime();
 			setOptionWorkTime(result.data.data.result);
 		} catch (error) {
 			console.error('Error creating attendance:', error);
