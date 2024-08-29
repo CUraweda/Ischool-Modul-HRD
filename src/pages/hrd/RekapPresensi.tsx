@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TimeEntryDialog from '@/components/TimeDialog';
-import { Attendance } from '@/middlewares/api/hrd';
-
+import { Attendance, Employee } from '@/middlewares/api/hrd';
+import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
+import { FaFileExport } from 'react-icons/fa6';
 interface Worktime {
 	id: number;
 	division_id: number;
@@ -68,6 +70,7 @@ const PresensiPage: React.FC = () => {
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
+	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const fetchAttendanceData = async () => {
 		try {
 			const result = await Attendance.getEmployeeAttendance(
@@ -90,10 +93,28 @@ const PresensiPage: React.FC = () => {
 		setCurrentPage(newPage);
 	};
 
+	const fetchAllEmployee = async () => {
+		try {
+			const response = await Employee.getAllEmployee(0);
+			const { result } = response.data.data || {};
+			// setDataEmployee(result);
+
+			setDataEmployee(Array.isArray(result) ? result : []);
+		} catch (err) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Something went wrong!',
+			});
+			console.error(err);
+		}
+	};
+
 	// const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
 
 	useEffect(() => {
 		fetchAttendanceData();
+		fetchAllEmployee();
 	}, []);
 
 	useEffect(() => {
@@ -105,6 +126,29 @@ const PresensiPage: React.FC = () => {
 	const handleOpenDialogTime = () => setDialogTime(true);
 	const handleCloseDialogTime = () => setDialogTime(false);
 
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return date.toISOString().split('T')[0]; // Returns date in yyyy-mm-dd format
+	};
+
+	const exportToXLSX = () => {
+		const formattedData = attendanceData.map((item, index) => ({
+			no: index + 1,
+			id: item.id,
+			Nama: item.employee.full_name,
+			Divisi: item.employee.division,
+			uid: item.uid,
+			Deskripsi: item.description,
+			status: item.status,
+			Pukul: item.createdAt.split('T')[1].split('.')[0],
+			Tanggal: formatDate(item.createdAt),
+		}));
+
+		const worksheet = XLSX.utils.json_to_sheet(formattedData);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Presensi Data');
+		XLSX.writeFile(workbook, 'Rekap_Presensi_Data_Export.xlsx');
+	};
 	return (
 		<div className="w-full p-2">
 			<div className="w-full flex-wrap md:flex">
@@ -142,19 +186,39 @@ const PresensiPage: React.FC = () => {
 			<div className="my-5 flex-grow border-t border-gray-400 drop-shadow-sm"></div>
 
 			<div className="flex w-full justify-between">
-				<div className="flex gap-4">
-					<button className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
-						Semua
-						<div className="pl-5">{totalRows}</div>
-					</button>
-					<button
-						className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
-						onClick={handleOpenDialogTime}
+				<div className="m-2 flex flex-wrap-reverse gap-4 lg:flex">
+					<div className="flex flex-wrap-reverse gap-4">
+						<button className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
+							Semua
+							<div className="pl-5">{totalRows}</div>
+						</button>
+						<button
+							className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
+							onClick={handleOpenDialogTime}
+						>
+							Set Jam Masuk dan Keluar
+						</button>
+						<button
+							className="text-md btn badge-success badge-md btn-xs h-fit rounded-badge text-white drop-shadow-sm"
+							onClick={() => exportToXLSX()}
+						>
+							<FaFileExport />
+							<div className="pl-1">{totalRows}</div>
+							Export
+						</button>
+					</div>
+					<select
+						className="select select-bordered select-xs"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
 					>
-						Set Jam Masuk dan Keluar
-					</button>
-				</div>
-				<div className="my-auto flex gap-4">
+						<option value="">Select Employee</option>
+						{dataEmployee.map((employee) => (
+							<option key={employee.id} value={employee.full_name}>
+								{employee.full_name}
+							</option>
+						))}
+					</select>
 					<select
 						className="select select-bordered select-xs"
 						onChange={(e) => {
@@ -251,41 +315,41 @@ const PresensiPage: React.FC = () => {
 						))}
 					</tbody>
 				</table>
-			</div>
-			<div className="join m-5">
-				<button
-					className="btn join-item btn-sm"
-					onClick={() => handlePageChange(currentPage - 1)}
-					disabled={currentPage === 0}
-				>
-					Previous
-				</button>
-				<button className="btn join-item btn-sm">
-					<div className="flex justify-between">
-						<span>
-							Page {currentPage + 1} of {totalPages}
-						</span>
-					</div>
-				</button>
-				<button className="btn join-item btn-sm" onClick={() => setLimit(10)}>
-					10
-				</button>
-				<button className="btn join-item btn-sm" onClick={() => setLimit(50)}>
-					50
-				</button>
-				<button className="btn join-item btn-sm" onClick={() => setLimit(100)}>
-					100
-				</button>
-				<button className="btn join-item btn-sm" onClick={() => setLimit(0)}>
-					All
-				</button>
-				<button
-					className="btn join-item btn-sm"
-					onClick={() => handlePageChange(currentPage + 1)}
-					disabled={currentPage + 1 === totalPages}
-				>
-					Next
-				</button>
+				<div className="join m-5">
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => handlePageChange(currentPage - 1)}
+						disabled={currentPage === 0}
+					>
+						Previous
+					</button>
+					<button className="btn join-item btn-sm">
+						<div className="flex justify-between">
+							<span>
+								Page {currentPage + 1} of {totalPages}
+							</span>
+						</div>
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setLimit(10)}>
+						10
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setLimit(50)}>
+						50
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setLimit(100)}>
+						100
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setLimit(0)}>
+						All
+					</button>
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => handlePageChange(currentPage + 1)}
+						disabled={currentPage + 1 === totalPages}
+					>
+						Next
+					</button>
+				</div>
 			</div>
 			{dialogTime && <TimeEntryDialog isOpen={dialogTime} onClose={handleCloseDialogTime} />}
 		</div>

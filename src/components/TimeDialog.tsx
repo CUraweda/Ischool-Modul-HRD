@@ -16,9 +16,7 @@ interface dialog {
 	setJamKeluar: (value: string) => void;
 	setJamMasuk: (value: string) => void;
 	selectedValue: string;
-	selectedValueDay: string;
 	selectedValueType: string;
-	handleChangeDay: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 	handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 	handleChangeType: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
@@ -32,8 +30,6 @@ const DialogAdd: React.FC<dialog> = ({
 	selectedValue,
 	selectedValueType,
 	handleChangeType,
-	handleChangeDay,
-	selectedValueDay,
 	onSaveData,
 }) => {
 	const [optionDivision, setOptionDivision] = useState<any[]>([]);
@@ -48,15 +44,15 @@ const DialogAdd: React.FC<dialog> = ({
 	useEffect(() => {
 		getDataDivision();
 	}, []);
-	const optionsDay = [
-		{ id: 1, name: 'Senin' },
-		{ id: 2, name: 'Selasa' },
-		{ id: 3, name: 'Rabu' },
-		{ id: 4, name: 'Kamis' },
-		{ id: 5, name: 'Jumat' },
-		{ id: 6, name: 'Sabtu' },
-		{ id: 7, name: 'Minggu' },
-	];
+	// const optionsDay = [
+	// 	{ id: 1, name: 'Senin' },
+	// 	{ id: 2, name: 'Selasa' },
+	// 	{ id: 3, name: 'Rabu' },
+	// 	{ id: 4, name: 'Kamis' },
+	// 	{ id: 5, name: 'Jumat' },
+	// 	{ id: 6, name: 'Sabtu' },
+	// 	{ id: 7, name: 'Minggu' },
+	// ];
 	const optionsType = ['MASUK', 'KELUAR'];
 	return (
 		<div>
@@ -131,7 +127,7 @@ const DialogAdd: React.FC<dialog> = ({
 							</div>
 						</section>
 					</div>
-					<div>
+					{/* <div>
 						<label className="label">
 							<span className="label-text">Hari</span>
 						</label>
@@ -145,7 +141,7 @@ const DialogAdd: React.FC<dialog> = ({
 								</option>
 							))}
 						</select>
-					</div>
+					</div> */}
 					<div className="join join-vertical mt-5 sm:join-horizontal">
 						<button className={`btn btn-outline btn-error join-item btn-sm px-5`} onClick={() => onClose()}>
 							Batal
@@ -166,7 +162,6 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 	const [showDialog, setShowDialog] = useState<boolean>(false);
 	const [selectedValue, setSelectedValue] = useState<string>('');
 	const [jamMasuk, setJamMasuk] = useState<string>('');
-	const [selectedValueDay, setSelectedValueDay] = useState<string>('');
 	const [selectedValueType, setSelectedValueType] = useState<string>('');
 	const [dataWorkTime, setDataWorkTime] = useState<any[]>([]);
 
@@ -179,17 +174,16 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 		const value = event.target.value;
 		setSelectedValueType(value);
 	};
-	const handleChangeDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
-		const value = event.target.value;
-		setSelectedValueDay(value);
-	};
+	// const handleChangeDay = (event: React.ChangeEvent<HTMLSelectElement>) => {
+	// 	const value = event.target.value;
+	// 	setSelectedValueDay(value);
+	// };
 	const onSaveData = () => {
 		const Data = {
 			division_id: selectedValue,
 			type: selectedValueType,
 			start_time: jamMasuk,
 			end_time: jamKeluar,
-			weekday_id: selectedValueDay,
 		};
 		if (id !== 0) {
 			changeWorkTime(Data, id);
@@ -214,7 +208,7 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 		setId(0);
 	};
 	const changeWorkTime = async (data: any, id: number) => {
-		await WorkTime.updateWorkTime(data, id);
+		await WorkTime.updateWorkTime(id, data);
 		getAllWorkTime();
 		setId(0);
 	};
@@ -233,12 +227,13 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 
 	const handleEdit: any = (type: string, data: any) => {
 		setId(data.id);
+		console.log(data);
 		if (type === 'edit') {
 			setShowDialog((showDialog) => !showDialog);
 			setSelectedValue(data.division_id);
-			setSelectedValueDay(data.weekday_id);
 			setJamMasuk(data.start_time);
 			setJamKeluar(data.end_time);
+			setSelectedValueType(data.type);
 		} else {
 			removeWorkTime(data.id);
 		}
@@ -258,8 +253,6 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 						setJamMasuk={setJamMasuk}
 						handleChange={handleChange}
 						selectedValue={selectedValue}
-						handleChangeDay={handleChangeDay}
-						selectedValueDay={selectedValueDay}
 						handleChangeType={handleChangeType}
 						selectedValueType={selectedValueType}
 						onSaveData={onSaveData}
@@ -299,9 +292,7 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 								<div className="card w-full rounded-sm p-5" key={option.id}>
 									<div className="card-body rounded-xl shadow-lg">
 										<div className="flex justify-between">
-											<div className="text-xl">
-												{option.weekday.name} - {option.division.name}
-											</div>
+											<div className="w-1/3 truncate text-ellipsis text-xl">{option.division.name}</div>
 											<div className="block">
 												<section className="text-3xl">
 													{option.start_time.slice(0, 5)} - {option.end_time.slice(0, 5)}
@@ -310,7 +301,7 @@ const TimeEntryDialog: React.FC<TimeEntryDialogProps> = ({ isOpen, onClose }) =>
 											</div>
 											<div className="flex items-end gap-5 self-center">
 												<button
-													className="btn btn-circle btn-outline btn-primary btn-md rounded-full"
+													className="btn btn-circle btn-primary btn-md rounded-full hover:outline-none"
 													onClick={() => handleEdit('edit', option)}
 												>
 													<LuPencil className="text-2xl" />

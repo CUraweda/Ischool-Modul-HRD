@@ -150,7 +150,17 @@ const WorkTime = {
 		}),
 };
 
-// Modul untuk pengelolaan data karyawan dan divisi
+const Employee = {
+	getAllEmployee: (limit: number): AxiosPromise<any> =>
+		instance.get('employee', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+			},
+		}),
+};
 const EmployeeDivision = {
 	getAllEmployee: (): AxiosPromise<any> =>
 		instance.get('employee', {
@@ -218,4 +228,4 @@ const CustomerCare = {
 			}
 		),
 };
-export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare };
+export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Employee };
