@@ -27,7 +27,7 @@ const DetailPenggajianUserPage = () => {
 
 	return (
 		<div className="min-h-screen p-4">
-			<div className="container mx-auto">
+			<div className="">
 				{/* Breadcrumb */}
 				<div className="breadcrumbs mb-6 text-sm">
 					<ul>
@@ -105,16 +105,10 @@ const DetailPenggajianUserPage = () => {
 					</div>
 				</div>
 
-				{/* Filter Buttons */}
-				<div className="mb-6 flex flex-wrap gap-4">
-					<button className="btn btn-primary">2024</button>
-					<button className="btn btn-primary">September</button>
-				</div>
-
 				{/* Bottom Row - Table */}
-				<div className="card bg-base-100 shadow-md">
-					<div className="card-body overflow-x-auto">
-						<table className="w-full table-auto text-xs">
+				<div className="card overflow-x-auto bg-base-100 shadow-md">
+					<div className="card-body w-96">
+						<table className="table-auto text-xs">
 							<thead>
 								<tr>
 									<th colSpan={2} className="whitespace-nowrap p-2 text-center">

@@ -1,8 +1,60 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
-import axios, { AxiosPromise } from 'axios';
+import axios, { Axios, AxiosPromise } from 'axios';
 const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
 const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
+
+const Dashboard = {
+	DataKaryawan: (): AxiosPromise<any> =>
+		instance({
+			method: 'GET',
+			url: `employee?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataPengumuman: (): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-announcement`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataChart: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-attendance/recap-week`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataApplicant: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `applicant-form/rekap-dashboard`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataTraining: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `training/recap-dashboard`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	PostPengumuman: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-announcement/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 
 const Rekrutmen = {
 	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
@@ -48,6 +100,14 @@ const Karyawan = {
 		instance({
 			method: 'GET',
 			url: `employee?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	ProfilKaryawan: (id: string | undefined): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee/show/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -218,4 +278,4 @@ const CustomerCare = {
 			}
 		),
 };
-export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare };
+export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Dashboard };

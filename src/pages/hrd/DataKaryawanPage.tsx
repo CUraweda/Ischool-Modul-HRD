@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal, { openModal } from '../../components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
+import { useNavigate } from 'react-router-dom';
 
 const DataKaryawanPage = () => {
 	const [search, setSearch] = useState('');
@@ -9,6 +10,7 @@ const DataKaryawanPage = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [page, setPage] = useState(1);
 	const [itemsPerPage] = useState(20);
+	const navigate = useNavigate();
 
 	const handleDialog = () => {
 		openModal('addKaryawan');
@@ -36,6 +38,10 @@ const DataKaryawanPage = () => {
 	const handleAction = (action: string, itemId: number) => {
 		// Handle edit and delete actions here
 		console.log(`${action} item with id ${itemId}`);
+	};
+
+	const detailProfil = (id: number) => {
+		navigate(`/hrd/data-karyawan/${id}`);
 	};
 
 	return (
@@ -121,10 +127,10 @@ const DataKaryawanPage = () => {
 											</label>
 											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
 												<li>
-													<a onClick={() => handleAction('Edit', item.id)}>Edit</a>
+													<a onClick={() => detailProfil(item.id)}>Edit Profil</a>
 												</li>
 												<li>
-													<a onClick={() => handleAction('Delete', item.id)}>Delete</a>
+													<a onClick={() => handleAction('Delete', item.id)}>Hapus Karyawan</a>
 												</li>
 											</ul>
 										</div>
