@@ -48,7 +48,7 @@ const DetailProbationPage = () => {
 	};
 
 	const handleNavigation = (id2: number) => {
-		navigate(`/hrd/probation/${id}/${id2}`);
+		navigate(`/hrd/employee/${id}/${id2}`);
 	};
 
 	useEffect(() => {

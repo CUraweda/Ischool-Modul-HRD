@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
 import Modal, { openModal } from '../../components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
+import { useNavigate } from 'react-router-dom';
 
 const DataKaryawanPage = () => {
 	const [search, setSearch] = useState('');
 	const [dataKaryawan, setDataKaryawan] = useState<any[]>([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [page, setPage] = useState(1);
+	const [itemsPerPage] = useState(20);
+	const navigate = useNavigate();
+
 	const handleDialog = () => {
 		openModal('addKaryawan');
 	};
 
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.DataKaryawan(1, 20, search);
+			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search);
 			setDataKaryawan(response.data.data.result);
+			setTotalPages(response.data.data.totalPages);
+			setPage(response.data.data.page);
 		} catch (error) {
 			console.error(error);
 		}
@@ -20,7 +29,21 @@ const DataKaryawanPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, [search]);
+	}, [search, currentPage]);
+
+	const handlePageChange = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
+	};
+
+	const handleAction = (action: string, itemId: number) => {
+		// Handle edit and delete actions here
+		console.log(`${action} item with id ${itemId}`);
+	};
+
+	const detailProfil = (id: number) => {
+		navigate(`/hrd/data-karyawan/${id}`);
+	};
+
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">
@@ -44,7 +67,7 @@ const DataKaryawanPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="items-cente mt-6 flex justify-between">
+			<div className="mt-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -74,45 +97,69 @@ const DataKaryawanPage = () => {
 
 			<div className="q-mt card mt-5 w-full bg-base-100 shadow-xl">
 				<div className="card-body">
-					<div className="overflow-x-auto">
-						<table className="table table-zebra w-full">
-							<thead className="sticky top-0 z-10 bg-base-200">
-								<tr>
-									<th className="text-xs">No</th>
-									<th className="text-xs">Nama</th>
-									<th className="text-xs">Posisi</th>
-									<th className="text-xs">Jabatan</th>
-									<th className="text-xs">Status</th>
-									<th className="text-xs">Action</th>
-								</tr>
-							</thead>
-							<tbody>
-								{dataKaryawan.map((item, index) => (
-									<tr key={index}>
-										<td className="px-4 py-2">{index + 1}</td>
-										<td className="px-4 py-2">{item.full_name}</td>
-										<td className="px-4 py-2">
-											<span className="rounded-md bg-[#DBEAFF] p-2 text-xs font-semibold text-gray-500">Guru</span>
-										</td>
-										<td className="px-4 py-2">Guru SD 2 Azzaitun</td>
-										<td className="px-4 py-2">{item.employee_status}</td>
-										<td className="relative px-4 py-2">test</td>
-									</tr>
-								))}
-								{/* <tr>
-									<td className="px-4 py-2">1</td>
-									<td className="px-4 py-2">Alya Putri Azzahra</td>
+					<table className="table table-zebra">
+						<thead>
+							<tr>
+								<th className="text-xs">No</th>
+								<th className="text-xs">Nama</th>
+								<th className="flex">Posisi</th>
+								<th className="text-xs">Jabatan</th>
+								<th className="text-xs">Status</th>
+								<th className="text-xs">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{dataKaryawan.map((item, index) => (
+								<tr key={index}>
+									<td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+									<td className="px-4 py-2">{item.full_name}</td>
 									<td className="px-4 py-2">
-										<span className="rounded-md bg-[#DBEAFF] p-2 text-xs font-semibold text-gray-500">Guru</span>
+										<span className="rounded-md bg-[#DBEAFF] p-2 text-xs font-semibold text-gray-500">
+											{item.occupation}
+										</span>
 									</td>
-									<td className="px-4 py-2">Guru SD 2 Azzaitun</td>
-									<td className="px-4 py-2">Tetap</td>
-									<td className="relative px-4 py-2">test</td>
-								</tr> */}
-								{/* Additional rows can go here */}
-							</tbody>
-						</table>
-					</div>
+									<td className="px-4 py-2">{item.occupation}</td>
+									<td className="px-4 py-2">{item.employee_status}</td>
+									<td className="relative px-4 py-2">
+										<div className="dropdown dropdown-end">
+											<label tabIndex={0} className="btn btn-ghost btn-xs">
+												...
+											</label>
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+												<li>
+													<a onClick={() => detailProfil(item.id)}>Edit Profil</a>
+												</li>
+												<li>
+													<a onClick={() => handleAction('Delete', item.id)}>Hapus Karyawan</a>
+												</li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			{/* Pagination */}
+			<div className="mt-5 flex items-center justify-center">
+				<div className="join">
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === 1}
+						onClick={() => handlePageChange(currentPage - 1)}
+					>
+						«
+					</button>
+					<button className="btn join-item btn-sm">Page {page}</button>
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === totalPages}
+						onClick={() => handlePageChange(currentPage + 1)}
+					>
+						»
+					</button>
 				</div>
 			</div>
 
