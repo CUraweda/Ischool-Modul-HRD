@@ -1,5 +1,3 @@
-import React from 'react';
-
 const DaftarPenilaianPage = () => {
 	return (
 		<div className="p-4">

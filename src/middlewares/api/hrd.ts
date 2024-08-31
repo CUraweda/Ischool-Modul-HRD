@@ -1,5 +1,5 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
-import axios, { Axios, AxiosPromise } from 'axios';
+import axios, { AxiosPromise } from 'axios';
 const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
 const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
