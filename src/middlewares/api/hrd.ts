@@ -65,38 +65,52 @@ const Form = {
 			},
 		}),
 };
-
 const Attendance = {
 	getEmployeeAttendance: (
 		page: number,
 		limit: number,
-		type: string,
+		type: string[],
+		status: string[],
 		search: string,
-		status: string,
-		division: string,
+		division: any,
 		date: string
-	): AxiosPromise<any> =>
-		instance.get(`employee-attendance`, {
-			params: { search, type, status, division, date, page, limit },
+	): AxiosPromise<any> => {
+		const typeParam = type.length ? type.join(',') : '';
+		const statusParam = status.length ? status.join(',') : '';
+
+		return instance.get(`employee-attendance`, {
+			params: { search, type: typeParam, status: statusParam, division_id: division, date, page, limit },
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
-		}),
-
+		});
+	},
+	getAllDivision: (): AxiosPromise<any> => {
+		return instance.get(`division`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+	},
 	getVacation: (
 		page: number,
 		limit: number,
 		search: string,
-		type: string,
-		status: string,
-		date: string
-	): AxiosPromise<any> =>
-		instance.get('employee-vacation', {
-			params: { search, page, limit, type, status, date },
+		type: string[],
+		status: string[],
+		date: string,
+		divisi: any
+	): AxiosPromise<any> => {
+		const typeParam = type.length ? type.join(',') : '';
+		const statusParam = status.length ? status.join(',') : '';
+
+		return instance.get('employee-vacation', {
+			params: { search, page, limit, type: typeParam, status: statusParam, date, division_id: divisi },
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
-		}),
+		});
+	},
 
 	createVacation: (data: any): AxiosPromise<any> =>
 		instance.post('employee-vacation/create', data, {
@@ -118,8 +132,21 @@ const Attendance = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	requestVacation: (data: any): AxiosPromise<any> =>
+		instance.post(`employee-vacation/request`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
-
+const Training = {
+	getAllTraining: (page: number, limit: number, status: string, employee_id: any | null): AxiosPromise<any> =>
+		instance.get(`training?page=${page}&limit=${limit}&status=${status}&employee_id=${employee_id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 const WorkTime = {
 	getWorkTime: (): AxiosPromise<any> =>
 		instance.get('worktime', {
@@ -151,13 +178,14 @@ const WorkTime = {
 };
 
 const Employee = {
-	getAllEmployee: (limit: number): AxiosPromise<any> =>
+	getAllEmployee: (limit: number, search_query: any): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 			params: {
 				limit: limit,
+				search_query: search_query,
 			},
 		}),
 };
@@ -228,4 +256,4 @@ const CustomerCare = {
 			}
 		),
 };
-export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Employee };
+export { Training, Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Employee };

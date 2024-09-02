@@ -70,29 +70,41 @@
 	{
 		"submenu": false,
 		"title": "Rekap Penilaian",
-		"icon": "<AiOutlineTeam />",
-		"url": "/hrd/rekap-penilaian",
+		"icon": "<GoPeople />",
+		"url": "/hrd/penilaian",
 		"subtitle": []
 	},
 	{
 		"submenu": false,
 		"title": "Pelatihan",
-		"icon": "<AiOutlineCalendar />",
+		"icon": "<MdOutlineDateRange />",
 		"url": "/hrd/pelatihan",
 		"subtitle": []
 	},
 	{
-		"submenu": false,
+		"submenu": true,
 		"title": "Penggajian",
 		"icon": "<AiOutlineIdcard />",
-		"url": "/hrd/penggajian",
-		"subtitle": []
+		"url": "",
+		"subtitle": [
+			{
+				"name": "Dashboard",
+				"url": "/hrd/penggajian"
+			},
+			{
+				"name": "Rekap Gaji",
+				"url": ""
+			},
+			{
+				"name": "Atur Gaji",
+				"url": ""
+			}
+		]
 	},
-
 	{
 		"submenu": false,
 		"title": "Customer Care",
-		"icon": "<AiOutlineIdcard />",
+		"icon": "<IoChatbubbleEllipsesOutline />",
 		"url": "/hrd/customer-care",
 		"subtitle": []
 	}
