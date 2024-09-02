@@ -191,7 +191,7 @@ const DashboardPage = () => {
 							|
 							<span className="font-bold text-red-500">
 								Hadir: {chart.reduce((total, item) => total + item.izin, 0)}
-							</span>{' '}
+							</span>
 							|
 							<span className="font-bold text-yellow-500">
 								Hadir: {chart.reduce((total, item) => total + item.cuti, 0)}
@@ -253,7 +253,7 @@ const DashboardPage = () => {
 				</div>
 			</div>
 
-			<div className="flex justify-center gap-4">
+			<div className="lg: flex flex-wrap justify-center gap-4 lg:flex-nowrap">
 				<div className="mb-8 w-full rounded-lg bg-white p-4 shadow-md">
 					<div className="flex items-center justify-between">
 						<div className="w-full border-r border-gray-300 text-center">
