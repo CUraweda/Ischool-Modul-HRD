@@ -60,7 +60,7 @@ const Rekrutmen = {
 	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}`,
+			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -70,6 +70,15 @@ const Rekrutmen = {
 		instance({
 			method: `GET`,
 			url: `applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	CloseRekrutment: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `job-vacancy/close/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -93,6 +102,35 @@ const Rekrutmen = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	LulusRekrutmen: (data: any, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	GagalRekrutmen: (data: any, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+
+const Probation = {
+	DetailProbation: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 
 const Karyawan = {
@@ -100,6 +138,15 @@ const Karyawan = {
 		instance({
 			method: 'GET',
 			url: `employee?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	TambahKaryawan: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee/create`,
+			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -278,4 +325,4 @@ const CustomerCare = {
 			}
 		),
 };
-export { Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Dashboard };
+export { Rekrutmen, Probation, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Dashboard };

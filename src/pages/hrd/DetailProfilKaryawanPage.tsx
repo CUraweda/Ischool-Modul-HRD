@@ -1,5 +1,5 @@
-import { Karyawan } from '@/middlewares/api';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import { Karyawan, Probation } from '@/middlewares/api';
+import Modal, { openModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -16,27 +16,27 @@ const DetailProfilKaryawanPage = () => {
 		tanggalLahir: '',
 		umur: '',
 		statusPernikahan: '',
-		alamat: '',
 		jenjangPendidikan: '',
 		bidang: '',
-		istriSuami: '',
 		jumlahAnak: '',
-		kelengkapanBerkas: '',
 		posisi: '',
 		status: '',
 		jabatan: '',
 		mulaiBekerja: '',
 	});
+	const [pelatihan, setPelatihan] = useState<any[]>([]);
 
-	const handleInputChange = (e: any) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
+	const dialogPelatihan = () => {
+		openModal('detailPelatihan');
 	};
 
-	const handleSubmit = (e: any) => {
-		e.preventDefault();
-		// Handle form submission
-		closeModal('editProfilKaryawan');
+	const dataPelatihan = async () => {
+		try {
+			const response = await Probation.DetailProbation(id);
+			setPelatihan(response.data.data.trainings);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	const handleDialog = () => {
@@ -60,12 +60,9 @@ const DetailProfilKaryawanPage = () => {
 				tanggalLahir: data.dob ? data.dob.split('T')[0] : '',
 				umur: data.dob ? `${new Date().getFullYear() - new Date(data.dob).getFullYear()} Tahun` : '',
 				statusPernikahan: data.marital_status || '',
-				alamat: '', // Assuming there's no field for address in the API
 				jenjangPendidikan: data.last_education || '',
 				bidang: data.major || '',
-				istriSuami: '', // Assuming there's no field for spouse in the API
 				jumlahAnak: '', // Assuming there's no field for children in the API
-				kelengkapanBerkas: '', // Assuming there's no field for documents in the API
 				posisi: data.occupation || '',
 				status: data.employee_status || '',
 				jabatan: data.duty || '',
@@ -79,6 +76,7 @@ const DetailProfilKaryawanPage = () => {
 	useEffect(() => {
 		if (id) {
 			fetchData();
+			dataPelatihan();
 		}
 	}, [id]);
 
@@ -116,9 +114,6 @@ const DetailProfilKaryawanPage = () => {
 							<p>
 								<strong>Status Pernikahan:</strong> {fetch?.marital_status}
 							</p>
-							<p>
-								<strong>Alamat:</strong> {formData.alamat || 'Tidak tersedia'}
-							</p>
 						</div>
 						<div className="p-4">
 							<h2 className="mb-2 text-lg font-semibold">Informasi Lainnya</h2>
@@ -126,11 +121,7 @@ const DetailProfilKaryawanPage = () => {
 								<strong>Pendidikan:</strong> {fetch?.last_education} - {fetch?.major}
 							</p>
 							<p>
-								<strong>Kelengkapan Berkas:</strong> {formData.kelengkapanBerkas || 'Tidak tersedia'}
-							</p>
-							<p>
-								<strong>Istri/Suami, dan Anak:</strong> {formData.istriSuami || 'Tidak tersedia'},{' '}
-								{formData.jumlahAnak || 'Tidak tersedia'}
+								<strong>Kelengkapan Berkas:</strong>
 							</p>
 						</div>
 					</div>
@@ -163,14 +154,21 @@ const DetailProfilKaryawanPage = () => {
 				<div className="mt-6 flex justify-between">
 					<button className="btn btn-primary">{fetch?.is_teacher === 'G' ? 'Guru' : 'Staff'}</button>
 					<button className="btn btn-secondary">{fetch?.employee_status}</button>
-					<button className="btn btn-accent">Lihat Detail Pelatihan</button>
+					<button
+						className="btn btn-accent"
+						onClick={() => {
+							dialogPelatihan();
+						}}
+					>
+						Lihat Detail Pelatihan
+					</button>
 					<button className="btn btn-secondary" onClick={handleDialog}>
 						Edit Profil
 					</button>
 				</div>
 			</div>
 
-			<Modal id="editProfilKaryawan">
+			{/* <Modal id="editProfilKaryawan">
 				<form onSubmit={handleSubmit}>
 					<div className="grid grid-cols-2 gap-4">
 						<div>
@@ -332,6 +330,49 @@ const DetailProfilKaryawanPage = () => {
 						</button>
 					</div>
 				</form>
+			</Modal> */}
+
+			<Modal id="detailPelatihan">
+				<h3 className="text-lg font-bold">Pelatihan yang sudah dilakukan</h3>
+				<div className="mt-4 space-y-4">
+					{pelatihan.map((item, index) => (
+						<div className="card bg-base-100 shadow-md" key={index}>
+							<div className="card-body">
+								<h2 className="card-title">{item.title}</h2>
+								<p>Tujuan: {item.purpose}.</p>
+								<p>
+									Pengajuan oleh: <span className="font-bold">HRD</span>
+								</p>
+								<div className="mt-4 flex items-center justify-between text-gray-500">
+									<div className="flex items-center space-x-2">
+										<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M5.121 11.293a8.004 8.004 0 0110.962 0M4 14l2 2 4-4m2 6a9 9 0 100-18 9 9 0 000 18zm-3-9v.01"
+											/>
+										</svg>
+										<span>{item.location}</span>
+									</div>
+									<div className="flex items-center space-x-2">
+										<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M8 7h4m-2-2v4m0 4v2a1 1 0 001 1h3m4 0h-2a1 1 0 01-1-1v-3m0 0H7a1 1 0 01-1-1V7a1 1 0 011-1h3m4 0h2a1 1 0 011 1v3m-4 0v4"
+											/>
+										</svg>
+										<span>
+											{item.start_date.split('T')[0]} - {item.end_date.split('T')[0]}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
 			</Modal>
 		</div>
 	);
