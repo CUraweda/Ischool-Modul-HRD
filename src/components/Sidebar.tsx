@@ -45,7 +45,7 @@ const Sidebar = () => {
 				<input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 				<div className="drawer-side">
 					<label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay" />
-					<ul className="menu min-h-screen bg-base-100 p-4">
+					<ul className="menu min-h-screen w-full bg-base-100 p-4">
 						<div className="mb-3 flex w-full items-center justify-between pb-6">
 							<div className="flex items-center justify-center gap-1">
 								<img src={logo} alt="logo" className="w-20" />
@@ -56,7 +56,7 @@ const Sidebar = () => {
 							</label>
 						</div>
 
-						<ul className="menu w-full max-w-xs rounded-lg font-bold text-gray-500">
+						<ul className="menu w-full rounded-lg font-bold text-gray-500">
 							{data.map((item: Menu, index: number) => (
 								<React.Fragment key={`menu-` + index}>
 									{item.submenu ? (

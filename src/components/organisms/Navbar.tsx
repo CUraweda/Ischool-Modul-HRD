@@ -8,10 +8,14 @@ const Navbar = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const logout = () => {
+		console.log('Logging out...');
 		sessionStorage.clear();
+		localStorage.clear();
 		dispatch(clearUser());
-		navigate('/login');
+		console.log('Redirecting to login...');
+		navigate('/login', { replace: true });
 	};
+
 	return (
 		<div>
 			<div className="navbar bg-base-100 shadow-md">
@@ -54,4 +58,5 @@ const Navbar = () => {
 		</div>
 	);
 };
+
 export default Navbar;
