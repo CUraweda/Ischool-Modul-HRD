@@ -50,7 +50,15 @@
 		"url": "",
 		"subtitle": [
 			{
-				"name": "Data Karayawan",
+				"name": "Daftar Asessor",
+				"url": "/hrd/daftar-asessor"
+			},
+			{
+				"name": "Daftar Penilaian",
+				"url": "/hrd/daftar-penilaian"
+			},
+			{
+				"name": "Data Karyawan",
 				"url": "/hrd/data-karyawan"
 			}
 		]
@@ -58,29 +66,42 @@
 	{
 		"submenu": false,
 		"title": "Rekap Penilaian",
-		"icon": "<AiOutlineTeam />",
-		"url": "/hrd/rekap-penilaian",
+		"icon": "<GoPeople />",
+		"url": "/hrd/penilaian",
 		"subtitle": []
 	},
 	{
 		"submenu": false,
 		"title": "Pelatihan",
-		"icon": "<AiOutlineCalendar />",
+		"icon": "<MdOutlineDateRange />",
 		"url": "/hrd/pelatihan",
 		"subtitle": []
 	},
 	{
-		"submenu": false,
+		"submenu": true,
 		"title": "Penggajian",
 		"icon": "<AiOutlineIdcard />",
-		"url": "/hrd/penggajian",
-		"subtitle": []
-	},
+		"url": "",
+		"subtitle": [
+			{
+				"name": "Dashboard",
+				"url": "/hrd/dashboard-penggajian"
+			},
+			{
+				"name": "Rekap Gaji",
+				"url": "/hrd/rekap-gaji"
+			},
 
+			{
+				"name": "Atur Gaji",
+				"url": "/hrd/atur-gaji"
+			}
+		]
+	},
 	{
 		"submenu": false,
 		"title": "Customer Care",
-		"icon": "<AiOutlineIdcard />",
+		"icon": "<IoChatbubbleEllipsesOutline />",
 		"url": "/hrd/customer-care",
 		"subtitle": []
 	}

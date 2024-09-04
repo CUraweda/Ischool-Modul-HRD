@@ -13,6 +13,7 @@ import PengajuanCutiPage from '../pages/hrd/PengajuanCuti';
 import DinasLuarPage from '@/pages/hrd/DinasLuarPage';
 import RekapPenilaianPage from '@/pages/hrd/RekapPenilaian';
 import DetailRekapPage from '@/pages/hrd/DetailRekap';
+import PenilaianPage from '@/pages/hrd/PenilaianPage';
 import PelatihanPage from '@/pages/hrd/PelatihanPage';
 import RekrutmenPage from '@/pages/hrd/RekrutmenPage';
 import DetailRekrutmenPage from '@/pages/hrd/DetailRekrutmenPage';
@@ -22,11 +23,14 @@ import DetailCardProbationPage from '@/pages/hrd/DetailCardProbationPage';
 import DataKaryawanPage from '@/pages/hrd/DataKaryawanPage';
 import PenggajianPage from '@/pages/hrd/PenggajianPage';
 import DetailPenggajianPage from '@/pages/hrd/DetailPenggajianPage';
-import DetailPenggajianUser from '@/pages/hrd/DetailPenggajianUserPage';
+import AturGajiPage from '@/pages/hrd/AturGajiPage';
 import DetailProfilKaryawanPage from '@/pages/hrd/DetailProfilKaryawanPage';
 import FormPage from '@/pages/public/FormPage';
 import FormDataPage from '@/pages/public/FormDataPage';
 import CustomerCarePage from '@/pages/hrd/CustomerPage';
+import DetailPenggajianUserPage from '@/pages/hrd/DetailPenggajianUserPage';
+import DaftarAsessorPage from '@/pages/hrd/DaftarAsessorPage';
+import DaftarPenilaianPage from '@/pages/hrd/DaftarPenilaianPage';
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
@@ -71,6 +75,7 @@ const AppRoutes: React.FC = () => {
 					<Route path="dinas-luar" element={<DinasLuarPage />} />
 					<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 					<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
+					<Route path="penilaian" element={<PenilaianPage />} />
 					<Route path="pelatihan" element={<PelatihanPage />} />
 					<Route path="rekrutmen" element={<RekrutmenPage />} />
 					<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
@@ -78,10 +83,13 @@ const AppRoutes: React.FC = () => {
 					<Route path="employee/:id" element={<DetailProbationPage />} />
 					<Route path="employee/:id/:id2" element={<DetailCardProbationPage />} />
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />
-					<Route path="data-karyawan/1" element={<DetailProfilKaryawanPage />} />
-					<Route path="penggajian" element={<PenggajianPage />} />
-					<Route path="penggajian/1" element={<DetailPenggajianPage />} />
-					<Route path="penggajian/1/1" element={<DetailPenggajianUser />} />
+					<Route path="data-karyawan/:id" element={<DetailProfilKaryawanPage />} />
+					<Route path="daftar-asessor" element={<DaftarAsessorPage />} />
+					<Route path="daftar-penilaian" element={<DaftarPenilaianPage />} />
+					<Route path="dashboard-penggajian" element={<PenggajianPage />} />
+					<Route path="rekap-gaji" element={<DetailPenggajianPage />} />
+					<Route path="rekap-gaji/1" element={<DetailPenggajianUserPage />} />
+					<Route path="atur-gaji" element={<AturGajiPage />} />
 					<Route path="customer-care" element={<CustomerCarePage />} />
 				</Route>
 				<Route

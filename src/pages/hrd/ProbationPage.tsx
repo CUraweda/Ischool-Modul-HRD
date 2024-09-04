@@ -37,6 +37,15 @@ const Probationpage = () => {
 		}
 	};
 
+	const CloseRekrutmen = async (id: any) => {
+		try {
+			await Rekrutmen.CloseRekrutment(id);
+			fetchData();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	useEffect(() => {
 		fetchData();
 	}, [search]);
@@ -183,7 +192,9 @@ const Probationpage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold">Tutup Penerimaan</span>
+											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+												Tutup Penerimaan
+											</span>
 										</div>
 									</li>
 								</ul>
