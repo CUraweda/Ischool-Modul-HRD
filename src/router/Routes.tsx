@@ -13,6 +13,7 @@ import PengajuanCutiPage from '../pages/hrd/PengajuanCuti';
 import DinasLuarPage from '@/pages/hrd/DinasLuarPage';
 import RekapPenilaianPage from '@/pages/hrd/RekapPenilaian';
 import DetailRekapPage from '@/pages/hrd/DetailRekap';
+import PenilaianPage from '@/pages/hrd/PenilaianPage';
 import PelatihanPage from '@/pages/hrd/PelatihanPage';
 import RekrutmenPage from '@/pages/hrd/RekrutmenPage';
 import DetailRekrutmenPage from '@/pages/hrd/DetailRekrutmenPage';
@@ -74,6 +75,7 @@ const AppRoutes: React.FC = () => {
 					<Route path="dinas-luar" element={<DinasLuarPage />} />
 					<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 					<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
+					<Route path="penilaian" element={<PenilaianPage />} />
 					<Route path="pelatihan" element={<PelatihanPage />} />
 					<Route path="rekrutmen" element={<RekrutmenPage />} />
 					<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />

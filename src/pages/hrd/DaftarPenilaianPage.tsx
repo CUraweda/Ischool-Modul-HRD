@@ -1,7 +1,25 @@
+import { useState, useEffect } from 'react';
+import { Karyawan } from '@/middlewares/api';
+import Modal, { openModal, closeModal } from '@/components/ModalProps';
+
 const DaftarPenilaianPage = () => {
+	const [fetch, setFetch] = useState<any[]>([]);
+
+	const fetchData = async () => {
+		try {
+			const response = await Karyawan.DaftarPenilaian(0, 20);
+			setFetch(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchData();
+	}, []);
 	return (
 		<div className="p-4">
-			<div className="mb-3 flex items-center justify-between">
+			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Penilaian</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input type="text" className="grow" placeholder="Cari" />
@@ -37,64 +55,48 @@ const DaftarPenilaianPage = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{/* Example rows */}
-							<tr>
-								<td>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</td>
-								<td>Alya Putri Azzahra</td>
-								<td>alya@gmail.com</td>
-								<td>Staff</td>
-								<td>85</td>
-								<td>Aktif</td>
-								<td className="flex gap-2">
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path strokeLinecap="round" strokeLinejoin="round" d="M19 13H5v-2h14v2Z" />
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-								</td>
-							</tr>
-							{/* Repeat above tr for each row */}
+							{fetch.map((item, index) => (
+								<tr key={index}>
+									<td>
+										<input type="checkbox" className="checkbox checkbox-sm" />
+									</td>
+									<td>{item.employee.full_name}</td>
+									<td>{item.employee.email ? item.employee.email : '-'}</td>
+									<td>{item.employee.occupation}</td>
+									<td>{item.employee.grade}</td>
+									<td>{item.employee.still_in_probation == false ? 'Tidak aktif' : 'Aktif'}</td>
+									<td className="flex gap-2">
+										<button className="btn btn-ghost btn-sm">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												className="h-4 w-4"
+												stroke="currentColor"
+												strokeWidth="2"
+											>
+												<path
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
+												/>
+											</svg>
+										</button>
+										<button className="btn btn-ghost btn-sm">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												className="h-4 w-4"
+												stroke="currentColor"
+												strokeWidth="2"
+											>
+												<path strokeLinecap="round" strokeLinejoin="round" d="M19 13H5v-2h14v2Z" />
+											</svg>
+										</button>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>

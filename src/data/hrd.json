@@ -66,14 +66,14 @@
 	{
 		"submenu": false,
 		"title": "Rekap Penilaian",
-		"icon": "<AiOutlineTeam />",
-		"url": "/hrd/rekap-penilaian",
+		"icon": "<GoPeople />",
+		"url": "/hrd/penilaian",
 		"subtitle": []
 	},
 	{
 		"submenu": false,
 		"title": "Pelatihan",
-		"icon": "<AiOutlineCalendar />",
+		"icon": "<MdOutlineDateRange />",
 		"url": "/hrd/pelatihan",
 		"subtitle": []
 	},
@@ -98,11 +98,10 @@
 			}
 		]
 	},
-
 	{
 		"submenu": false,
 		"title": "Customer Care",
-		"icon": "<AiOutlineIdcard />",
+		"icon": "<IoChatbubbleEllipsesOutline />",
 		"url": "/hrd/customer-care",
 		"subtitle": []
 	}

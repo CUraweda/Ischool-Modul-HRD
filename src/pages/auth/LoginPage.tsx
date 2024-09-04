@@ -4,10 +4,10 @@ import { useAppDispatch } from '@/hooks';
 import { loginUser } from '@/middlewares/api';
 import { setSession, setUser } from '@/stores/user';
 import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { setSessionStorageItem } from '@/utils/storageUtils'; // Import utility function
+import { setSessionStorageItem } from '@/utils/storageUtils';
 
 const loginSchema = Yup.object().shape({
 	email: Yup.string().email('Email tidak valid').required('Email harus diisi'),
@@ -16,6 +16,7 @@ const loginSchema = Yup.object().shape({
 
 const LoginPage: React.FC = () => {
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 
 	const loginForm = useFormik({
 		initialValues: {
@@ -27,7 +28,9 @@ const LoginPage: React.FC = () => {
 		onSubmit: async (values, { setSubmitting }) => {
 			setSubmitting(true);
 			try {
+				console.log('Attempting login with:', values);
 				const res = await loginUser(values.email, values.password);
+				console.log('Login response:', res);
 				if (res.status === 200 && res.data.data) {
 					const userData = res.data.data;
 					const accessToken = res.data.tokens.access.token;
@@ -41,14 +44,23 @@ const LoginPage: React.FC = () => {
 						})
 					);
 
-					// Store access_token and role_id in sessionStorage
 					setSessionStorageItem('access_token', accessToken);
 					setSessionStorageItem('role_id', userData.role_id);
 					setSessionStorageItem('id', userData.id);
 
 					toast.success('Login berhasil!');
+
+					const role_id = sessionStorage.getItem('role_id');
+					console.log('Navigating based on role_id:', role_id);
+
+					if (role_id === '5') {
+						navigate('/hrd/dashboard');
+					} else {
+						navigate('/public/form');
+					}
 				}
 			} catch (error) {
+				console.error('Login error:', error);
 				toast.warn('Email atau password salah');
 			} finally {
 				setSubmitting(false);
