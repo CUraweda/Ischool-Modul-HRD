@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Karyawan } from '@/middlewares/api';
-import Modal, { openModal, closeModal } from '@/components/ModalProps';
+// import Modal, { openModal, closeModal } from '@/components/ModalProps';
 
 const DaftarPenilaianPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);

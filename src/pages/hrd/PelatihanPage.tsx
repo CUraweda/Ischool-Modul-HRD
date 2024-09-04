@@ -19,7 +19,7 @@ const PelatihanPage: React.FC<{}> = () => {
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
-	const [search_query, setSearch_query] = useState<string>('');
+	const [search_query] = useState<string>('');
 	const [ListDivision, setListDivision] = useState<any[]>([]);
 	const [forCreate, setForCreate] = useState<boolean>(false);
 	const [limit, setLimit] = useState<number>(10);
@@ -158,7 +158,7 @@ const PelatihanPage: React.FC<{}> = () => {
 		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Data Pelatihan');
 		XLSX.writeFile(workbook, 'Data_Pelatihan.xlsx');
 	};
-	const handleSubmit = (values: any) => {};
+	const handleSubmit = () => {};
 	const showModalHandle = (type: any) => {
 		setShowModal((showModal) => !showModal);
 		setForCreate(type === 'add' ? true : false);
@@ -175,96 +175,96 @@ const PelatihanPage: React.FC<{}> = () => {
 	};
 	return (
 		<div className="h-screen w-full p-2">
-						{showModal && (
-							<dialog className="modal modal-open" onClick={() => setShowModal(false)}>
-								<div className="modal-box" onClick={(e) => e.stopPropagation()}>
-									<button
-										className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-										onClick={() => setShowModal(false)}
-									>
-										✕
-									</button>
-									<h3 className="text-lg font-bold">{forCreate ? 'Buat Pengajuan' : 'Ubah Status'}</h3>
-									<Formik
-										initialValues={
-											forCreate
-												? {
-														trainingName: '',
-														trainingDate: '',
-														trainingLocation: '',
-														trainingDuration: '',
-														trainingPurpose: '',
-														participantName: '',
-													}
-												: {
-														description: '',
-													}
+			{showModal && (
+				<dialog className="modal modal-open" onClick={() => setShowModal(false)}>
+					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
+						<button
+							className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+							onClick={() => setShowModal(false)}
+						>
+							✕
+						</button>
+						<h3 className="text-lg font-bold">{forCreate ? 'Buat Pengajuan' : 'Ubah Status'}</h3>
+						<Formik
+							initialValues={
+								forCreate
+									? {
+											trainingName: '',
+											trainingDate: '',
+											trainingLocation: '',
+											trainingDuration: '',
+											trainingPurpose: '',
+											participantName: '',
 										}
-										onSubmit={handleSubmit}
-									>
-										{({ handleSubmit }) => (
-											<form onSubmit={handleSubmit}>
-												{forCreate ? (
-													<>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Nama Pelatihan</span>
-															</label>
-															<Field name="trainingName" className="input input-bordered w-full" />
-														</div>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Tanggal Pelatihan</span>
-															</label>
-															<Field type="date" name="trainingDate" className="input input-bordered w-full" />
-														</div>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Tempat Pelatihan</span>
-															</label>
-															<Field name="trainingLocation" className="input input-bordered w-full" />
-														</div>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Durasi Pelatihan</span>
-															</label>
-															<Field name="trainingDuration" className="input input-bordered w-full" />
-														</div>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Tujuan Pelatihan</span>
-															</label>
-															<Field name="trainingPurpose" className="input input-bordered w-full" />
-														</div>
-														<div className="my-2 w-full">
-															<label className="label">
-																<span className="label-text">Nama Peserta</span>
-															</label>
-															<Field name="participantName" className="input input-bordered w-full" />
-														</div>
-													</>
-												) : (
-													<div className="my-2 w-full">
-														<label className="label">
-															<span className="label-text">Deskripsi</span>
-														</label>
-														<Field as="textarea" name="description" className="textarea textarea-bordered w-full" />
-													</div>
-												)}
-												<div className="modal-action">
-													<button className="btn btn-primary" type="submit">
-														Submit
-													</button>
-													<button type="button" className="btn" onClick={() => setShowModal(false)}>
-														Cancel
-													</button>
-												</div>
-											</form>
-										)}
-									</Formik>
-								</div>
-							</dialog>
-						)}
+									: {
+											description: '',
+										}
+							}
+							onSubmit={handleSubmit}
+						>
+							{({ handleSubmit }) => (
+								<form onSubmit={handleSubmit}>
+									{forCreate ? (
+										<>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Nama Pelatihan</span>
+												</label>
+												<Field name="trainingName" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Tanggal Pelatihan</span>
+												</label>
+												<Field type="date" name="trainingDate" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Tempat Pelatihan</span>
+												</label>
+												<Field name="trainingLocation" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Durasi Pelatihan</span>
+												</label>
+												<Field name="trainingDuration" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Tujuan Pelatihan</span>
+												</label>
+												<Field name="trainingPurpose" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Nama Peserta</span>
+												</label>
+												<Field name="participantName" className="input input-bordered w-full" />
+											</div>
+										</>
+									) : (
+										<div className="my-2 w-full">
+											<label className="label">
+												<span className="label-text">Deskripsi</span>
+											</label>
+											<Field as="textarea" name="description" className="textarea textarea-bordered w-full" />
+										</div>
+									)}
+									<div className="modal-action">
+										<button className="btn btn-primary" type="submit">
+											Submit
+										</button>
+										<button type="button" className="btn" onClick={() => setShowModal(false)}>
+											Cancel
+										</button>
+									</div>
+								</form>
+							)}
+						</Formik>
+					</div>
+				</dialog>
+			)}
 
 			<div className="w-full flex-wrap md:flex">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">

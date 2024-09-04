@@ -18,7 +18,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
-	const [search_query, setSearch_query] = useState<string>('');
+	const [search_query] = useState<string>('');
 	const [ListDivision, setListDivision] = useState<any[]>([]);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Training } from '@/middlewares/api/hrd';
+// import { Training } from '@/middlewares/api/hrd';
 interface EmployeeData {
 	id: number;
 	name: string;
@@ -20,23 +20,23 @@ const PelatihanPage: React.FC = () => {
 	const Navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);
-	const [DataTraining, setDataTraining] = useState<any[]>([]);
-	const [filter, setFilter] = useState({
-		search: '',
-		employee_id: '',
-		status: '',
-		page: 0,
-		limit: 10,
-	});
-	const getDataTraining = async () => {
-		try {
-			const response = await Training.getAllTraining(filter.page, filter.limit, filter.status, filter.employee_id);
-			setDataTraining(response.data.data.result);
-			console.log(response.data.data.result);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+	// const [DataTraining, setDataTraining] = useState<any[]>([]);
+	// const [filter] = useState({
+	// 	search: '',
+	// 	employee_id: '',
+	// 	status: '',
+	// 	page: 0,
+	// 	limit: 10,
+	// });
+	// const getDataTraining = async () => {
+	// 	try {
+	// 		const response = await Training.getAllTraining(filter.page, filter.limit, filter.status, filter.employee_id);
+	// 		setDataTraining(response.data.data.result);
+	// 		console.log(response.data.data.result);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// };
 	const employees: EmployeeData[] = [
 		{
 			id: 1,
@@ -65,7 +65,7 @@ const PelatihanPage: React.FC = () => {
 		Navigate('/hrd/rekap-penilaian/detail', { state: { employee } });
 	};
 	useEffect(() => {
-		getDataTraining();
+		// getDataTraining();
 	}, []);
 	return (
 		<div className="w-full p-2">
