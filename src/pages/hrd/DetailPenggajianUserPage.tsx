@@ -1,9 +1,28 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-
+import { useLocation } from 'react-router-dom';
+import { Penggajian } from '@/middlewares/api/hrd';
+import { useEffect, useState } from 'react';
+import { getSessionStorageItem } from '@/utils/storageUtils';
 ChartJS.register(ArcElement, Tooltip, Legend);
-
 const DetailPenggajianUserPage = () => {
+	const location = useLocation();
+	const token = getSessionStorageItem('access_token');
+	const { id } = location.state;
+	const [userDetail, setUserDetail] = useState<any>(null);
+	const getDetail = async () => {
+		try {
+			const res = await Penggajian.getDetailAccount(id, token);
+			setUserDetail(res.data.data);
+			console.log(userDetail);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		getDetail();
+	}, []);
 	const data = {
 		labels: ['Total Gaji Pertahun', 'Total Gaji Bulan Desember'],
 		datasets: [

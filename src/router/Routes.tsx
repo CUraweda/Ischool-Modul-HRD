@@ -82,8 +82,8 @@ const AppRoutes: React.FC = () => {
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />
 					<Route path="data-karyawan/1" element={<DetailProfilKaryawanPage />} />
 					<Route path="penggajian" element={<PenggajianPage />} />
-					<Route path="penggajian/1" element={<DetailPenggajianPage />} />
-					<Route path="penggajian/1/1" element={<DetailPenggajianUser />} />
+					<Route path="rekap-penggajian" element={<DetailPenggajianPage />} />
+					<Route path="rekap-penggajian/:id" element={<DetailPenggajianUser />} />
 					<Route path="customer-care" element={<CustomerCarePage />} />
 				</Route>
 				<Route

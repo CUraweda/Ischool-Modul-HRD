@@ -140,8 +140,34 @@ const Attendance = {
 		}),
 };
 const Training = {
-	getAllTraining: (page: number, limit: number, status: string, employee_id: any | null): AxiosPromise<any> =>
-		instance.get(`training?page=${page}&limit=${limit}&status=${status}&employee_id=${employee_id}`, {
+	getAllTraining: (
+		page: number,
+		limit: number,
+		status: any,
+		type: string[],
+		search_query: string,
+		employee_id: any | null
+	): AxiosPromise<any> => {
+		const typeParam = type.length ? type.join(',') : '';
+
+		return instance.get(
+			`training?page=${page}&limit=${limit}&status=${status}&employee_id=${employee_id}&search_query=${search_query}&type=${typeParam}`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+	},
+	requestTraining: (data: any): AxiosPromise<any> =>
+		instance.post('training/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	updateTraining: (id: number, data: any): AxiosPromise<any> =>
+		instance.put(`training/update/${id}`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -186,6 +212,31 @@ const Employee = {
 			params: {
 				limit: limit,
 				search_query: search_query,
+			},
+		}),
+};
+const EmployeeJobdesk = {
+	getAllJobdesk: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
+		instance.get('employee-jobdesk', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+			},
+		}),
+	getDifference: (id: number): AxiosPromise<any> =>
+		instance.get(`employee-jobdesk/difference-day/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+		createJobdesk: (data: any): AxiosPromise<any> =>
+		instance.post('employee-jobdesk/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
 			},
 		}),
 };
@@ -256,4 +307,49 @@ const CustomerCare = {
 			}
 		),
 };
-export { Training, Rekrutmen, Karyawan, Form, Attendance, WorkTime, EmployeeDivision, CustomerCare, Employee };
+
+const Penggajian = {
+	getAllAccount: (token: string, month: string): AxiosPromise<any> =>
+		instance.get(`/employee-account?page=0&limit=20&this_month=${month}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getMonthAccount: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/total-month', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getYearAccount: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/recap-year', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getOneAccount: (id: number, token: string): AxiosPromise<any> =>
+		instance.get(`/employee-account/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getDetailAccount: (id: number, token: string): AxiosPromise<any> =>
+		instance.get(`/employee-account/detail/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+export {
+	Training,
+	Rekrutmen,
+	Karyawan,
+	Form,
+	Attendance,
+	WorkTime,
+	EmployeeDivision,
+	CustomerCare,
+	Employee,
+	EmployeeJobdesk,
+	Penggajian,
+};

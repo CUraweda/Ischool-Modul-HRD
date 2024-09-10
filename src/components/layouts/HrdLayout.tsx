@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navbar } from '@/components/organisms';
-import { getSessionStorageItem } from '@/utils/storageUtils';
 import Sidebar from '@/components/Sidebar';
 import { Outlet } from 'react-router-dom';
 // interface Props {
@@ -8,8 +7,6 @@ import { Outlet } from 'react-router-dom';
 // }
 const HrdLayout: React.FC<{}> = () => {
 	// const drawerId = 'hrd-drawer';
-	const token = getSessionStorageItem('access_token');
-	console.log('Access Token:', token);
 	return (
 		<>
 			<div className="flex h-screen w-full flex-col overflow-hidden" data-theme="light">
