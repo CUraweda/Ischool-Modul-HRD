@@ -200,6 +200,17 @@ const Attendance = {
 			},
 		});
 	},
+
+	getAllEmployeeMonth: (search: string): AxiosPromise<any> => {
+		return instance.get(`employee-attendance/recap-month-employee`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				search_query: search,
+			},
+		});
+	},
 	getAllDivision: (): AxiosPromise<any> => {
 		return instance.get(`division`, {
 			headers: {
