@@ -83,12 +83,10 @@ const AppRoutes: React.FC = () => {
 					<Route path="employee/:id" element={<DetailProbationPage />} />
 					<Route path="employee/:id/:id2" element={<DetailCardProbationPage />} />
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />
-<<<<<<< HEAD
 					<Route path="data-karyawan/1" element={<DetailProfilKaryawanPage />} />
 					<Route path="penggajian" element={<PenggajianPage />} />
 					<Route path="rekap-penggajian" element={<DetailPenggajianPage />} />
-					<Route path="rekap-penggajian/:id" element={<DetailPenggajianUser />} />
-=======
+					<Route path="rekap-penggajian/:id" element={<DetailPenggajianUserPage />} />
 					<Route path="data-karyawan/:id" element={<DetailProfilKaryawanPage />} />
 					<Route path="daftar-asessor" element={<DaftarAsessorPage />} />
 					<Route path="daftar-penilaian" element={<DaftarPenilaianPage />} />
@@ -96,7 +94,6 @@ const AppRoutes: React.FC = () => {
 					<Route path="rekap-gaji" element={<DetailPenggajianPage />} />
 					<Route path="rekap-gaji/1" element={<DetailPenggajianUserPage />} />
 					<Route path="atur-gaji" element={<AturGajiPage />} />
->>>>>>> cd9783cb3dd295cfd040f6f044de43da7dd8a538
 					<Route path="customer-care" element={<CustomerCarePage />} />
 				</Route>
 				<Route
