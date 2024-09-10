@@ -11,7 +11,7 @@ const HrdLayout: React.FC<{}> = () => {
 		<>
 			<div className="flex h-screen w-full flex-col overflow-hidden" data-theme="light">
 				<div className="flex flex-grow">
-					<div className="z-50 p-2 xl:w-fit">
+					<div className="z-50 xl:w-fit">
 						<Sidebar />
 					</div>
 					<div className="h-screen w-full" style={{ backgroundColor: '#BFDCFE' }}>
