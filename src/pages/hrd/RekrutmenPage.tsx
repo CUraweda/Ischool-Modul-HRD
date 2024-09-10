@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Modal, { openModal } from '../../components/ModalProps';
+import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
 
@@ -30,7 +30,7 @@ const RekrutmenPage = () => {
 	};
 	const [titleRekrutmen, setTitleRekrutmen] = useState('');
 	const [role, setRole] = useState('');
-	const [division, setDivision] = useState<number>();
+	const [division, setDivision] = useState<number>(0);
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
 	const [maxApplicant, setMaxApplicant] = useState<number>();
@@ -76,6 +76,17 @@ const RekrutmenPage = () => {
 		};
 		try {
 			await Rekrutmen.AddRekrutmen(data);
+			fetchData();
+			closeModal('addRekrutmen');
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const CloseRekrutmen = async (id: any) => {
+		try {
+			await Rekrutmen.CloseRekrutment(id);
+			fetchData();
 		} catch (error) {
 			console.error(error);
 		}
@@ -120,7 +131,7 @@ const RekrutmenPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="items-cente mt-6 flex justify-between">
+			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -150,7 +161,7 @@ const RekrutmenPage = () => {
 			{dataRekrutmen.map((item, index) => (
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
-						<div className="flex items-center justify-between">
+						<div className="flex flex-wrap items-center justify-between gap-2">
 							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
@@ -183,7 +194,7 @@ const RekrutmenPage = () => {
 								</div>
 							</div>
 
-							<div>
+							{/* <div>
 								<div className="text-xs">Pendaftar</div>
 								<div>
 									<div className="avatar-group -space-x-3 rtl:space-x-reverse">
@@ -209,7 +220,7 @@ const RekrutmenPage = () => {
 										</div>
 									</div>
 								</div>
-							</div>
+							</div> */}
 
 							<div className="flex items-center gap-2">
 								<div
@@ -285,7 +296,9 @@ const RekrutmenPage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold">Tutup Penerimaan</span>
+											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+												Tutup Penerimaan
+											</span>
 										</div>
 									</li>
 								</ul>
@@ -330,7 +343,7 @@ const RekrutmenPage = () => {
 								value={division}
 								onChange={(e) => setDivision(parseInt(e.target.value))}
 							>
-								<option value="" disabled>
+								<option value="0" disabled>
 									-Pilih-
 								</option>
 								{dropdownDivision.map((item, index) => (

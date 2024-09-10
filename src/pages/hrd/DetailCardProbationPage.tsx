@@ -30,7 +30,7 @@ const DetailCardProbationPage = () => {
 	};
 
 	return (
-		<div className="min-h-screen bg-blue-50 p-8">
+		<div className="min-h-screen">
 			<div className="container mx-auto grid grid-cols-1 gap-6 md:grid-cols-2">
 				{/* Top Section: Two Cards */}
 				<div className="rounded-lg bg-white p-6 shadow-lg">

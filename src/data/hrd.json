@@ -13,12 +13,12 @@
 		"url": "",
 		"subtitle": [
 			{
-				"name": "Rekrutmen",
+				"name": "Data Rekrutmen",
 				"url": "/hrd/rekrutmen"
 			},
 			{
-				"name": "Probation",
-				"url": "/hrd/probation"
+				"name": "Data Probation",
+				"url": "/hrd/employee"
 			}
 		]
 	},
@@ -50,19 +50,15 @@
 		"url": "",
 		"subtitle": [
 			{
-				"name": "Daftar Assesor",
-				"url": "/hrd/daftar-assesor"
+				"name": "Daftar Asessor",
+				"url": "/hrd/daftar-asessor"
 			},
 			{
-				"name": "Jenis Pembayaran",
+				"name": "Daftar Penilaian",
 				"url": "/hrd/daftar-penilaian"
 			},
 			{
-				"name": "Daftar Karyawan",
-				"url": "/hrd/daftar-karyawan"
-			},
-			{
-				"name": "Data Karayawan",
+				"name": "Data Karyawan",
 				"url": "/hrd/data-karyawan"
 			}
 		]
@@ -89,15 +85,20 @@
 		"subtitle": [
 			{
 				"name": "Dashboard",
-				"url": "/hrd/penggajian"
+				"url": "/hrd/dashboard-penggajian"
 			},
 			{
 				"name": "Rekap Gaji",
+<<<<<<< HEAD
 				"url": "/hrd/rekap-penggajian"
+=======
+				"url": "/hrd/rekap-gaji"
+>>>>>>> cd9783cb3dd295cfd040f6f044de43da7dd8a538
 			},
+
 			{
 				"name": "Atur Gaji",
-				"url": ""
+				"url": "/hrd/atur-gaji"
 			}
 		]
 	},

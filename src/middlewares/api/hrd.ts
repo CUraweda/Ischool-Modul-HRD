@@ -1,14 +1,66 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
-const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
-const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
+const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
+const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
+
+const Dashboard = {
+	DataKaryawan: (): AxiosPromise<any> =>
+		instance({
+			method: 'GET',
+			url: `employee?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataPengumuman: (): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-announcement`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataChart: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-attendance/recap-week`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataApplicant: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `applicant-form/rekap-dashboard`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataTraining: (): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `training/recap-dashboard`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	PostPengumuman: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-announcement/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 
 const Rekrutmen = {
 	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}`,
+			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -18,6 +70,15 @@ const Rekrutmen = {
 		instance({
 			method: `GET`,
 			url: `applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	CloseRekrutment: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `job-vacancy/close/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -41,6 +102,35 @@ const Rekrutmen = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	LulusRekrutmen: (data: any, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	GagalRekrutmen: (data: any, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+
+const Probation = {
+	DetailProbation: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 
 const Karyawan = {
@@ -48,6 +138,31 @@ const Karyawan = {
 		instance({
 			method: 'GET',
 			url: `employee?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	TambahKaryawan: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	ProfilKaryawan: (id: string | undefined): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee/show/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DaftarPenilaian: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-jobdesk?page=${page}&limit=${limit}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -233,7 +348,7 @@ const EmployeeJobdesk = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-		createJobdesk: (data: any): AxiosPromise<any> =>
+	createJobdesk: (data: any): AxiosPromise<any> =>
 		instance.post('employee-jobdesk/create', data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -341,8 +456,10 @@ const Penggajian = {
 		}),
 };
 export {
-	Training,
+	Dashboard,
 	Rekrutmen,
+	Probation,
+	Training,
 	Karyawan,
 	Form,
 	Attendance,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Training, Employee } from '@/middlewares/api/hrd';
+import { Training } from '@/middlewares/api/hrd';
+// import { Training, Employee } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import Swal from 'sweetalert2';
 import { TbFaceId } from 'react-icons/tb';
@@ -8,20 +9,18 @@ import { RiArrowDropDownLine } from 'react-icons/ri';
 import { FaFileExport } from 'react-icons/fa6';
 import { Formik, Field } from 'formik';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { getSessionStorageItem } from '@/utils/storageUtils';
 const PelatihanPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
 	const [filterStatus, setFilterStatus] = useState<any>('');
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [searchQuery, setSearchQuery] = useState<string>('');
-	const idUser = getSessionStorageItem('id');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
 	// const [search_query, setSearch_query] = useState<string>('');
 	// const [filterDivision, setFilterDivision] = useState<any>('');
-	const [ListEmployee, setEmployeeList] = useState<any[]>([]);
+	// const [ListEmployee, setEmployeeList] = useState<any[]>([]);
 	const [forCreate, setForCreate] = useState<boolean>(false);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
@@ -71,22 +70,22 @@ const PelatihanPage: React.FC<{}> = () => {
 			console.error(err);
 		}
 	};
-	const fetchAllEmployee = async () => {
-		try {
-			const response = await Employee.getAllEmployee(100000000, '');
-			const { result } = response.data.data || {};
-			setEmployeeList(result);
-			if (response.data.code !== 200) {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Something went wrong!',
-				});
-			}
-		} catch (err) {
-			console.error(err);
-		}
-	};
+	// const fetchAllEmployee = async () => {
+	// 	try {
+	// 		const response = await Employee.getAllEmployee(100000000, '');
+	// 		const { result } = response.data.data || {};
+	// 		setEmployeeList(result);
+	// 		if (response.data.code !== 200) {
+	// 			Swal.fire({
+	// 				icon: 'error',
+	// 				title: 'Oops...',
+	// 				text: 'Something went wrong!',
+	// 			});
+	// 		}
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 	}
+	// };
 	const handlePageChange = (newPage: number) => {
 		setCurrentPage(newPage);
 	};
@@ -179,7 +178,7 @@ const PelatihanPage: React.FC<{}> = () => {
 		}
 	};
 	const showModalHandle = (type: any, item: any) => {
-		fetchAllEmployee();
+		// fetchAllEmployee();
 		setSelectedUpdate(item);
 		setShowModal((showModal) => !showModal);
 		setForCreate(type === 'add' ? true : false);
@@ -203,18 +202,15 @@ const PelatihanPage: React.FC<{}> = () => {
 							initialValues={
 								forCreate
 									? {
-											title: '',
-											location: '',
-											start_date: '',
-											end_date: '',
-											purpose: '',
-											employee_id: '',
-											is_active: true,
-											proposer_id: idUser,
-											status: '',
+											trainingName: '',
+											trainingDate: '',
+											trainingLocation: '',
+											trainingDuration: '',
+											trainingPurpose: '',
+											participantName: '',
 										}
 									: {
-											status: selectedUpdate?.status || '',
+											description: '',
 										}
 							}
 							onSubmit={handleSubmit}
@@ -227,54 +223,37 @@ const PelatihanPage: React.FC<{}> = () => {
 												<label className="label">
 													<span className="label-text">Nama Pelatihan</span>
 												</label>
-												<Field name="title" className="input input-bordered w-full" />
+												<Field name="trainingName" className="input input-bordered w-full" />
+											</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Tanggal Pelatihan</span>
+												</label>
+												<Field type="date" name="trainingDate" className="input input-bordered w-full" />
 											</div>
 											<div className="my-2 w-full">
 												<label className="label">
 													<span className="label-text">Tempat Pelatihan</span>
 												</label>
-												<Field name="location" className="input input-bordered w-full" />
+												<Field name="trainingLocation" className="input input-bordered w-full" />
 											</div>
-											<div className="my-2 flex w-full gap-5">
-												<div className="w-full">
-													<label className="label">
-														<span className="label-text">Durasi Pelatihan</span>
-													</label>
-													<Field type="date" name="start_date" className="input input-bordered w-full" />
-												</div>
-												<div className="w-full">
-													<label className="label">
-														<span className="label-text">Durasi Pelatihan</span>
-													</label>
-													<Field type="date" name="end_date" className="input input-bordered w-full" />
-												</div>
+											<div className="my-2 w-full">
+												<label className="label">
+													<span className="label-text">Durasi Pelatihan</span>
+												</label>
+												<Field name="trainingDuration" className="input input-bordered w-full" />
 											</div>
 											<div className="my-2 w-full">
 												<label className="label">
 													<span className="label-text">Tujuan Pelatihan</span>
 												</label>
-												<Field name="purpose" className="input input-bordered w-full" />
+												<Field name="trainingPurpose" className="input input-bordered w-full" />
 											</div>
 											<div className="my-2 w-full">
 												<label className="label">
 													<span className="label-text">Nama Peserta</span>
 												</label>
-												<Field as="select" name="employee_id" className="select select-bordered w-full">
-													<option value="" disabled>
-														Pilih Peserta
-													</option>
-													{ListEmployee.map((employee) => (
-														<option key={employee.id} value={employee.id}>
-															{employee?.full_name}
-														</option>
-													))}
-												</Field>{' '}
-											</div>
-											<div className="my-2 w-full">
-												<label className="label">
-													<span className="label-text">Status</span>
-												</label>
-												<Field name="status" className="textarea textarea-bordered w-full" />
+												<Field name="participantName" className="input input-bordered w-full" />
 											</div>
 										</>
 									) : (
@@ -282,7 +261,7 @@ const PelatihanPage: React.FC<{}> = () => {
 											<label className="label">
 												<span className="label-text">Deskripsi</span>
 											</label>
-											<Field as="textarea" name="status" className="textarea textarea-bordered w-full" />
+											<Field as="textarea" name="description" className="textarea textarea-bordered w-full" />
 										</div>
 									)}
 									<div className="modal-action">

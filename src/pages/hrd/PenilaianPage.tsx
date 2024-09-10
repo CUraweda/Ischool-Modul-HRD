@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { EmployeeJobdesk } from '@/middlewares/api/hrd';
 
 const PelatihanPage: React.FC = () => {
@@ -30,6 +31,66 @@ const PelatihanPage: React.FC = () => {
 		} catch (error) {
 			console.error(error);
 		}
+=======
+// import { Training } from '@/middlewares/api/hrd';
+interface EmployeeData {
+	id: number;
+	name: string;
+	email: string;
+	position: string;
+	overallScore: number;
+	details: {
+		startDate: string;
+		division: string;
+		status: string;
+		email: string;
+		remainingInternshipTime: string;
+		image: string;
+	};
+}
+const PelatihanPage: React.FC = () => {
+	const Navigate = useNavigate();
+	const [searchQuery, setSearchQuery] = useState<string>('');
+	const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);
+	// const [DataTraining, setDataTraining] = useState<any[]>([]);
+	// const [filter] = useState({
+	// 	search: '',
+	// 	employee_id: '',
+	// 	status: '',
+	// 	page: 0,
+	// 	limit: 10,
+	// });
+	// const getDataTraining = async () => {
+	// 	try {
+	// 		const response = await Training.getAllTraining(filter.page, filter.limit, filter.status, filter.employee_id);
+	// 		setDataTraining(response.data.data.result);
+	// 		console.log(response.data.data.result);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// };
+	const employees: EmployeeData[] = [
+		{
+			id: 1,
+			name: 'Alya Putri Azzahra',
+			email: 'alyaputriazzahra52@gmail.com',
+			position: 'Keuangan',
+			overallScore: 90,
+			details: {
+				startDate: '23 Mei 2024',
+				division: 'Keuangan',
+				status: 'Pegawai tetap',
+				email: 'alyaputriazzahra52@gmail.com',
+				remainingInternshipTime: '1 Bulan 15 Hari',
+				image: 'https://i.pravatar.cc/100?img=3',
+			},
+		},
+	];
+	const handleCheckboxChange = (id: number) => {
+		setSelectedEmployees((prevSelected) =>
+			prevSelected.includes(id) ? prevSelected.filter((employeeId) => employeeId !== id) : [...prevSelected, id]
+		);
+>>>>>>> cd9783cb3dd295cfd040f6f044de43da7dd8a538
 	};
 
 	// const handleCheckboxChange = (id: number) => {
@@ -43,7 +104,11 @@ const PelatihanPage: React.FC = () => {
 		Navigate('/hrd/rekap-penilaian/detail', { state: { employee } });
 	};
 	useEffect(() => {
+<<<<<<< HEAD
 		getDataJobdesk();
+=======
+		// getDataTraining();
+>>>>>>> cd9783cb3dd295cfd040f6f044de43da7dd8a538
 	}, []);
 	return (
 		<div className="w-full p-2">

@@ -1,4 +1,3 @@
-import Modal, { openModal } from '../../components/ModalProps';
 import { useEffect, useState } from 'react';
 import { Rekrutmen } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
@@ -29,14 +28,19 @@ const Probationpage = () => {
 	const [search, setSearch] = useState('');
 	const navigate = useNavigate();
 
-	const handleDialog = () => {
-		openModal('addRekrutmen');
-	};
-
 	const fetchData = async () => {
 		try {
 			const response = await Rekrutmen.DataRekrutmen(0, 20, search);
 			setDataProbation(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const CloseRekrutmen = async (id: any) => {
+		try {
+			await Rekrutmen.CloseRekrutment(id);
+			fetchData();
 		} catch (error) {
 			console.error(error);
 		}
@@ -47,7 +51,7 @@ const Probationpage = () => {
 	}, [search]);
 
 	const handleCardClick = (id: number) => {
-		navigate(`/hrd/probation/${id}`);
+		navigate(`/hrd/employee/${id}`);
 	};
 
 	return (
@@ -73,7 +77,7 @@ const Probationpage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="items-cente mt-6 flex justify-between">
+			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -85,25 +89,11 @@ const Probationpage = () => {
 						Ditutup <span>25</span>
 					</button>
 				</div>
-
-				<div className="flex items-center gap-2">
-					<button className="btn btn-xs" onClick={handleDialog}>
-						<span>+</span> Tambah
-					</button>
-					<select className="select select-bordered select-xs w-full max-w-xs">
-						<option disabled selected>
-							Filter
-						</option>
-						<option>Tiny Apple</option>
-						<option>Tiny Orange</option>
-						<option>Tiny Tomato</option>
-					</select>
-				</div>
 			</div>
 			{dataProbation.map((item, index) => (
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
-						<div className="flex items-center justify-between">
+						<div className="flex flex-wrap items-center justify-between gap-2">
 							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
 								<h4 className="font-bold">{item.title}</h4>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
@@ -202,7 +192,9 @@ const Probationpage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold">Tutup Penerimaan</span>
+											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+												Tutup Penerimaan
+											</span>
 										</div>
 									</li>
 								</ul>
@@ -211,66 +203,6 @@ const Probationpage = () => {
 					</div>
 				</div>
 			))}
-
-			<Modal id="addRekrutmen">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
-					<form>
-						<div className="mb-4 grid grid-cols-2 gap-4">
-							<div>
-								<label className="mb-1 block text-sm font-medium">Role</label>
-								<select className="w-full rounded border border-gray-300 p-2" required>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									{/* Add role options here */}
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Divisi</label>
-								<select className="w-full rounded border border-gray-300 p-2" required>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									{/* Add division options here */}
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Periode Pendaftaran</label>
-								<input type="text" className="w-full rounded border border-gray-300 p-2" required />
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Pendaftar yang Dibutuhkan</label>
-								<input type="number" className="w-full rounded border border-gray-300 p-2" required />
-							</div>
-						</div>
-
-						<div>
-							<label className="mb-1 block text-sm font-medium">Jenjang Pendidikan</label>
-							<select className="w-full rounded border border-gray-300 p-2" required>
-								<option value="" disabled>
-									-Pilih-
-								</option>
-								{/* Add education level options here */}
-							</select>
-						</div>
-
-						<div className="mt-2">
-							<label className="mb-1 block text-sm font-medium">Note</label>
-							<textarea className="w-full rounded border border-gray-300 p-2" rows={4}></textarea>
-						</div>
-
-						<div className="flex justify-end">
-							<button type="submit" className="btn btn-primary">
-								Tambah
-							</button>
-						</div>
-					</form>
-				</div>
-			</Modal>
 		</div>
 	);
 };

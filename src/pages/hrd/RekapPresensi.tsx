@@ -121,7 +121,11 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllEmployee = async () => {
 		try {
+<<<<<<< HEAD
 			const response = await Employee.getAllEmployee(1000000000000, '');
+=======
+			const response = await Employee.getAllEmployee(0, '');
+>>>>>>> cd9783cb3dd295cfd040f6f044de43da7dd8a538
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
