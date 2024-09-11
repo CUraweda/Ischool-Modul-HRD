@@ -49,7 +49,7 @@ const SignUp: React.FC = () => {
 
 					toast.success('Registrasi berhasil!');
 
-					navigate('/login');
+					navigate('/');
 				}
 			} catch (error) {
 				toast.error('Registrasi gagal, silakan coba lagi.');
