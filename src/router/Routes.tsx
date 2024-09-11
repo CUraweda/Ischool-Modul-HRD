@@ -18,6 +18,7 @@ import PelatihanPage from '@/pages/hrd/PelatihanPage';
 import RekrutmenPage from '@/pages/hrd/RekrutmenPage';
 import DetailRekrutmenPage from '@/pages/hrd/DetailRekrutmenPage';
 import ProbationPage from '@/pages/hrd/ProbationPage';
+import DaftarInterviewPage from '@/pages/hrd/DaftarInterviewPage';
 import DetailProbationPage from '@/pages/hrd/DetailProbationPage';
 import DetailCardProbationPage from '@/pages/hrd/DetailCardProbationPage';
 import DataKaryawanPage from '@/pages/hrd/DataKaryawanPage';
@@ -80,6 +81,7 @@ const AppRoutes: React.FC = () => {
 					<Route path="rekrutmen" element={<RekrutmenPage />} />
 					<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
 					<Route path="employee" element={<ProbationPage />} />
+					<Route path="employee/interview/:id" element={<DaftarInterviewPage />} />
 					<Route path="employee/:id" element={<DetailProbationPage />} />
 					<Route path="employee/:id/:id2" element={<DetailCardProbationPage />} />
 					<Route path="data-karyawan" element={<DataKaryawanPage />} />

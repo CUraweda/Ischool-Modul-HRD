@@ -40,7 +40,7 @@ const DetailProfilKaryawanPage = () => {
 	};
 
 	const handleDialog = () => {
-		openModal('editProfilKaryawan');
+		openModal('fileAttachment');
 	};
 
 	const fetchData = async () => {
@@ -48,8 +48,6 @@ const DetailProfilKaryawanPage = () => {
 			const response = await Karyawan.ProfilKaryawan(id);
 			const data = response.data.data;
 			setFetch(data);
-
-			// Fill formData with fetched data
 			setFormData({
 				namaLengkap: data.full_name || '',
 				email: data.email || '',
@@ -62,7 +60,7 @@ const DetailProfilKaryawanPage = () => {
 				statusPernikahan: data.marital_status || '',
 				jenjangPendidikan: data.last_education || '',
 				bidang: data.major || '',
-				jumlahAnak: '', // Assuming there's no field for children in the API
+				jumlahAnak: '',
 				posisi: data.occupation || '',
 				status: data.employee_status || '',
 				jabatan: data.duty || '',
@@ -94,79 +92,112 @@ const DetailProfilKaryawanPage = () => {
 				<div className="border-b border-t">
 					<div className="grid grid-cols-2 gap-4 border-b">
 						<div className="border-r p-4">
-							<h2 className="mb-2 text-lg font-semibold">Informasi Pribadi</h2>
-							<p>
-								<strong>NIK:</strong> {fetch?.nik || 'Tidak tersedia'}
-							</p>
-							<p>
-								<strong>Jenis Kelamin:</strong> {fetch?.gender === 'L' ? 'Laki-Laki' : 'Perempuan'}
-							</p>
-							<p>
-								<strong>Agama:</strong> {fetch?.religion}
-							</p>
-							<p>
-								<strong>Tanggal Lahir:</strong>{' '}
-								{fetch?.dob ? `${fetch.pob}, ${new Date(fetch.dob).toLocaleDateString('id-ID')}` : 'Tidak tersedia'}
-							</p>
-							<p>
-								<strong>Umur:</strong> {formData.umur}
-							</p>
-							<p>
-								<strong>Status Pernikahan:</strong> {fetch?.marital_status}
-							</p>
+							<div className="flex items-center gap-3">
+								<h2 className="text-md font-bold">Informasi Pribadi</h2>
+								<div className="text-sm font-bold text-gray-500">NIK - {fetch?.nik || 'Tidak tersedia'}</div>
+							</div>
+							<div className="mt-2 flex flex-wrap justify-between">
+								<div className="flex flex-col gap-1">
+									<div className="flex flex-col gap-[0.3rem]">
+										<div className="text-sm font-bold text-gray-500">Jenis Kelamin</div>
+										<div className="text-sm font-bold">{fetch?.gender === 'L' ? 'Laki-Laki' : 'Perempuan'}</div>
+									</div>
+									<div className="flex flex-col gap-[0.3rem]">
+										<div className="text-sm font-bold text-gray-500">Agama</div>
+										<div className="text-sm font-bold">{fetch?.religion}</div>
+									</div>
+									<div className="flex flex-col gap-[0.3rem]">
+										<div className="text-sm font-bold text-gray-500">Tanggal Lahir</div>
+										<div className="text-sm font-bold">
+											{fetch?.dob
+												? `${fetch.pob}, ${new Date(fetch.dob).toLocaleDateString('id-ID')}`
+												: 'Tidak tersedia'}
+										</div>
+									</div>
+								</div>
+
+								<div className="flex flex-col gap-1">
+									<div className="flex flex-col gap-[0.3rem]">
+										<div className="text-sm font-bold text-gray-500">Umur</div>{' '}
+										<div className="text-sm font-bold">{formData.umur}</div>
+									</div>
+									<div className="flex flex-col gap-[0.3rem]">
+										<div className="text-sm font-bold text-gray-500">Status Pernikahan</div>
+										<div className="text-sm font-bold">{fetch?.marital_status}</div>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div className="p-4">
-							<h2 className="mb-2 text-lg font-semibold">Informasi Lainnya</h2>
-							<p>
-								<strong>Pendidikan:</strong> {fetch?.last_education} - {fetch?.major}
-							</p>
-							<p>
-								<strong>Kelengkapan Berkas:</strong>
-							</p>
+							<h2 className="text-md font-bold">Informasi Lainnya</h2>
+							<div className="mt-2 flex flex-col gap-1">
+								<div className="flex flex-col gap-[0.3rem]">
+									<div className="text-sm font-bold text-gray-500">Pendidikan</div>
+									<div className="text-sm font-bold">
+										{fetch?.last_education} - {fetch?.major}
+									</div>
+								</div>
+								<div className="flex flex-col gap-[0.3rem]">
+									<div className="text-sm font-bold text-gray-500">Kelengkapan Berkas</div>
+									<a className="link text-sm font-bold text-blue-600" onClick={handleDialog}>
+										Lihat Berkas
+									</a>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div className="grid grid-cols-4 gap-4">
 						<div className="border-r p-4">
-							<p>
-								<strong>Posisi:</strong> {fetch?.occupation}
-							</p>
+							<div>
+								<div className="text-sm font-bold text-gray-500">Posisi</div>
+								<div className="text-sm font-bold">{fetch?.occupation}</div>
+							</div>
 						</div>
 						<div className="border-r p-4">
-							<p>
-								<strong>Jabatan:</strong> {fetch?.duty}
-							</p>
+							<div>
+								<div className="text-sm font-bold text-gray-500">Jabatan</div>
+								{fetch?.formpositions.map((item: any) => <div>{item?.employeeposition?.name}</div>)}
+							</div>
 						</div>
 						<div className="border-r p-4">
-							<p>
-								<strong>Bidang:</strong> {fetch?.major}
-							</p>
+							<div>
+								<div className="text-sm font-bold text-gray-500">Bidang</div>
+							</div>
 						</div>
 						<div className="p-4">
-							<p>
-								<strong>Mulai Bekerja:</strong>{' '}
-								{fetch?.work_start_date
-									? new Date(fetch.work_start_date).toLocaleDateString('id-ID')
-									: 'Tidak tersedia'}
-							</p>
+							<div>
+								<div className="text-sm font-bold text-gray-500">Mulai Bekerja</div>
+								<div className="text-sm font-bold">
+									{fetch?.work_start_date
+										? new Date(fetch.work_start_date).toLocaleDateString('id-ID')
+										: 'Tidak tersedia'}
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div className="mt-6 flex justify-between">
-					<button className="btn btn-primary">{fetch?.is_teacher === 'G' ? 'Guru' : 'Staff'}</button>
-					<button className="btn btn-secondary">{fetch?.employee_status}</button>
+					<div className="flex items-center gap-2">
+						<button className="btn btn-primary w-full">{fetch?.is_teacher === 'G' ? 'Guru' : 'Staff'}</button>
+						<button className="btn btn-primary w-full">{fetch?.employee_status}</button>
+					</div>
 					<button
-						className="btn btn-accent"
+						className="btn btn-ghost text-primary"
 						onClick={() => {
 							dialogPelatihan();
 						}}
 					>
 						Lihat Detail Pelatihan
 					</button>
-					<button className="btn btn-secondary" onClick={handleDialog}>
+					{/* <button className="btn btn-secondary" onClick={handleDialog}>
 						Edit Profil
-					</button>
+					</button> */}
 				</div>
 			</div>
+
+			<Modal id="fileAttachment">
+				<div>test</div>
+			</Modal>
 
 			{/* <Modal id="editProfilKaryawan">
 				<form onSubmit={handleSubmit}>
@@ -345,25 +376,40 @@ const DetailProfilKaryawanPage = () => {
 								</p>
 								<div className="mt-4 flex items-center justify-between text-gray-500">
 									<div className="flex items-center space-x-2">
-										<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="size-6"
+										>
+											<path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M5.121 11.293a8.004 8.004 0 0110.962 0M4 14l2 2 4-4m2 6a9 9 0 100-18 9 9 0 000 18zm-3-9v.01"
+												d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
 											/>
 										</svg>
+
 										<span>{item.location}</span>
 									</div>
 									<div className="flex items-center space-x-2">
-										<svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="size-6"
+										>
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M8 7h4m-2-2v4m0 4v2a1 1 0 001 1h3m4 0h-2a1 1 0 01-1-1v-3m0 0H7a1 1 0 01-1-1V7a1 1 0 011-1h3m4 0h2a1 1 0 011 1v3m-4 0v4"
+												d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
 											/>
 										</svg>
+
 										<span>
 											{item.start_date.split('T')[0]} - {item.end_date.split('T')[0]}
 										</span>

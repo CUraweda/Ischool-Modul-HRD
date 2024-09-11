@@ -1,27 +1,61 @@
-import Modal from '../../components/ModalProps';
+import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Rekrutmen } from '@/middlewares/api';
+import { Probation, Rekrutmen } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
 
-const DetailProbationPage = () => {
+const DaftarInterviewPage = () => {
 	const [search, setSearch] = useState('');
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const [dataDetailProbation, setDataDetailProbation] = useState<any[]>([]);
+	const [fetch, setFetch] = useState<any[]>([]);
+	const [id2, setId2] = useState<number | null>();
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
 
 	const fetchData = async () => {
 		try {
 			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id);
-			setDataDetailProbation(response.data.data);
+			setFetch(response.data.data);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
-	const handleNavigation = (id2: number) => {
-		navigate(`/hrd/employee/${id}/${id2}`);
+	const AcceptedProbation = async () => {
+		const data = {
+			probation_start_date: startDate,
+			probation_end_date: endDate,
+		};
+		try {
+			await Probation.AcceptedProbation(data, id2);
+			closeModal('handleInterview');
+			fetchData();
+		} catch (error) {
+			console.error(error);
+		}
 	};
+
+	const RejectedProbation = async () => {
+		try {
+			await Probation.AcceptedProbation(null, id2);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleDialog = (type: string, id: any) => {
+		if (type == 'terima') {
+			openModal('handleInterview');
+			setId2(id);
+		} else {
+			RejectedProbation();
+		}
+	};
+
+	// const handleNavigation = (id2: number) => {
+	// 	navigate(`/hrd/employee/${id}/${id2}`);
+	// };
 
 	useEffect(() => {
 		if (id) {
@@ -30,7 +64,7 @@ const DetailProbationPage = () => {
 	}, [id, search]);
 
 	return (
-		<div>
+		<div className="min-h-screen">
 			<div className="mb-3 flex items-center justify-between">
 				<div>
 					<h3 className="font-bold">Probation</h3>
@@ -57,7 +91,7 @@ const DetailProbationPage = () => {
 
 			<div className="mt-6 flex justify-between">
 				<div className="flex items-center gap-2">
-					{/* <button className="btn btn-outline btn-info btn-xs">
+					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
@@ -65,9 +99,9 @@ const DetailProbationPage = () => {
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
 						Ditutup <span>25</span>
-					</button> */}
+					</button>
 				</div>
-				{/* <div className="flex items-center gap-2">
+				<div className="flex items-center gap-2">
 					<select className="select select-bordered select-xs w-full max-w-xs">
 						<option disabled selected>
 							Filter
@@ -76,34 +110,24 @@ const DetailProbationPage = () => {
 						<option>Tiny Orange</option>
 						<option>Tiny Tomato</option>
 					</select>
-				</div> */}
+				</div>
 			</div>
 
 			<div className="card mt-10 w-full bg-base-100 shadow-xl">
 				<div className="card-body">
-					<div className="overflow-x-auto">
+					<div>
 						<table className="table">
 							<thead>
 								<tr>
-									<th>
-										<label>
-											<input type="checkbox" className="checkbox" />
-										</label>
-									</th>
 									<th className="text-sm text-black">Nama</th>
 									<th className="text-sm text-black">Email</th>
 									<th className="text-sm text-black">Status</th>
-									<th className="text-sm text-black"></th>
+									<th className="text-sm text-black">Action</th>
 								</tr>
 							</thead>
 							<tbody>
-								{dataDetailProbation.map((item, index) => (
+								{fetch.map((item, index) => (
 									<tr key={index}>
-										<th>
-											<label>
-												<input type="checkbox" className="checkbox" />
-											</label>
-										</th>
 										<td>
 											<div className="flex items-center gap-3">
 												<div className="avatar">
@@ -122,12 +146,20 @@ const DetailProbationPage = () => {
 										<td>
 											<span className="badge badge-ghost badge-sm">{item.email}</span>
 										</td>
-										<td className="text-center">{item.status}</td>
-										<th>
-											<button className="btn btn-primary btn-sm" onClick={() => handleNavigation(item.id)}>
-												...
-											</button>
-										</th>
+										<td>{item.status}</td>
+										<td className="relative px-4 py-2">
+											<div className="dropdown dropdown-end">
+												<button className="btn btn-primary btn-sm">...</button>
+												<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+													<li>
+														<a onClick={() => handleDialog('terima', item.id)}>Terima</a>
+													</li>
+													<li>
+														<a onClick={() => handleDialog('terima', item.id)}>Tolak</a>
+													</li>
+												</ul>
+											</div>
+										</td>
 									</tr>
 								))}
 							</tbody>
@@ -135,8 +167,41 @@ const DetailProbationPage = () => {
 					</div>
 				</div>
 			</div>
+			<Modal id="handleInterview">
+				<div>
+					<div className="form-control mb-4">
+						<label htmlFor="judul" className="label">
+							<span className="label-text font-semibold">Tanggal Mulai</span>
+						</label>
+						<input
+							type="datetime-local"
+							id="tanggalJam"
+							className="input input-bordered w-full"
+							onChange={(e) => setStartDate(e.target.value)}
+						/>
+					</div>
+
+					<div className="form-control mb-4">
+						<label htmlFor="tanggalJam" className="label">
+							<span className="label-text font-semibold">Tanggal Berakhir</span>
+						</label>
+						<input
+							type="datetime-local"
+							id="tanggalJam"
+							className="input input-bordered w-full"
+							onChange={(e) => setEndDate(e.target.value)}
+						/>
+					</div>
+
+					<div className="flex items-center justify-end">
+						<button className="btn btn-primary text-white" onClick={AcceptedProbation}>
+							Kirim
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };
 
-export default DetailProbationPage;
+export default DaftarInterviewPage;

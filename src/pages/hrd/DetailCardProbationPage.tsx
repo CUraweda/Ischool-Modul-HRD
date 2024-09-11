@@ -1,22 +1,61 @@
 import image from '../../assets/images/blueAbstractPattern.png';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Probation } from '@/middlewares/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const DetailCardProbationPage = () => {
 	// const { id } = useParams<{ id: string }>();
-	// const { id2 } = useParams<{ id2: string }>();
+	const { id2 } = useParams<{ id2: string }>();
+	const [fetch, setFetch] = useState<any | null>([]);
 
-	// Data for the chart
+	const FetchData = async () => {
+		try {
+			const response = await Probation.DetailByUser(id2);
+			setFetch(response.data.data);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleProbation = (type: string, id: any) => {
+		if (type == 'finish') {
+			Finish(id);
+		} else {
+			Contract(id);
+		}
+	};
+
+	const Finish = async (id: any) => {
+		try {
+			await Probation.FinishProbation(null, id);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const Contract = async (id: any) => {
+		try {
+			await Probation.ContracthProbation(null, id);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		FetchData();
+	}, []);
+
 	const data = {
 		labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
 		datasets: [
 			{
 				label: 'Performance',
-				data: [80, 70, 75, 90, 60], // Performance data for each day
-				backgroundColor: 'rgba(54, 162, 235, 0.6)', // Bar color
+				data: [80, 70, 75, 90, 60],
+				backgroundColor: 'rgba(54, 162, 235, 0.6)',
 			},
 		],
 	};
@@ -31,15 +70,28 @@ const DetailCardProbationPage = () => {
 
 	return (
 		<div className="min-h-screen">
+			<div className="flex items-end justify-end">
+				<div className="dropdown dropdown-end">
+					<button className="btn btn-primary mb-4">Akhir Masa Percobaan</button>
+					<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+						<li>
+							<a onClick={() => handleProbation('finish', fetch.employee_id)}>Akhiri</a>
+						</li>
+						<li>
+							<a onClick={() => handleProbation('contractsss', fetch.employee_id)}>Kontrak</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 			<div className="container mx-auto grid grid-cols-1 gap-6 md:grid-cols-2">
 				{/* Top Section: Two Cards */}
 				<div className="rounded-lg bg-white p-6 shadow-lg">
 					{/* Profile Card */}
 					<div className="flex flex-col items-center">
 						<img src={image} alt="Profile" className="mb-4 h-36 w-36 rounded-lg object-cover" />
-						<h2 className="text-lg font-bold">Alya Putri Azzahra</h2>
-						<p className="text-sm text-gray-500">No. Telp: 094587346724</p>
-						<p className="text-sm text-gray-500">Email: alyaputriazzahra52@gmail.com</p>
+						<h2 className="text-lg font-bold">{fetch.full_name}</h2>
+						<p className="text-sm text-gray-500">No. Telp: {fetch.phone}</p>
+						<p className="text-sm text-gray-500">Email: {fetch.email}</p>
 					</div>
 				</div>
 

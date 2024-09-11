@@ -26,6 +26,7 @@ const DataKaryawanPage = () => {
 
 	// Additional states
 	const [search, setSearch] = useState('');
+	const [status, setStatus] = useState('');
 	const [dataKaryawan, setDataKaryawan] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
@@ -39,7 +40,7 @@ const DataKaryawanPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search);
+			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search, status);
 			setDataKaryawan(response.data.data.result);
 			setTotalPages(response.data.data.totalPages);
 			setPage(response.data.data.page);
@@ -48,10 +49,18 @@ const DataKaryawanPage = () => {
 		}
 	};
 
+	const DeleteKaryawan = async (id: any) => {
+		try {
+			await Karyawan.HapusKaryawan(id);
+			fetchData();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const handleCreateKaryawan = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		// Creating the data object from state variables
 		const data = {
 			full_name: fullName,
 			gender: gender,
@@ -76,7 +85,7 @@ const DataKaryawanPage = () => {
 		try {
 			await Karyawan.TambahKaryawan(data);
 			fetchData();
-			closeModal('addKaryawan'); // Close the modal after successful creation
+			closeModal('addKaryawan');
 		} catch (error) {
 			console.error(error);
 		}
@@ -84,7 +93,7 @@ const DataKaryawanPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, [search, currentPage]);
+	}, [search, currentPage, status]);
 
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
@@ -123,7 +132,7 @@ const DataKaryawanPage = () => {
 
 			<div className="mt-6 flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<button className="btn btn-outline btn-info btn-xs">
+					{/* <button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
@@ -131,20 +140,23 @@ const DataKaryawanPage = () => {
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
 						Ditutup <span>25</span>
-					</button>
+					</button> */}
 				</div>
 
 				<div className="flex items-center gap-2">
 					<button className="btn btn-xs" onClick={handleDialog}>
 						<span>+</span> Tambah
 					</button>
-					<select className="select select-bordered select-xs w-full max-w-xs">
-						<option disabled selected>
+					<select
+						className="select select-bordered select-xs w-full max-w-xs"
+						onChange={(e) => setStatus(e.target.value)}
+					>
+						<option value="" selected>
 							Filter
 						</option>
-						<option>Tiny Apple</option>
-						<option>Tiny Orange</option>
-						<option>Tiny Tomato</option>
+						<option>Part Time</option>
+						<option>Kontrak</option>
+						<option>Tetap</option>
 					</select>
 				</div>
 			</div>
@@ -168,15 +180,15 @@ const DataKaryawanPage = () => {
 									<td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + index + 1}</td>
 									<td className="px-4 py-2">{item.full_name}</td>
 									<td className="px-4 py-2">
-										<span className="rounded-md bg-[#DBEAFF] p-2 text-xs font-semibold text-gray-500">
+										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
 											{item.occupation}
-										</span>
+										</div>
 									</td>
 									<td className="px-4 py-2">{item.major ? item.major : '-'}</td>
 									<td className="px-4 py-2">{item.employee_status}</td>
 									<td className="relative px-4 py-2">
 										<div className="dropdown dropdown-end">
-											<label tabIndex={0} className="btn btn-ghost btn-xs">
+											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
 											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
@@ -184,7 +196,7 @@ const DataKaryawanPage = () => {
 													<a onClick={() => detailProfil(item.id)}>Edit Profil</a>
 												</li>
 												<li>
-													<a onClick={() => handleAction('Delete', item.id)}>Hapus Karyawan</a>
+													<a onClick={() => DeleteKaryawan(item.id)}>Hapus Karyawan</a>
 												</li>
 											</ul>
 										</div>
@@ -221,7 +233,7 @@ const DataKaryawanPage = () => {
 				<div>
 					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
 					<form onSubmit={handleCreateKaryawan}>
-						<div className="mb-4 gap-4">
+						<div className="mb-4 flex flex-col gap-2">
 							<div>
 								<label className="mb-1 block text-sm font-medium">Nama Lengkap</label>
 								<input

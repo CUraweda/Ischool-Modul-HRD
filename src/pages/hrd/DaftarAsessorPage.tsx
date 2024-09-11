@@ -1,7 +1,29 @@
+import Modal, { openModal } from '@/components/ModalProps';
+import { Karyawan } from '@/middlewares/api';
+import { useState, useEffect } from 'react';
+
 const DaftarAsessorPage = () => {
+	const [fetch, setFetch] = useState<any[]>([]);
+
+	const FetchData = async () => {
+		try {
+			const response = await Karyawan.DaftarAsessor(0, 20);
+			setFetch(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleDialog = () => {
+		openModal('addAsessor');
+	};
+
+	useEffect(() => {
+		FetchData();
+	}, []);
 	return (
-		<div className="p-4">
-			<div className="mb-3 flex items-center justify-between">
+		<div className="min-h-screen">
+			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Asessor</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input type="text" className="grow" placeholder="Cari" />
@@ -20,83 +42,59 @@ const DaftarAsessorPage = () => {
 				</label>
 			</div>
 
+			<div className="mb-4 flex items-end justify-end">
+				<button className="btn btn-xs" onClick={handleDialog}>
+					<span>+</span> Tambah
+				</button>
+			</div>
+
 			<div className="card bg-white p-4 shadow-md">
-				<div className="overflow-x-auto">
+				<div>
 					<table className="table table-zebra w-full">
 						<thead>
 							<tr>
-								<th>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</th>
 								<th>Nama</th>
 								<th>Posisi</th>
-								<th>Posisi</th>
+								<th>Bidang</th>
 								<th>Status</th>
 								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							{/* Example rows */}
-							<tr>
-								<td>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</td>
-								<td>Alya Putri Azzahra</td>
-								<td>Terapis Anak</td>
-								<td>Staff</td>
-								<td>Aktif</td>
-								<td className="flex gap-2">
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path strokeLinecap="round" strokeLinejoin="round" d="M19 13H5v-2h14v2Z" />
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-								</td>
-							</tr>
-							{/* Repeat above tr for each row */}
+							{fetch.map((item, index) => (
+								<tr key={index}>
+									<td>{item.full_name}</td>
+									<td className="px-4 py-2">
+										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
+											{item.occupation}
+										</div>
+									</td>{' '}
+									<td>{item.major}</td>
+									<td>{item.is_asessor == true ? 'Aktif' : 'Tidak Aktif'}</td>
+									<td className="flex gap-2">
+										<div className="dropdown dropdown-end">
+											<label tabIndex={0} className="btn btn-primary btn-sm">
+												...
+											</label>
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+												<li>
+													<a>Edit Data</a>
+												</li>
+												<li>
+													<a>Edit Nilai</a>
+												</li>
+											</ul>
+										</div>
+									</td>{' '}
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
 			</div>
+			<Modal id="addAsessor">
+				<div>test</div>
+			</Modal>
 		</div>
 	);
 };

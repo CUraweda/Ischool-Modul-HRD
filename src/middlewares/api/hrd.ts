@@ -1,7 +1,9 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
-import axios, { AxiosPromise } from 'axios';
-const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
-const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
+import axios, { Axios, AxiosPromise } from 'axios';
+// const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
+// const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
+const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
+const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
 
 const Dashboard = {
@@ -57,10 +59,10 @@ const Dashboard = {
 };
 
 const Rekrutmen = {
-	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DataRekrutmen: (page: any, limit: any, search: string, division: any): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1`,
+			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1&division_id=${division}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -111,7 +113,7 @@ const Rekrutmen = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	GagalRekrutmen: (data: any, id: number): AxiosPromise =>
+	GagalRekrutmen: (data: null, id: number): AxiosPromise =>
 		instance({
 			method: `POST`,
 			url: `applicant-form/first-evaluate/gagal/${id}`,
@@ -131,13 +133,57 @@ const Probation = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	DetailByUser: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `applicant-form/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	AcceptedProbation: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/second-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	RejectedProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/second-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	FinishProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee/finish-probation/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	ContracthProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee/contract/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 
 const Karyawan = {
-	DataKaryawan: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DataKaryawan: (page: any, limit: any, search: string, status: string): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
-			url: `employee?page=${page}&limit=${limit}&search=${search}`,
+			url: `employee?page=${page}&limit=${limit}&search=${search}&status=${status}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -151,10 +197,18 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	HapusKaryawan: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `employee/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	ProfilKaryawan: (id: string | undefined): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `employee/show/${id}`,
+			url: `employee/detail/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -163,6 +217,14 @@ const Karyawan = {
 		instance({
 			method: `GET`,
 			url: `employee-jobdesk?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DaftarAsessor: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-asessor?page=${page}&limit=${limit}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

@@ -48,13 +48,8 @@ const DetailRekrutmenPage = () => {
 	const handleRejected = async () => {
 		if (!selectedId) return;
 
-		const data = {
-			plan_date: null,
-			portal: null,
-		};
-
 		try {
-			await Rekrutmen.GagalRekrutmen(data, selectedId);
+			await Rekrutmen.GagalRekrutmen(null, selectedId);
 			setIsModalOpen(false);
 		} catch (error) {
 			console.error(error);
@@ -67,13 +62,16 @@ const DetailRekrutmenPage = () => {
 		}
 	}, [id, search]);
 
+	const title = localStorage.getItem('title');
+	const subtitle = localStorage.getItem('subtitle');
+
 	return (
 		<div>
 			{/* Existing Content */}
 			<div className="mb-3 flex items-center justify-between">
 				<div>
-					<h3 className="font-bold">Karyawan</h3>
-					<div className="text-sm">Keuangan</div>
+					<h3 className="font-bold">{title}</h3>
+					<div className="text-sm">{subtitle}</div>
 				</div>
 				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input type="text" className="grow" placeholder="Search" onChange={(e) => setSearch(e.target.value)} />

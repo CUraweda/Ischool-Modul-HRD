@@ -1,24 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Karyawan } from '@/middlewares/api';
-// import Modal, { openModal, closeModal } from '@/components/ModalProps';
+import Modal, { openModal, closeModal } from '@/components/ModalProps';
 
 const DaftarPenilaianPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
+	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
 
 	const fetchData = async () => {
 		try {
 			const response = await Karyawan.DaftarPenilaian(0, 20);
 			setFetch(response.data.data.result);
+			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
+			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const handleDialog = () => {
+		openModal('addPenilaian');
 	};
 
 	useEffect(() => {
 		fetchData();
 	}, []);
 	return (
-		<div className="p-4">
+		<div className="min-h-screen">
 			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Penilaian</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
@@ -38,14 +45,17 @@ const DaftarPenilaianPage = () => {
 				</label>
 			</div>
 
+			<div className="mb-4 flex items-end justify-end">
+				<button className="btn btn-xs" onClick={handleDialog}>
+					<span>+</span> Tambah
+				</button>
+			</div>
+
 			<div className="card bg-white p-4 shadow-md">
-				<div className="overflow-x-auto">
+				<div>
 					<table className="table table-zebra w-full">
 						<thead>
 							<tr>
-								<th>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</th>
 								<th>Nama</th>
 								<th>Email</th>
 								<th>Posisi</th>
@@ -57,43 +67,29 @@ const DaftarPenilaianPage = () => {
 						<tbody>
 							{fetch.map((item, index) => (
 								<tr key={index}>
-									<td>
-										<input type="checkbox" className="checkbox checkbox-sm" />
-									</td>
 									<td>{item.employee.full_name}</td>
 									<td>{item.employee.email ? item.employee.email : '-'}</td>
-									<td>{item.employee.occupation}</td>
+									<td className="px-4 py-2">
+										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
+											{item.employee.occupation}
+										</div>
+									</td>{' '}
 									<td>{item.employee.grade}</td>
 									<td>{item.employee.still_in_probation == false ? 'Tidak aktif' : 'Aktif'}</td>
 									<td className="flex gap-2">
-										<button className="btn btn-ghost btn-sm">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												viewBox="0 0 24 24"
-												fill="none"
-												className="h-4 w-4"
-												stroke="currentColor"
-												strokeWidth="2"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-												/>
-											</svg>
-										</button>
-										<button className="btn btn-ghost btn-sm">
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												viewBox="0 0 24 24"
-												fill="none"
-												className="h-4 w-4"
-												stroke="currentColor"
-												strokeWidth="2"
-											>
-												<path strokeLinecap="round" strokeLinejoin="round" d="M19 13H5v-2h14v2Z" />
-											</svg>
-										</button>
+										<div className="dropdown dropdown-end">
+											<label tabIndex={0} className="btn btn-primary btn-sm">
+												...
+											</label>
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+												<li>
+													<a>Edit Data</a>
+												</li>
+												<li>
+													<a>Edit Nilai</a>
+												</li>
+											</ul>
+										</div>
 									</td>
 								</tr>
 							))}
@@ -101,6 +97,33 @@ const DaftarPenilaianPage = () => {
 					</table>
 				</div>
 			</div>
+
+			<Modal id="addPenilaian">
+				<div>
+					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
+					<div className="flex flex-col gap-2">
+						<div>
+							<label className="mb-1 text-sm font-medium">Judul Rekrutmen</label>
+							<input
+								type="text"
+								className="w-full rounded border border-gray-300 p-2"
+								placeholder="Masukkan judul rekrutmen"
+							/>
+						</div>
+						<div>
+							<label className="mb-1 text-sm font-medium">Role</label>
+							<select className="w-full rounded border border-gray-300 p-2">
+								<option value="">-Pilih-</option>
+								{dropdownKaryawan.map((item, index) => (
+									<option value={item.id} key={index}>
+										{item.full_name}
+									</option>
+								))}
+							</select>
+						</div>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };
