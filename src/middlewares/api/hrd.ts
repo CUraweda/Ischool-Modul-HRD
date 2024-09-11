@@ -330,6 +330,12 @@ const WorkTime = {
 };
 
 const Employee = {
+	getOneEmployee: (id: any): AxiosPromise<any> =>
+		instance.get(`employee/show/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	getAllEmployee: (limit: number, search_query: any): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
@@ -338,6 +344,85 @@ const Employee = {
 			params: {
 				limit: limit,
 				search_query: search_query,
+			},
+		}),
+};
+const Salary = {
+	getAllSalary: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
+		instance.get('employee-salary', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+			},
+		}),
+	createSalary: (data: any): AxiosPromise<any> =>
+		instance.post('employee-salary/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	updateSalary: (data: any, id: number): AxiosPromise<any> =>
+		instance.put(`employee-salary/update/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+const Bill = {
+	getAllBill: (limit: number, search_query: any, page: number, account_id: any): AxiosPromise<any> =>
+		instance.get('employee-bill', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+				account_id: account_id,
+			},
+		}),
+	getOneBill: (id: number): AxiosPromise<any> =>
+		instance.get(`employee-bill/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	updateBill: (data: any, id: number): AxiosPromise<any> =>
+		instance.put(`employee-bill/create${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createBill: (data: any): AxiosPromise<any> =>
+		instance.post('employee-bill/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getAllTypes: (limit: number, page: number): AxiosPromise<any> =>
+		instance.get(`bill-type`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				page: page,
+			},
+		}),
+	getOneTypes: (id: number): AxiosPromise<any> =>
+		instance.get(`bill-type/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createTypeAll: (data: any): AxiosPromise<any> =>
+		instance.post('employee-bill/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
 			},
 		}),
 };
@@ -436,7 +521,7 @@ const CustomerCare = {
 
 const Penggajian = {
 	getAllAccount: (token: string, month: string): AxiosPromise<any> =>
-		instance.get(`/employee-account?page=0&limit=20&this_month=${month}`, {
+		instance.get(`/employee-account?page=0&limit0&this_month=${month}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -465,8 +550,22 @@ const Penggajian = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	createAccount: (token: string, data: any): AxiosPromise<any> =>
+		instance.post(`/employee-account/create`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	deleteAccount: (token: string, id: number): AxiosPromise<any> =>
+		instance.delete(`/employee-account/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 export {
+	Bill,
+	Salary,
 	Dashboard,
 	Rekrutmen,
 	Probation,

@@ -17,11 +17,11 @@ const PenggajianPage = () => {
 	const [rekapYear, setRekapYear] = useState<any[]>([]);
 	const [dataPenggajian, setDataPenggajian] = useState<any[]>([]);
 	const [attendanceData, setAttendanceData] = useState<any[]>([]);
-	const [filter, setFilter] = useState({
-		search: '',
-		month: '',
-		year: '',
-	});
+	// const [filter, setFilter] = useState({
+	// 	search: '',
+	// 	month: '',
+	// 	year: '',
+	// });
 	const getRecapMonth = async () => {
 		try {
 			const res = await Penggajian.getMonthAccount(token);
@@ -49,7 +49,7 @@ const PenggajianPage = () => {
 	};
 	const getAllAttendance = async () => {
 		try {
-			const result = await Attendance.getAllEmployeeMonth(filter.search);
+			const result = await Attendance.getAllEmployeeMonth('');
 			setAttendanceData(result.data.data);
 		} catch (error) {
 			console.error('Error fetching attendance data:', error);
@@ -71,9 +71,9 @@ const PenggajianPage = () => {
 		getAllAttendance();
 	}, []);
 
-	useEffect(() => {
-		getAllAttendance();
-	}, [filter]);
+	// useEffect(() => {
+	// 	getAllAttendance();
+	// }, [filter]);
 	const formatNumber = (data: number) => {
 		return new Intl.NumberFormat('id-ID', {
 			style: 'currency',
@@ -233,7 +233,7 @@ const PenggajianPage = () => {
 						)}
 						{selectedOption === 'Kehadiran' && (
 							<div className="w-full overflow-x-auto">
-								<label className="text-md input input-md input-bordered m-2 flex w-1/2 items-center gap-2">
+								{/* <label className="text-md input input-md input-bordered m-2 flex w-1/2 items-center gap-2">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										viewBox="0 0 16 16"
@@ -253,7 +253,7 @@ const PenggajianPage = () => {
 										value={filter.search}
 										onChange={(e) => setFilter((prev) => ({ ...prev, search: e.target.value }))}
 									/>
-								</label>
+								</label> */}
 								<div className="h-[250px]">
 									<table className="table table-zebra w-full overflow-y-scroll">
 										<thead>
