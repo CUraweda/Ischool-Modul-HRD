@@ -28,9 +28,8 @@ const LoginPage: React.FC = () => {
 		onSubmit: async (values, { setSubmitting }) => {
 			setSubmitting(true);
 			try {
-				console.log('Attempting login with:', values);
 				const res = await loginUser(values.email, values.password);
-				console.log('Login response:', res);
+
 				if (res.status === 200 && res.data.data) {
 					const userData = res.data.data;
 					const accessToken = res.data.tokens.access.token;
@@ -48,16 +47,13 @@ const LoginPage: React.FC = () => {
 					setSessionStorageItem('role_id', userData.role_id);
 					setSessionStorageItem('id', userData.id);
 
-					toast.success('Login berhasil!');
-
 					const role_id = sessionStorage.getItem('role_id');
-					console.log('Navigating based on role_id:', role_id);
 
-					if (role_id === '5') {
-						navigate('/hrd/dashboard');
-					} else {
-						navigate('/public/form');
-					}
+					role_id == '5'
+						? navigate('/hrd/dashboard')
+						: role_id == '12'
+							? navigate('/public/career')
+							: toast.warn('anda tidak memiliki akses');
 				}
 			} catch (error) {
 				console.error('Login error:', error);
