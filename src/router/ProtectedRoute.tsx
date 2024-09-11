@@ -1,16 +1,16 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface ProtectedRouteProps {
 	roles: number[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
-	const { accessToken, role } = useAuth();
+	const accessToken = sessionStorage.getItem('access_token');
+	const role = sessionStorage.getItem('role_id');
 
 	if (!accessToken || !roles.includes(Number(role))) {
-		return <Navigate to="/login" replace />;
+		return <Navigate to="/" replace />;
 	}
 
 	return <Outlet />;

@@ -3,17 +3,30 @@ import { FaBell } from 'react-icons/fa';
 import { BsList } from 'react-icons/bs';
 import { clearUser } from '@/stores/user';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const Navbar = () => {
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
+	const [isLogin, setLogin] = useState<boolean>(false);
+
+	useEffect(() => {
+		const accessToken = sessionStorage.getItem('access_token');
+		const role = sessionStorage.getItem('role_id');
+
+		if (accessToken || role) {
+			setLogin(true);
+		}
+		
+	}, []);
+
 	const logout = () => {
 		console.log('Logging out...');
 		sessionStorage.clear();
 		localStorage.clear();
 		dispatch(clearUser());
-		console.log('Redirecting to login...');
-		navigate('/login', { replace: true });
+
+		navigate('/', { replace: true });
 	};
 
 	return (
@@ -30,7 +43,8 @@ const Navbar = () => {
 					</button>
 				</div>
 				<div className="flex-none gap-5">
-					<div className="dropdown dropdown-end">
+					<button className={`btn btn-primary ${isLogin ? 'hidden' : ''}`} onClick={() => navigate('/')}>Login</button>
+					<div className={`dropdown dropdown-end ${isLogin ? '' : 'hidden'}`}>
 						<div tabIndex={0} role="button" className="avatar btn btn-circle btn-ghost">
 							<div className="w-10 rounded-full">
 								<img
