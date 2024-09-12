@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
 // import { Bar, Doughnut } from 'react-chartjs-2';
 import { Penggajian, Attendance } from '@/middlewares/api/hrd';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import { Link } from 'react-router-dom';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register the components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 // import { useNavigate } from 'react-router-dom';
 
 const PenggajianPage = () => {
@@ -198,7 +202,7 @@ const PenggajianPage = () => {
 								</a>
 							</li>
 							<li>
-								<Link to="/hrd/rekap-penggajian">Lainnya</Link>
+								<Link to="/hrd/rekap-gaji">Lainnya</Link>
 								{/* <a
 									className={selectedOption === 'Lainnya' ? 'active' : ''}
 									onClick={() => setSelectedOption('Lainnya')}

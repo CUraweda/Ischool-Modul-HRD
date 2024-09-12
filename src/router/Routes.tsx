@@ -56,7 +56,7 @@ const AppRoutes: React.FC = () => {
 							</AuthLayout>
 						}
 					/>
-					<Route path="/hrd/" element={<ProtectedRoute roles={[5]} />}>
+					<Route path="/hrd/" element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} />}>
 						<Route element={<HrdLayout />}>
 							<Route path="dashboard" element={<DashboardPage />} />
 							<Route path="rekap-presensi" element={<RekapPresensiPage />} />

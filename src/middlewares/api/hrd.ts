@@ -1,7 +1,10 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
-import axios, { AxiosPromise } from 'axios';
-const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
-const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
+import axios, { Axios, AxiosPromise } from 'axios';
+// const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
+// const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
+// const token = getSessionStorageItem('access_token');
+const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
+const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
 
 const Dashboard = {

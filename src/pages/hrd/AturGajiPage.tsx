@@ -23,10 +23,10 @@ const AturGajiPage = () => {
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
 	const [formDataBill, setFormDataBill] = useState({
-		account_id: dataUpdateBill?.id ?? 0,
+		account_id: dataUpdateBill?.account_id ?? 0,
 		type_id: dataUpdateBill?.type_id ?? 0,
 		description: dataUpdateBill?.description ?? '',
-		amount: 0,
+		amount: dataUpdateBill?.amount ?? 0,
 	});
 	const formatCurrency = (value: number) => {
 		return value.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
@@ -204,7 +204,15 @@ const AturGajiPage = () => {
 				is_active: dataUpdateSalary.is_active,
 			});
 		}
-	}, [dataUpdateSalary]);
+		if (dataUpdateBill) {
+			setFormDataBill({
+				account_id: dataUpdateBill?.account_id ?? 0,
+				type_id: dataUpdateBill?.type_id ?? 0,
+				description: dataUpdateBill?.description ?? '',
+				amount: dataUpdateBill?.amount ?? 0,
+			});
+		}
+	}, [dataUpdateSalary, dataUpdateBill]);
 
 	const handleInputChangeBill = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
@@ -533,7 +541,10 @@ const AturGajiPage = () => {
 												<button
 													className="btn btn-ghost btn-neutral"
 													onClick={() => {
-														setModalBill(true), setTypeBillModal('edit'), setUpdateDataBill(item.id);
+														setModalBill(true),
+															setTypeBillModal('edit'),
+															setUpdateDataBill(item),
+															console.log('test123', item);
 													}}
 												>
 													<FaRegEdit />
