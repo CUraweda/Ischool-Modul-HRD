@@ -5,6 +5,15 @@ import Modal, { openModal, closeModal } from '@/components/ModalProps';
 const DaftarPenilaianPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
 	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
+	const [selectedKaryawan, setSelectedKaryawan] = useState('');
+	const [judulKegiatan, setJudulKegiatan] = useState('');
+	const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('');
+	const [tenggatWaktu, setTenggatWaktu] = useState('');
+	const [prioritas, setPrioritas] = useState('');
+	const [nilai, setNilai] = useState('');
+	const [editMode, setEditMode] = useState(false);
+	const [editId, setEditId] = useState<number | null>(null);
+	const [id, setId] = useState();
 
 	const fetchData = async () => {
 		try {
@@ -17,13 +26,80 @@ const DaftarPenilaianPage = () => {
 		}
 	};
 
-	const handleDialog = () => {
+	const AddPenilaian = async () => {
+		const data = {
+			employee_id: selectedKaryawan,
+			name: judulKegiatan,
+			description: deskripsiKegiatan,
+			due_date: tenggatWaktu,
+			priority: 1,
+			priority_label: prioritas,
+			grade: nilai,
+		};
+
+		try {
+			if (editMode && editId !== null) {
+				await Karyawan.EditPenilaian(data, editId);
+			} else {
+				await Karyawan.AddPenilaian(data);
+			}
+			fetchData();
+			closeModal('addPenilaian');
+			resetForm();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleEdit = (item: any) => {
+		setSelectedKaryawan(item.employee.id);
+		setJudulKegiatan(item.name);
+		setDeskripsiKegiatan(item.description);
+		setTenggatWaktu(item.due_date);
+		setPrioritas(item.priority_label);
+		setNilai(item.grade);
+		setEditMode(true);
+		setEditId(item.id);
 		openModal('addPenilaian');
+	};
+
+	const editNilai = async () => {
+		const data = {
+			grade: nilai,
+		};
+		try {
+			await Karyawan.EditNilai(data, id);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const resetForm = () => {
+		setSelectedKaryawan('');
+		setJudulKegiatan('');
+		setDeskripsiKegiatan('');
+		setTenggatWaktu('');
+		setPrioritas('');
+		setNilai('');
+		setEditMode(false);
+		setEditId(null);
+	};
+
+	const handleDialog = (type: string, item: any, id: any) => {
+		resetForm();
+		if (type == 'data') {
+			openModal('addPenilaian');
+		} else {
+			openModal('editGrade');
+			setId(id);
+			setNilai(item.grade);
+		}
 	};
 
 	useEffect(() => {
 		fetchData();
 	}, []);
+
 	return (
 		<div className="min-h-screen">
 			<div className="mb-8 flex items-center justify-between">
@@ -46,7 +122,7 @@ const DaftarPenilaianPage = () => {
 			</div>
 
 			<div className="mb-4 flex items-end justify-end">
-				<button className="btn btn-xs" onClick={handleDialog}>
+				<button className="btn btn-xs" onClick={() => handleDialog('data', '', '')}>
 					<span>+</span> Tambah
 				</button>
 			</div>
@@ -74,8 +150,8 @@ const DaftarPenilaianPage = () => {
 											{item.employee.occupation}
 										</div>
 									</td>
-									<td>{item.employee.grade}</td>
-									<td>{item.employee.still_in_probation == false ? 'Tidak aktif' : 'Aktif'}</td>
+									<td>{item.grade}</td>
+									<td>{item.is_finish ? 'Aktif' : 'Tidak aktif'}</td>
 									<td className="flex gap-2">
 										<div className="dropdown dropdown-end">
 											<label tabIndex={0} className="btn btn-primary btn-sm">
@@ -83,10 +159,10 @@ const DaftarPenilaianPage = () => {
 											</label>
 											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
 												<li>
-													<a>Edit Data</a>
+													<a onClick={() => handleEdit(item)}>Edit Data</a>
 												</li>
 												<li>
-													<a>Edit Nilai</a>
+													<a onClick={() => handleDialog('nilai', item, item.id)}>Edit Nilai</a>
 												</li>
 											</ul>
 										</div>
@@ -99,20 +175,16 @@ const DaftarPenilaianPage = () => {
 			</div>
 
 			<Modal id="addPenilaian">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
-					<div className="flex flex-col gap-2">
+				<div className="p-6">
+					<h2 className="mb-4 text-xl font-bold text-gray-800">{editMode ? 'Edit Penilaian' : 'Tambah Penilaian'}</h2>
+					<div className="flex flex-col gap-4">
 						<div>
-							<label className="mb-1 text-sm font-medium">Judul Rekrutmen</label>
-							<input
-								type="text"
-								className="w-full rounded border border-gray-300 p-2"
-								placeholder="Masukkan judul rekrutmen"
-							/>
-						</div>
-						<div>
-							<label className="mb-1 text-sm font-medium">Role</label>
-							<select className="w-full rounded border border-gray-300 p-2">
+							<label className="mb-1 block text-sm font-medium text-gray-700">Pilih Karyawan</label>
+							<select
+								className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								value={selectedKaryawan}
+								onChange={(e) => setSelectedKaryawan(e.target.value)}
+							>
 								<option value="">-Pilih-</option>
 								{dropdownKaryawan.map((item, index) => (
 									<option value={item.id} key={index}>
@@ -121,6 +193,99 @@ const DaftarPenilaianPage = () => {
 								))}
 							</select>
 						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Judul Kegiatan</label>
+							<input
+								type="text"
+								className="input input-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								placeholder="Masukkan judul kegiatan"
+								value={judulKegiatan}
+								onChange={(e) => setJudulKegiatan(e.target.value)}
+							/>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Deskripsi Kegiatan</label>
+							<textarea
+								className="textarea textarea-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								placeholder="Masukkan deskripsi kegiatan"
+								value={deskripsiKegiatan}
+								onChange={(e) => setDeskripsiKegiatan(e.target.value)}
+							/>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Tenggat Waktu</label>
+							<input
+								type="date"
+								className="input input-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								placeholder="Pilih tenggat waktu"
+								value={tenggatWaktu}
+								onChange={(e) => setTenggatWaktu(e.target.value)}
+							/>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Prioritas</label>
+							<select
+								className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								value={prioritas}
+								onChange={(e) => setPrioritas(e.target.value)}
+							>
+								<option value="">-Pilih-</option>
+								<option value="Tinggi">Tinggi</option>
+								<option value="Sedang">Sedang</option>
+								<option value="Rendah">Rendah</option>
+							</select>
+						</div>
+
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Nilai</label>
+							<input
+								type="text"
+								className="input input-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								placeholder="Masukkan nilai"
+								value={nilai}
+								onChange={(e) => setNilai(e.target.value)}
+							/>
+						</div>
+					</div>
+
+					<div className="mt-6 flex justify-end gap-2">
+						<button className="btn" onClick={() => closeModal('addPenilaian')}>
+							Tutup
+						</button>
+						<button className="btn btn-primary" onClick={AddPenilaian}>
+							{editMode ? 'Simpan Perubahan' : 'Tambah'}
+						</button>
+					</div>
+				</div>
+			</Modal>
+
+			<Modal id="editGrade">
+				<div className="p-6">
+					<h2 className="mb-4 text-xl font-bold text-gray-800">Edit Nilai</h2>
+					<div className="flex flex-col gap-4">
+						<div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Nilai</label>
+							<input
+								type="text"
+								className="input input-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								placeholder="Masukkan nilai"
+								value={nilai}
+								onChange={(e) => setNilai(e.target.value)}
+							/>
+						</div>
+					</div>
+
+					<div className="mt-6 flex justify-end gap-2">
+						<button className="btn" onClick={() => closeModal('addPenilaian')}>
+							Tutup
+						</button>
+						<button className="btn btn-primary" onClick={editNilai}>
+							Simpan Perubahan
+						</button>
 					</div>
 				</div>
 			</Modal>

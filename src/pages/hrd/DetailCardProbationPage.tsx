@@ -7,22 +7,59 @@ import { Probation } from '@/middlewares/api';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
+interface ChartDataItem {
+	name: string;
+	raw_grade: number;
+	graded: number;
+}
+
 const DetailCardProbationPage = () => {
-	// const { id } = useParams<{ id: string }>();
 	const { id2 } = useParams<{ id2: string }>();
-	const [fetch, setFetch] = useState<any | null>([]);
+	const [fetch, setFetch] = useState<any | null>(null);
+	const [table, setTable] = useState<any[]>([]);
+	const [chart, setChart] = useState<ChartDataItem[]>([]);
+	const [internshipDetails, setInternshipDetails] = useState({
+		startDate: '',
+		endDate: '',
+		duration: '',
+		remainingTime: '',
+	});
 
 	const FetchData = async () => {
 		try {
 			const response = await Probation.DetailByUser(id2);
 			setFetch(response.data.data);
+			handleInternshipDetails(response.data.data.probation_start_date, response.data.data.probation_end_date);
+			const responseTable = await Probation.DetailPresensi(id2);
+			setTable(responseTable.data.data.result);
+			const responseChart = await Probation.DetailChart(id2);
+			setChart(responseChart.data.data);
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
+	const handleInternshipDetails = (startDate: string, endDate: string) => {
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		const now = new Date();
+
+		const durationMonths = Math.ceil(
+			(end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth() + 1
+		);
+		const remainingTimeInMillis = end.getTime() - now.getTime();
+		const remainingDays = Math.ceil(remainingTimeInMillis / (1000 * 60 * 60 * 24));
+
+		setInternshipDetails({
+			startDate: start.toLocaleDateString(),
+			endDate: end.toLocaleDateString(),
+			duration: `${durationMonths} Bulan`,
+			remainingTime: `${Math.floor(remainingDays / 30)} Bulan ${remainingDays % 30} Hari`,
+		});
+	};
+
 	const handleProbation = (type: string, id: any) => {
-		if (type == 'finish') {
+		if (type === 'finish') {
 			Finish(id);
 		} else {
 			Contract(id);
@@ -49,13 +86,17 @@ const DetailCardProbationPage = () => {
 		FetchData();
 	}, []);
 
+	const labels = chart.map((item) => item.name);
+	const dataValues = chart.map((item) => item.graded);
+
 	const data = {
-		labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
+		labels,
 		datasets: [
 			{
 				label: 'Performance',
-				data: [80, 70, 75, 90, 60],
-				backgroundColor: 'rgba(54, 162, 235, 0.6)',
+				data: dataValues,
+				backgroundColor: '#6366f1',
+				borderRadius: 10,
 			},
 		],
 	};
@@ -75,10 +116,10 @@ const DetailCardProbationPage = () => {
 					<button className="btn btn-primary mb-4">Akhir Masa Percobaan</button>
 					<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
 						<li>
-							<a onClick={() => handleProbation('finish', fetch.employee_id)}>Akhiri</a>
+							<a onClick={() => handleProbation('finish', fetch?.id)}>Akhiri</a>
 						</li>
 						<li>
-							<a onClick={() => handleProbation('contractsss', fetch.employee_id)}>Kontrak</a>
+							<a onClick={() => handleProbation('contractsss', fetch?.id)}>Kontrak</a>
 						</li>
 					</ul>
 				</div>
@@ -89,9 +130,9 @@ const DetailCardProbationPage = () => {
 					{/* Profile Card */}
 					<div className="flex flex-col items-center">
 						<img src={image} alt="Profile" className="mb-4 h-36 w-36 rounded-lg object-cover" />
-						<h2 className="text-lg font-bold">{fetch.full_name}</h2>
-						<p className="text-sm text-gray-500">No. Telp: {fetch.phone}</p>
-						<p className="text-sm text-gray-500">Email: {fetch.email}</p>
+						<h2 className="text-lg font-bold">{fetch?.full_name}</h2>
+						<p className="text-sm text-gray-500">No. Telp: {fetch?.phone}</p>
+						<p className="text-sm text-gray-500">Email: {fetch?.email}</p>
 					</div>
 				</div>
 
@@ -100,16 +141,16 @@ const DetailCardProbationPage = () => {
 					<h3 className="text-lg font-semibold">Internship Details</h3>
 					<div className="mt-4">
 						<p className="text-gray-700">
-							Tgl Mulai: <span className="font-bold">23 Mei 2024</span>
+							Tgl Mulai: <span className="font-bold">{internshipDetails.startDate}</span>
 						</p>
 						<p className="text-gray-700">
-							Tgl Berakhir: <span className="font-bold">23 Juli 2024</span>
+							Tgl Berakhir: <span className="font-bold">{internshipDetails.endDate}</span>
 						</p>
 						<p className="text-gray-700">
-							Durasi Magang: <span className="font-bold">3 Bulan</span>
+							Durasi Magang: <span className="font-bold">{internshipDetails.duration}</span>
 						</p>
 						<p className="text-gray-700">
-							Sisa Waktu Magang: <span className="font-bold">1 Bulan 15 Hari</span>
+							Sisa Waktu Magang: <span className="font-bold">{internshipDetails.remainingTime}</span>
 						</p>
 					</div>
 				</div>
@@ -126,38 +167,17 @@ const DetailCardProbationPage = () => {
 									<th>Keterangan</th>
 									<th>Jam Datang</th>
 									<th>Jam Pulang</th>
-									<th>Status</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>04/06/2024</td>
-									<td>Hadir</td>
-									<td>09.30</td>
-									<td>16.30</td>
-									<td className="text-green-500">Tepat Waktu</td>
-								</tr>
-								<tr>
-									<td>05/06/2024</td>
-									<td>Hadir</td>
-									<td>08.54</td>
-									<td>17.00</td>
-									<td className="text-green-500">Tepat Waktu</td>
-								</tr>
-								<tr>
-									<td>06/06/2024</td>
-									<td>Izin</td>
-									<td>-</td>
-									<td>-</td>
-									<td className="text-yellow-500">Izin</td>
-								</tr>
-								<tr>
-									<td>07/06/2024</td>
-									<td>Hadir</td>
-									<td>11.00</td>
-									<td>17.00</td>
-									<td className="text-red-500">Terlambat</td>
-								</tr>
+								{table.map((item, index) => (
+									<tr key={index}>
+										<td>{item.worktime.createdAt.split('T')[0]}</td>
+										<td>{item.worktime.type}</td>
+										<td>{item.worktime.start_time}</td>
+										<td>{item.worktime.end_time}</td>
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

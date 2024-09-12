@@ -1,31 +1,26 @@
 import { Karyawan, Probation } from '@/middlewares/api';
-import Modal, { openModal } from '../../components/ModalProps';
+import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const DetailProfilKaryawanPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const [fetch, setFetch] = useState<any | null>(null);
-	const [formData, setFormData] = useState({
-		namaLengkap: '',
-		email: '',
-		telepon: '',
-		nik: '',
-		jenisKelamin: '',
-		agama: '',
-		tanggalLahir: '',
-		umur: '',
-		statusPernikahan: '',
-		jenjangPendidikan: '',
-		bidang: '',
-		jumlahAnak: '',
-		posisi: '',
-		status: '',
-		jabatan: '',
-		mulaiBekerja: '',
-	});
 	const [pelatihan, setPelatihan] = useState<any[]>([]);
 	const [file, setFile] = useState<any[]>([]);
+	const navigate = useNavigate();
+	const [formData, setFormData] = useState({
+		full_name: '',
+		email: '',
+		phone: '',
+		gender: '',
+		dob: '',
+		pob: '',
+		marital_status: '',
+		religion: '',
+		major: '',
+		occupation: '',
+	});
 
 	const dialogPelatihan = () => {
 		openModal('detailPelatihan');
@@ -49,8 +44,20 @@ const DetailProfilKaryawanPage = () => {
 		}
 	};
 
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prevData) => ({
+			...prevData,
+			[name]: value,
+		}));
+	};
+
 	const handleDialog = () => {
 		openModal('fileAttachment');
+	};
+
+	const editDialog = () => {
+		openModal('editModal');
 	};
 
 	// const downloadFile = (filePath: string, fileName: string) => {
@@ -67,23 +74,49 @@ const DetailProfilKaryawanPage = () => {
 			const data = response.data.data;
 			setFetch(data);
 			setFormData({
-				namaLengkap: data.full_name || '',
+				full_name: data.full_name || '',
 				email: data.email || '',
-				telepon: data.phone || '',
-				nik: data.nik || '',
-				jenisKelamin: data.gender === 'L' ? 'Laki-Laki' : 'Perempuan',
-				agama: data.religion || '',
-				tanggalLahir: data.dob ? data.dob.split('T')[0] : '',
-				umur: data.dob ? `${new Date().getFullYear() - new Date(data.dob).getFullYear()} Tahun` : '',
-				statusPernikahan: data.marital_status || '',
-				jenjangPendidikan: data.last_education || '',
-				bidang: data.major || '',
-				jumlahAnak: '',
-				posisi: data.occupation || '',
-				status: data.employee_status || '',
-				jabatan: data.duty || '',
-				mulaiBekerja: data.work_start_date ? data.work_start_date.split('T')[0] : '',
+				phone: data.phone || '',
+				gender: data.gender || '',
+				dob: data.dob ? data.dob.split('T')[0] : '',
+				pob: data.pob || '',
+				marital_status: data.marital_status || '',
+				religion: data.religion || '',
+				major: data.major || '',
+				occupation: data.occupation || '',
 			});
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const EditKaryawan = async () => {
+		const data = {
+			full_name: formData.full_name,
+			email: formData.email,
+			phone: formData.phone,
+			gender: formData.gender,
+			dob: formData.dob,
+			pob: formData.pob,
+			marital_status: formData.marital_status,
+			religion: formData.religion,
+			major: formData.major,
+			occupation: formData.occupation,
+		};
+		try {
+			await Karyawan.EditKaryawan(data, id);
+			fetchData();
+			closeModal('editModal');
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const DeleteKaryawan = async () => {
+		try {
+			await Karyawan.HapusKaryawan(id);
+			fetchData();
+			navigate('/hrd/data-karyawan');
 		} catch (error) {
 			console.error(error);
 		}
@@ -102,10 +135,25 @@ const DetailProfilKaryawanPage = () => {
 			<div className="rounded-lg bg-white p-6 shadow-lg">
 				<div className="mb-6 flex items-center">
 					<img src="https://via.placeholder.com/100" alt="Profile" className="h-24 w-24 rounded-full" />
-					<div className="ml-4">
-						<h1 className="text-2xl font-bold">{fetch?.full_name}</h1>
-						<p className="text-gray-600">{fetch?.email}</p>
-						<p className="text-gray-600">{fetch?.phone}</p>
+					<div className="ml-4 flex w-full justify-between">
+						<div>
+							<h1 className="text-2xl font-bold">{fetch?.full_name}</h1>
+							<p className="text-gray-600">{fetch?.email}</p>
+							<p className="text-gray-600">{fetch?.phone}</p>
+						</div>
+						<div className="dropdown dropdown-end">
+							<label tabIndex={0} className="btn btn-circle btn-primary btn-sm">
+								...
+							</label>
+							<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+								<li>
+									<a onClick={editDialog}>Edit Profil</a>
+								</li>
+								<li>
+									<a onClick={DeleteKaryawan}>Hapus Karyawan</a>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 				<div className="border-b border-t">
@@ -138,7 +186,9 @@ const DetailProfilKaryawanPage = () => {
 								<div className="flex flex-col gap-1">
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Umur</div>{' '}
-										<div className="text-sm font-bold">{formData.umur}</div>
+										<div className="text-sm font-bold">
+											{fetch?.dob ? `${new Date().getFullYear() - new Date(fetch?.dob).getFullYear()} Tahun` : ''}
+										</div>
 									</div>
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Status Pernikahan</div>
@@ -210,11 +260,112 @@ const DetailProfilKaryawanPage = () => {
 					>
 						Lihat Detail Pelatihan
 					</button>
-					{/* <button className="btn btn-secondary" onClick={handleDialog}>
-						Edit Profil
-					</button> */}
 				</div>
 			</div>
+
+			<Modal id="editModal">
+				<h3 className="mb-4 text-lg font-bold">Edit Profil Karyawan</h3>
+				<div className="form-control">
+					<label className="label">Nama Lengkap</label>
+					<input
+						type="text"
+						name="full_name"
+						value={formData.full_name}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Email</label>
+					<input
+						type="email"
+						name="email"
+						value={formData.email}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Telepon</label>
+					<input
+						type="text"
+						name="phone"
+						value={formData.phone}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Jenis Kelamin</label>
+					<input
+						type="text"
+						name="gender"
+						value={formData.gender}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Tanggal Lahir</label>
+					<input
+						type="date"
+						name="dob"
+						value={formData.dob}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Tempat Lahir</label>
+					<input
+						type="text"
+						name="pob"
+						value={formData.pob}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Status Pernikahan</label>
+					<input
+						type="text"
+						name="marital_status"
+						value={formData.marital_status}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Agama</label>
+					<input
+						type="text"
+						name="religion"
+						value={formData.religion}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Jurusan</label>
+					<input
+						type="text"
+						name="major"
+						value={formData.major}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+
+					<label className="label">Posisi</label>
+					<input
+						type="text"
+						name="occupation"
+						value={formData.occupation}
+						onChange={handleInputChange}
+						className="input input-bordered"
+					/>
+				</div>
+
+				<div className="modal-action">
+					<button className="btn btn-primary" onClick={EditKaryawan}>
+						Simpan
+					</button>
+					<button className="btn" onClick={() => closeModal('editModal')}>
+						Batal
+					</button>
+				</div>
+			</Modal>
 
 			<Modal id="fileAttachment">
 				<div>
@@ -284,170 +435,6 @@ const DetailProfilKaryawanPage = () => {
 					</ul>
 				</div>
 			</Modal>
-
-			{/* <Modal id="editProfilKaryawan">
-				<form onSubmit={handleSubmit}>
-					<div className="grid grid-cols-2 gap-4">
-						<div>
-							<label>Nama Lengkap</label>
-							<input
-								type="text"
-								name="namaLengkap"
-								value={formData.namaLengkap}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Alamat</label>
-							<input
-								type="text"
-								name="alamat"
-								value={formData.alamat}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Email</label>
-							<input
-								type="email"
-								name="email"
-								value={formData.email}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Jenjang Pendidikan</label>
-							<input
-								type="text"
-								name="jenjangPendidikan"
-								value={formData.jenjangPendidikan}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Telepon</label>
-							<input
-								type="text"
-								name="telepon"
-								value={formData.telepon}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Bidang</label>
-							<input
-								type="text"
-								name="bidang"
-								value={formData.bidang}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>NIK</label>
-							<input
-								type="text"
-								name="nik"
-								value={formData.nik}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Posisi</label>
-							<input
-								type="text"
-								name="posisi"
-								value={formData.posisi}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Jenis Kelamin</label>
-							<select
-								name="jenisKelamin"
-								value={formData.jenisKelamin}
-								onChange={handleInputChange}
-								className="select select-bordered w-full"
-							>
-								<option value="Laki-Laki">Laki-Laki</option>
-								<option value="Perempuan">Perempuan</option>
-							</select>
-						</div>
-						<div>
-							<label>Status</label>
-							<input
-								type="text"
-								name="status"
-								value={formData.status}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Agama</label>
-							<input
-								type="text"
-								name="agama"
-								value={formData.agama}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Jabatan</label>
-							<input
-								type="text"
-								name="jabatan"
-								value={formData.jabatan}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Tanggal Lahir</label>
-							<input
-								type="date"
-								name="tanggalLahir"
-								value={formData.tanggalLahir}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Mulai Bekerja</label>
-							<input
-								type="date"
-								name="mulaiBekerja"
-								value={formData.mulaiBekerja}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-						<div>
-							<label>Status Pernikahan</label>
-							<input
-								type="text"
-								name="statusPernikahan"
-								value={formData.statusPernikahan}
-								onChange={handleInputChange}
-								className="input input-bordered w-full"
-							/>
-						</div>
-					</div>
-					<div className="modal-action">
-						<button type="submit" className="btn btn-primary">
-							Simpan
-						</button>
-					</div>
-				</form>
-			</Modal> */}
 
 			<Modal id="detailPelatihan">
 				<h3 className="text-lg font-bold">Pelatihan yang sudah dilakukan</h3>

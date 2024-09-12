@@ -85,25 +85,15 @@ const DetailProbationPage = () => {
 						<table className="table">
 							<thead>
 								<tr>
-									<th>
-										<label>
-											<input type="checkbox" className="checkbox" />
-										</label>
-									</th>
 									<th className="text-sm text-black">Nama</th>
 									<th className="text-sm text-black">Email</th>
 									<th className="text-sm text-black">Status</th>
-									<th className="text-sm text-black"></th>
+									<th className="text-sm text-black">Action</th>
 								</tr>
 							</thead>
 							<tbody>
 								{dataDetailProbation.map((item, index) => (
 									<tr key={index}>
-										<th>
-											<label>
-												<input type="checkbox" className="checkbox" />
-											</label>
-										</th>
 										<td>
 											<div className="flex items-center gap-3">
 												<div className="avatar">
@@ -122,9 +112,9 @@ const DetailProbationPage = () => {
 										<td>
 											<span className="badge badge-ghost badge-sm">{item.email}</span>
 										</td>
-										<td className="text-center">{item.status}</td>
+										<td>{item.status}</td>
 										<th>
-											<button className="btn btn-primary btn-sm" onClick={() => handleNavigation(item.id)}>
+											<button className="btn btn-primary btn-sm" onClick={() => handleNavigation(item.employee_id)}>
 												...
 											</button>
 										</th>

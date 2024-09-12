@@ -101,28 +101,36 @@ const DaftarAsessorPage = () => {
 				</div>
 			</div>
 			<Modal id="addAsessor">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Asessor </h2>
-					<div>
-						<label className="mb-1 text-sm font-medium">Pilh Karyawan</label>
-						<select
-							className="w-full rounded border border-gray-300 p-2"
-							onChange={(e) => setEmployeeId(parseInt(e.target.value))}
-						>
-							<option value="">-Pilih-</option>
-							{dropdownKaryawan.map((item, index) => (
-								<option value={item.id} key={index}>
-									{item.full_name}
-								</option>
-							))}
-						</select>
-					</div>
+				<div className="mb-4">
+					<h2 className="text-2xl font-semibold text-gray-800">Tambah Asessor</h2>
 				</div>
-				<div className="flex items-center justify-center gap-4">
-					<button className="btn btn-primary mt-2" onClick={() => Aktif(employeeId)}>
+				<div className="mb-6">
+					<label className="mb-2 block text-sm font-medium text-gray-700">Pilih Karyawan</label>
+					<select
+						className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+						onChange={(e) => setEmployeeId(parseInt(e.target.value))}
+					>
+						<option value="" disabled selected>
+							- Pilih -
+						</option>
+						{dropdownKaryawan.map((item) => (
+							<option value={item.id} key={item.id}>
+								{item.full_name}
+							</option>
+						))}
+					</select>
+				</div>
+				<div className="mt-4 flex justify-center gap-4">
+					<button
+						className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow transition duration-150 hover:bg-blue-600"
+						onClick={() => Aktif(employeeId)}
+					>
 						Aktif
 					</button>
-					<button className="btn btn-primary mt-2" onClick={() => Nonaktif(employeeId)}>
+					<button
+						className="rounded-lg bg-red-500 px-4 py-2 text-white shadow transition duration-150 hover:bg-red-600"
+						onClick={() => Nonaktif(employeeId)}
+					>
 						Non Aktif
 					</button>
 				</div>

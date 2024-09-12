@@ -72,6 +72,7 @@ const RekrutmenPage = () => {
 
 		const data = {
 			title: titleRekrutmen,
+			role: role,
 			division_id: division,
 			start_date: startDate,
 			end_date: endDate,
@@ -368,8 +369,8 @@ const RekrutmenPage = () => {
 								<option value="" disabled>
 									-Pilih-
 								</option>
-								<option value="Karyawan">Karyawan</option>
-								<option value="Guru">Guru</option>
+								<option value="KARYAWAN">Karyawan</option>
+								<option value="GURU">Guru</option>
 							</select>
 						</div>
 

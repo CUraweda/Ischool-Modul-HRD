@@ -145,7 +145,23 @@ const Probation = {
 	DetailByUser: (id: any): AxiosPromise =>
 		instance({
 			method: `GET`,
-			url: `applicant-form/detail/${id}`,
+			url: `employee/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DetailPresensi: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-attendance?page=0&limit=1000&employee_id=${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DetailChart: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-jobdesk/recap-week-employee/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -206,6 +222,15 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	EditKaryawan: (data: any, id: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `employee/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	HapusKaryawan: (id: any): AxiosPromise<any> =>
 		instance({
 			method: `DELETE`,
@@ -226,6 +251,33 @@ const Karyawan = {
 		instance({
 			method: `GET`,
 			url: `employee-jobdesk?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	AddPenilaian: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-jobdesk/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	EditPenilaian: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-jobdesk/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	EditNilai: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-jobdesk/grade/${id}`,
+			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
