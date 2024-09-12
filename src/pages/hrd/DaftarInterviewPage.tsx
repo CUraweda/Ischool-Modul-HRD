@@ -36,9 +36,9 @@ const DaftarInterviewPage = () => {
 		}
 	};
 
-	const RejectedProbation = async () => {
+	const RejectedProbation = async (id: any) => {
 		try {
-			await Probation.AcceptedProbation(null, id2);
+			await Probation.RejectedProbation(null, id);
 		} catch (error) {
 			console.error(error);
 		}
@@ -49,7 +49,7 @@ const DaftarInterviewPage = () => {
 			openModal('handleInterview');
 			setId2(id);
 		} else {
-			RejectedProbation();
+			RejectedProbation(id);
 		}
 	};
 
@@ -89,7 +89,7 @@ const DaftarInterviewPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="mt-6 flex justify-between">
+			{/* <div className="mt-6 flex justify-between">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -111,7 +111,7 @@ const DaftarInterviewPage = () => {
 						<option>Tiny Tomato</option>
 					</select>
 				</div>
-			</div>
+			</div> */}
 
 			<div className="card mt-10 w-full bg-base-100 shadow-xl">
 				<div className="card-body">
@@ -155,7 +155,7 @@ const DaftarInterviewPage = () => {
 														<a onClick={() => handleDialog('terima', item.id)}>Terima</a>
 													</li>
 													<li>
-														<a onClick={() => handleDialog('terima', item.id)}>Tolak</a>
+														<a onClick={() => handleDialog('tolak', item.id)}>Tolak</a>
 													</li>
 												</ul>
 											</div>

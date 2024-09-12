@@ -77,6 +77,15 @@ const Rekrutmen = {
 			},
 		}),
 
+	DataCv: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `applicant-form/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
 	CloseRekrutment: (id: any): AxiosPromise<any> =>
 		instance({
 			method: `PUT`,
@@ -229,6 +238,24 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	AktifAsessor: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-asessor/activate/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	NonaktifAsessor: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-asessor/deactivate/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 
 const Form = {
@@ -239,6 +266,7 @@ const Form = {
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
+				'Content-Type': 'multipart/form-data',
 			},
 		}),
 };
@@ -419,7 +447,7 @@ const CustomerCare = {
 		}),
 
 	sendMessage: (token: string | null, currentReceiverId: number | string, inputMessage: any, id: string | null) =>
-		instance.post(
+		apics.post(
 			`/message/create`,
 			{
 				user_id: id,

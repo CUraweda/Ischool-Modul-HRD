@@ -73,7 +73,7 @@ const DaftarPenilaianPage = () => {
 										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
 											{item.employee.occupation}
 										</div>
-									</td>{' '}
+									</td>
 									<td>{item.employee.grade}</td>
 									<td>{item.employee.still_in_probation == false ? 'Tidak aktif' : 'Aktif'}</td>
 									<td className="flex gap-2">

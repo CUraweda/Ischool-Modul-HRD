@@ -5,26 +5,33 @@ const FormDataPage = () => {
 	const [profilePhoto, setProfilePhoto] = useState<any>(null);
 	const [profilePhotoFile, setProfilePhotoFile] = useState<any>(null);
 	const [educationCards, setEducationCards] = useState([
-		{ degree: '', city: '', school: '', startMonth: '', startYear: '', endMonth: '', endYear: '', description: '' },
+		{
+			degree: '',
+			major: '',
+			city: '',
+			instituion: '',
+			startDate: '',
+			endDate: '',
+			description: '',
+		},
 	]);
 	const [workExperienceCards, setWorkExperienceCards] = useState([
 		{
 			workPosition: '',
 			city: '',
 			workGift: '',
-			startMonth: '',
-			startYear: '',
-			endMonth: '',
-			endYear: '',
+			startDate: '',
+			endDate: '',
 			description: '',
 		},
 	]);
 	const [nonFormalEducationCards, setNonFormalEducationCards] = useState([{ description: '' }]);
-	const [achievementsCards, setAchievementsCards] = useState([{ description: '', periodeMonth: '', periodeYear: '' }]);
+	const [achievementsCards, setAchievementsCards] = useState([{ description: '', date: '' }]);
 	const [skillsCards, setSkillsCards] = useState([{ skills: '', level: '' }]);
 
 	// Data Pribadi state
 	const [fullName, setFullName] = useState('');
+	const [nik, setNik] = useState('');
 	const [email, setEmail] = useState('');
 	const [phone, setPhone] = useState('');
 	const [address, setAddress] = useState('');
@@ -86,7 +93,15 @@ const FormDataPage = () => {
 	const addEducationCard = () => {
 		setEducationCards([
 			...educationCards,
-			{ degree: '', city: '', school: '', startMonth: '', startYear: '', endMonth: '', endYear: '', description: '' },
+			{
+				degree: '',
+				major: '',
+				city: '',
+				instituion: '',
+				startDate: '',
+				endDate: '',
+				description: '',
+			},
 		]);
 	};
 
@@ -107,10 +122,8 @@ const FormDataPage = () => {
 				workPosition: '',
 				city: '',
 				workGift: '',
-				startMonth: '',
-				startYear: '',
-				endMonth: '',
-				endYear: '',
+				startDate: '',
+				endDate: '',
 				description: '',
 			},
 		]);
@@ -141,7 +154,7 @@ const FormDataPage = () => {
 	};
 
 	const addAchievementsCard = () => {
-		setAchievementsCards([...achievementsCards, { description: '', periodeMonth: '', periodeYear: '' }]);
+		setAchievementsCards([...achievementsCards, { description: '', date: '' }]);
 	};
 
 	const removeAchievementCard = (index: number) => {
@@ -171,23 +184,20 @@ const FormDataPage = () => {
 	const PostFormData = async () => {
 		const educationData = educationCards.map((card) => ({
 			degree: card.degree,
+			major: card.major,
 			city: card.city,
-			school: card.school,
-			startMonth: card.startMonth,
-			startYear: card.startYear,
-			endMonth: card.endMonth,
-			endYear: card.endYear,
+			instituion: card.instituion,
+			start_date: card.startDate,
+			end_date: card.endDate,
 			description: card.description,
 		}));
 
 		const workExperienceData = workExperienceCards.map((card) => ({
-			workPosition: card.workPosition,
+			position: card.workPosition,
 			city: card.city,
-			startMonth: card.startMonth,
-			startYear: card.startYear,
-			endMonth: card.endMonth,
-			endYear: card.endYear,
-			workGift: card.workGift,
+			start_date: card.startDate,
+			end_date: card.endDate,
+			company: card.workGift,
 			description: card.description,
 		}));
 
@@ -197,25 +207,27 @@ const FormDataPage = () => {
 
 		const achievementsData = achievementsCards.map((card) => ({
 			description: card.description,
-			periodeMonth: card.periodeMonth,
-			periodeYear: card.periodeYear,
+			date: card.date,
 		}));
 
 		const skillsData = skillsCards.map((card) => ({
-			skills: card.skills,
+			description: card.skills,
 			level: card.level,
 		}));
 
 		const profilePhotoDesc = profilePhotoFile ? createFileDesc('applicant_profile', [profilePhotoFile]) : [];
 		const achievementsFileDescs = createFileDesc('appreciation', files);
 
+		const user_id = sessionStorage.getItem('id');
+		const vacancyId = sessionStorage.getItem('vacancy_id');
+
 		const data = {
-			user_id: 1,
-			vacancy_id: 5,
+			user_id: user_id,
+			vacancy_id: vacancyId,
 			full_name: fullName,
 			email: email,
 			phone: phone,
-			nik: '21830921809',
+			nik: nik,
 			pob: birthPlace,
 			dob: birthDate,
 			religion: religion,
@@ -242,25 +254,6 @@ const FormDataPage = () => {
 			console.error(error);
 		}
 	};
-
-	const months = [
-		'Januari',
-		'Februari',
-		'Maret',
-		'April',
-		'Mei',
-		'Juni',
-		'Juli',
-		'Agustus',
-		'September',
-		'Oktober',
-		'November',
-		'Desember',
-	];
-
-	// Generate years, e.g., from 1980 to the current year
-	const currentYear = new Date().getFullYear();
-	const years = Array.from({ length: currentYear - 1980 + 1 }, (_, index) => 1980 + index);
 
 	return (
 		<div className="flex flex-col items-center space-y-6">
@@ -311,6 +304,16 @@ const FormDataPage = () => {
 				</div>
 
 				{/* Additional Fields */}
+				<div className="mb-4">
+					<label className="label text-gray-700">NIK</label>
+					<input
+						type="text"
+						placeholder="NIK"
+						className="input input-bordered w-full"
+						value={nik}
+						onChange={(e) => setNik(e.target.value)}
+					/>
+				</div>
 				<div className="mb-4">
 					<label className="label text-gray-700">Alamat</label>
 					<input
@@ -423,24 +426,47 @@ const FormDataPage = () => {
 					<div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
 							<label className="label text-gray-700">Gelar</label>
-							<input
+							<select
+								className="select select-bordered w-full"
+								onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+							>
+								<option value="">Gelar</option>
+								<option value="SMP">SMP</option>
+								<option value="SMA">SMA</option>
+								<option value="SMK">SMK</option>
+								<option value="D4">D4</option>
+								<option value="S1">S1</option>
+								<option value="S2">S2</option>
+								<option value="S3">S3</option>
+							</select>
+							{/* <input
 								type="text"
 								placeholder="Gelar"
 								className="input input-bordered w-full"
 								value={card.degree}
 								onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-							/>
+							/> */}
 						</div>
 						<div>
-							<label className="label text-gray-700">Kota</label>
+							<label className="label text-gray-700">Jurusan</label>
 							<input
 								type="text"
-								placeholder="Kota"
+								placeholder="Jurusan"
 								className="input input-bordered w-full"
-								value={card.city}
-								onChange={(e) => handleEducationChange(index, 'city', e.target.value)}
+								value={card.major}
+								onChange={(e) => handleEducationChange(index, 'major', e.target.value)}
 							/>
 						</div>
+					</div>
+					<div className="mb-4">
+						<label className="label text-gray-700">Kota</label>
+						<input
+							type="text"
+							placeholder="Kota"
+							className="input input-bordered w-full"
+							value={card.city}
+							onChange={(e) => handleEducationChange(index, 'city', e.target.value)}
+						/>
 					</div>
 					<div className="mb-4">
 						<label className="label text-gray-700">Sekolah</label>
@@ -448,69 +474,29 @@ const FormDataPage = () => {
 							type="text"
 							placeholder="Sekolah"
 							className="input input-bordered w-full"
-							value={card.school}
-							onChange={(e) => handleEducationChange(index, 'school', e.target.value)}
+							value={card.instituion}
+							onChange={(e) => handleEducationChange(index, 'instituion', e.target.value)}
 						/>
 					</div>
 					<div className="mb-4">
 						<div className="grid grid-cols-2 gap-4">
 							<div>
 								<label className="label text-gray-700">Tanggal mulai</label>
-								<div className="grid grid-cols-2 gap-2">
-									<select
-										className="select select-bordered w-full"
-										value={card.startMonth}
-										onChange={(e) => handleEducationChange(index, 'startMonth', e.target.value)}
-									>
-										<option value="">Bulan</option>
-										{months.map((month, idx) => (
-											<option key={idx} value={month}>
-												{month}
-											</option>
-										))}
-									</select>
-									<select
-										className="select select-bordered w-full"
-										value={card.startYear}
-										onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
-									>
-										<option value="">Tahun</option>
-										{years.map((year, idx) => (
-											<option key={idx} value={year}>
-												{year}
-											</option>
-										))}
-									</select>
-								</div>
+								<input
+									type="date"
+									className="w-full rounded border border-gray-300 p-2"
+									onChange={(e) => handleEducationChange(index, 'startDate', e.target.value)}
+									required
+								/>
 							</div>
 							<div>
 								<label className="label text-gray-700">Tanggal selesai</label>
-								<div className="grid grid-cols-2 gap-2">
-									<select
-										className="select select-bordered w-full"
-										value={card.endMonth}
-										onChange={(e) => handleEducationChange(index, 'endMonth', e.target.value)}
-									>
-										<option value="">Bulan</option>
-										{months.map((month, idx) => (
-											<option key={idx} value={month}>
-												{month}
-											</option>
-										))}
-									</select>
-									<select
-										className="select select-bordered w-full"
-										value={card.endYear}
-										onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
-									>
-										<option value="">Tahun</option>
-										{years.map((year, idx) => (
-											<option key={idx} value={year}>
-												{year}
-											</option>
-										))}
-									</select>
-								</div>
+								<input
+									type="date"
+									className="w-full rounded border border-gray-300 p-2"
+									onChange={(e) => handleEducationChange(index, 'endDate', e.target.value)}
+									required
+								/>
 							</div>
 						</div>
 					</div>
@@ -574,61 +560,21 @@ const FormDataPage = () => {
 						<div className="grid grid-cols-2 gap-4">
 							<div>
 								<label className="label text-gray-700">Tanggal mulai</label>
-								<div className="grid grid-cols-2 gap-2">
-									<select
-										className="select select-bordered w-full"
-										value={card.startMonth}
-										onChange={(e) => handleWorkExperienceChange(index, 'startMonth', e.target.value)}
-									>
-										<option value="">Bulan</option>
-										{months.map((month, idx) => (
-											<option key={idx} value={month}>
-												{month}
-											</option>
-										))}
-									</select>
-									<select
-										className="select select-bordered w-full"
-										value={card.startYear}
-										onChange={(e) => handleWorkExperienceChange(index, 'startYear', e.target.value)}
-									>
-										<option value="">Tahun</option>
-										{years.map((year, idx) => (
-											<option key={idx} value={year}>
-												{year}
-											</option>
-										))}
-									</select>
-								</div>
+								<input
+									type="date"
+									className="w-full rounded border border-gray-300 p-2"
+									onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
+									required
+								/>
 							</div>
 							<div>
 								<label className="label text-gray-700">Tanggal selesai</label>
-								<div className="grid grid-cols-2 gap-2">
-									<select
-										className="select select-bordered w-full"
-										value={card.endMonth}
-										onChange={(e) => handleWorkExperienceChange(index, 'endMonth', e.target.value)}
-									>
-										<option value="">Bulan</option>
-										{months.map((month, idx) => (
-											<option key={idx} value={month}>
-												{month}
-											</option>
-										))}
-									</select>
-									<select
-										className="select select-bordered w-full"
-										value={card.endYear}
-										onChange={(e) => handleWorkExperienceChange(index, 'endYear', e.target.value)}
-									>
-										<option value="">Tahun</option>
-										{years.map((year, idx) => (
-											<option key={idx} value={year}>
-												{year}
-											</option>
-										))}
-									</select>
-								</div>
+								<input
+									type="date"
+									className="w-full rounded border border-gray-300 p-2"
+									onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
+									required
+								/>
 							</div>
 						</div>
 					</div>
@@ -692,40 +638,12 @@ const FormDataPage = () => {
 					</div>
 					<div className="mb-4">
 						<label className="label text-gray-700">Periode</label>
-						<div className="grid grid-cols-1 gap-4">
-							<div>
-								<select
-									className="input input-bordered w-full"
-									value={card.periodeMonth}
-									onChange={(e) => handleAchievementsChange(index, 'periodeMonth', e.target.value)}
-								>
-									<option value="" disabled>
-										Pilih Bulan
-									</option>
-									{months.map((month, i) => (
-										<option key={i} value={month}>
-											{month}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<select
-									className="input input-bordered w-full"
-									value={card.periodeYear}
-									onChange={(e) => handleAchievementsChange(index, 'periodeYear', e.target.value)}
-								>
-									<option value="" disabled>
-										Pilih Tahun
-									</option>
-									{years.map((year, i) => (
-										<option key={i} value={year}>
-											{year}
-										</option>
-									))}
-								</select>
-							</div>
-						</div>
+						<input
+							type="date"
+							className="w-full rounded border border-gray-300 p-2"
+							onChange={(e) => handleAchievementsChange(index, 'date', e.target.value)}
+							required
+						/>
 					</div>
 					<div className="mb-4">
 						<label className="label text-gray-700">

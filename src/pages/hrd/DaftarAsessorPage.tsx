@@ -1,14 +1,38 @@
-import Modal, { openModal } from '@/components/ModalProps';
+import Modal, { closeModal, openModal } from '@/components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
 import { useState, useEffect } from 'react';
 
 const DaftarAsessorPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
+	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
+	const [employeeId, setEmployeeId] = useState<number>();
 
 	const FetchData = async () => {
 		try {
 			const response = await Karyawan.DaftarAsessor(0, 20);
 			setFetch(response.data.data.result);
+			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
+			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const Aktif = async (id: any) => {
+		try {
+			await Karyawan.AktifAsessor(null, id);
+			FetchData();
+			closeModal('addAsessor');
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const Nonaktif = async (id: any) => {
+		try {
+			await Karyawan.NonaktifAsessor(null, id);
+			FetchData();
+			closeModal('addAsessor');
 		} catch (error) {
 			console.error(error);
 		}
@@ -44,7 +68,7 @@ const DaftarAsessorPage = () => {
 
 			<div className="mb-4 flex items-end justify-end">
 				<button className="btn btn-xs" onClick={handleDialog}>
-					<span>+</span> Tambah
+					Atur Asessor <span>!</span>
 				</button>
 			</div>
 
@@ -57,7 +81,6 @@ const DaftarAsessorPage = () => {
 								<th>Posisi</th>
 								<th>Bidang</th>
 								<th>Status</th>
-								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -68,24 +91,9 @@ const DaftarAsessorPage = () => {
 										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
 											{item.occupation}
 										</div>
-									</td>{' '}
+									</td>
 									<td>{item.major}</td>
 									<td>{item.is_asessor == true ? 'Aktif' : 'Tidak Aktif'}</td>
-									<td className="flex gap-2">
-										<div className="dropdown dropdown-end">
-											<label tabIndex={0} className="btn btn-primary btn-sm">
-												...
-											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
-												<li>
-													<a>Edit Data</a>
-												</li>
-												<li>
-													<a>Edit Nilai</a>
-												</li>
-											</ul>
-										</div>
-									</td>{' '}
 								</tr>
 							))}
 						</tbody>
@@ -93,7 +101,31 @@ const DaftarAsessorPage = () => {
 				</div>
 			</div>
 			<Modal id="addAsessor">
-				<div>test</div>
+				<div>
+					<h2 className="mb-4 text-xl font-bold">Tambah Asessor </h2>
+					<div>
+						<label className="mb-1 text-sm font-medium">Pilh Karyawan</label>
+						<select
+							className="w-full rounded border border-gray-300 p-2"
+							onChange={(e) => setEmployeeId(parseInt(e.target.value))}
+						>
+							<option value="">-Pilih-</option>
+							{dropdownKaryawan.map((item, index) => (
+								<option value={item.id} key={index}>
+									{item.full_name}
+								</option>
+							))}
+						</select>
+					</div>
+				</div>
+				<div className="flex items-center justify-center gap-4">
+					<button className="btn btn-primary mt-2" onClick={() => Aktif(employeeId)}>
+						Aktif
+					</button>
+					<button className="btn btn-primary mt-2" onClick={() => Nonaktif(employeeId)}>
+						Non Aktif
+					</button>
+				</div>
 			</Modal>
 		</div>
 	);

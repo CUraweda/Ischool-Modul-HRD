@@ -276,9 +276,6 @@ const DashboardPage = () => {
 							<tbody>
 								{daftarApplicant.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.full_name}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>
@@ -308,9 +305,6 @@ const DashboardPage = () => {
 							<tbody>
 								{daftarTraining.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.title}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>

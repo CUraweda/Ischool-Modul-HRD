@@ -25,6 +25,7 @@ const DetailProfilKaryawanPage = () => {
 		mulaiBekerja: '',
 	});
 	const [pelatihan, setPelatihan] = useState<any[]>([]);
+	const [file, setFile] = useState<any[]>([]);
 
 	const dialogPelatihan = () => {
 		openModal('detailPelatihan');
@@ -39,9 +40,26 @@ const DetailProfilKaryawanPage = () => {
 		}
 	};
 
+	const dataFile = async () => {
+		try {
+			const response = await Probation.DetailProbation(id);
+			setFile(response.data.data.employeeattachments);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const handleDialog = () => {
 		openModal('fileAttachment');
 	};
+
+	// const downloadFile = (filePath: string, fileName: string) => {
+	// 	const fileUrl = `${filePath.replace(/\\/g, '/')}`;
+	// 	const link = document.createElement('a');
+	// 	link.href = fileUrl;
+	// 	link.download = fileName;
+	// 	link.click();
+	// };
 
 	const fetchData = async () => {
 		try {
@@ -75,6 +93,7 @@ const DetailProfilKaryawanPage = () => {
 		if (id) {
 			fetchData();
 			dataPelatihan();
+			dataFile();
 		}
 	}, [id]);
 
@@ -156,7 +175,9 @@ const DetailProfilKaryawanPage = () => {
 						<div className="border-r p-4">
 							<div>
 								<div className="text-sm font-bold text-gray-500">Jabatan</div>
-								{fetch?.formpositions.map((item: any) => <div>{item?.employeeposition?.name}</div>)}
+								{fetch?.formpositions.map((item: any, index: any) => (
+									<div key={index}>{item?.employeeposition?.name}</div>
+								))}
 							</div>
 						</div>
 						<div className="border-r p-4">
@@ -196,7 +217,72 @@ const DetailProfilKaryawanPage = () => {
 			</div>
 
 			<Modal id="fileAttachment">
-				<div>test</div>
+				<div>
+					<h3 className="mb-4 text-xl font-bold">Lihat Berkas Karyawan</h3>
+					<ul className="list-none">
+						{file.map((file) => (
+							<li key={file.id} className="flex items-center justify-between border-b py-2">
+								<div className="flex items-center space-x-4">
+									<div className="icon rounded-md border-[0.11115rem] border-solid border-gray-500 p-10">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="h-14 w-14"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+											/>
+										</svg>
+									</div>
+									<span className="text-lg font-semibold text-gray-500">{file.file_name}</span>
+								</div>
+								{/* <div className="flex items-center gap-4">
+									<button
+										className="btn btn-outline btn-xs rounded-full"
+										onClick={() => downloadFile(file.file_path, file.file_name)}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="h-5 w-5"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+											/>
+										</svg>
+									</button>
+									<button className="btn btn-outline btn-xs rounded-full">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="h-6 w-6"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+											/>
+											<path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+										</svg>
+									</button>
+								</div> */}
+							</li>
+						))}
+					</ul>
+				</div>
 			</Modal>
 
 			{/* <Modal id="editProfilKaryawan">
@@ -370,7 +456,7 @@ const DetailProfilKaryawanPage = () => {
 						<div className="card bg-base-100 shadow-md" key={index}>
 							<div className="card-body">
 								<h2 className="card-title">{item.title}</h2>
-								<p>Tujuan: {item.purpose}.</p>
+								<p>Tujuan: {item.purpose}</p>
 								<p>
 									Pengajuan oleh: <span className="font-bold">HRD</span>
 								</p>
