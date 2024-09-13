@@ -41,11 +41,11 @@ const Sidebar = () => {
 
 	return (
 		<div>
-			<div className="drawer lg:drawer-open">
+			<div className="drawer xl:drawer-open">
 				<input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 				<div className="drawer-side">
 					<label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay" />
-					<ul className="menu min-h-screen w-full bg-base-100 p-4">
+					<ul className="menu min-h-screen bg-base-100 p-4 md:w-[40%] xl:w-full">
 						<div className="mb-3 flex w-full items-center justify-between pb-6">
 							<div className="flex items-center justify-center gap-1">
 								<img src={logo} alt="logo" className="w-20" />

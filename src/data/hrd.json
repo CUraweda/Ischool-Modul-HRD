@@ -64,18 +64,20 @@
 		]
 	},
 	{
-		"submenu": false,
-		"title": "Rekap Penilaian",
-		"icon": "<GoPeople />",
-		"url": "/hrd/penilaian",
-		"subtitle": []
-	},
-	{
-		"submenu": false,
+		"submenu": true,
 		"title": "Pelatihan",
 		"icon": "<MdOutlineDateRange />",
-		"url": "/hrd/pelatihan",
-		"subtitle": []
+		"url": "",
+		"subtitle": [
+			{
+				"name": "Daftar Pelatihan",
+				"url": "/hrd/daftar-pelatihan"
+			},
+			{
+				"name": "Rekap Pelatihan",
+				"url": "/hrd/rekap-pelatihan"
+			}
+		]
 	},
 	{
 		"submenu": true,

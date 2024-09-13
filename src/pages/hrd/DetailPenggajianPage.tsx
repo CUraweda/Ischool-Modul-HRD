@@ -1,14 +1,424 @@
-import { useState } from 'react';
-
-const DetailPenggajianPage = () => {
+import React, { useState, useEffect } from 'react';
+import { Penggajian, Bill, Salary, Employee } from '@/middlewares/api/hrd';
+import * as XLSX from 'xlsx';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { IoMdClose } from 'react-icons/io';
+import { getSessionStorageItem } from '@/utils/storageUtils';
+const DetailPenggajianPage: React.FC<{}> = () => {
+	const Navigate = useNavigate();
+	const token = getSessionStorageItem('access_token');
 	const [isModalOpen, setModalOpen] = useState(false);
+	const [modalAdd, setModalAdd] = useState(false);
+	const [dataPenggajian, setDataPenggajian] = useState<any[]>([]);
+	const [detailPenggajian, setDetailPenggajian] = useState<any>(null);
+	const [dataSalary, setSalary] = useState<any>(null);
+	const [DataTypes, setTypes] = useState<any>({});
+	const [DataBill, setDataBill] = useState<any>([]);
+	const [ListEmployee, setListEmployee] = useState<any>(null);
+	const monthNames = [
+		'Januari',
+		'Februari',
+		'Maret',
+		'April',
+		'Mei',
+		'Juni',
+		'Juli',
+		'Agustus',
+		'September',
+		'Oktober',
+		'November',
+		'Desember',
+	];
 
-	const handleModal = () => {
-		setModalOpen(!isModalOpen);
+	const Month = monthNames.map((name, index) => ({
+		month_id: index + 1,
+		desc: name,
+	}));
+	const [filter, setFilter] = useState({
+		totalRows: 0,
+		totalPages: 0,
+		search: '',
+		limit: 0,
+	});
+	const [formData, setFormData] = useState({
+		salary_id: 0,
+		employee_id: 0,
+		month_id: 0,
+		year: 0,
+		uid: '',
+		status: '',
+		is_paid: true,
+		temp_total: 0,
+		fixed_salary: 0,
+		variable_salary: 0,
+		loan: 0,
+		cooperative: 0,
+	});
+	const resetForm = () => {
+		setFormData({
+			salary_id: 0,
+			employee_id: 0,
+			month_id: 0,
+			year: 0,
+			uid: '',
+			status: '',
+			is_paid: true,
+			temp_total: 0,
+			fixed_salary: 0,
+			variable_salary: 0,
+			loan: 0,
+			cooperative: 0,
+		});
+	};
+	const fetchData = async () => {
+		try {
+			const res = await Penggajian.getAllAccount(token, '');
+			console.log('Response object:', res.data.data.result);
+			setDataPenggajian(res.data.data.result);
+			setFilter((prev) => ({ ...prev, totalPages: res.data.data.totalPages, totalRows: res.data.data.totalRows }));
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	};
+	const getAllSalary = async () => {
+		try {
+			const res = await Salary.getAllSalary(100000, '', 0);
+			setSalary(res.data.data.result);
+			console.log(res.data.data.result);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const createAccount = async (data: any) => {
+		try {
+			const res = await Penggajian.createAccount(token, data);
+			setSalary(res.data.data.result);
+			if (res.status === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Data berhasil ditambahkan',
+				});
+				fetchData();
+				resetForm();
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Terjadi kesalahan saat ditambahkan.',
+				});
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const getOne = async (id: any) => {
+		try {
+			const res = await Penggajian.getOneAccount(id, token);
+			setDetailPenggajian(res.data.data);
+			console.log('as', res.data.data);
+			getEmployee(res.data.data.employee_id);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	};
+	const getEmployee = async (id: any) => {
+		try {
+			const res = await Employee.getOneEmployee(id);
+			setListEmployee(res.data.data);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	// Update handleInputChange to handle salary_id selection
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+		const { name, type, value } = e.target as HTMLInputElement | HTMLSelectElement;
+
+		// Convert value to number if it is numeric
+		let updatedValue: any = value;
+		if (type === 'checkbox') {
+			const target = e.target as HTMLInputElement;
+			updatedValue = target.checked;
+		} else if (['salary_id', 'employee_id', 'month_id', 'year'].includes(name)) {
+			updatedValue = parseInt(value, 10) || 0;
+		} else if (['temp_total', 'fixed_salary', 'variable_salary', 'loan', 'cooperative'].includes(name)) {
+			updatedValue = parseFloat(value) || 0;
+		}
+
+		setFormData((prevFormData) => {
+			const newFormData = {
+				...prevFormData,
+				[name]: updatedValue,
+			};
+
+			// Handle specific logic for salary_id change
+			if (name === 'salary_id') {
+				const selectedSalary = dataSalary.find((s: any) => s.id === updatedValue);
+				if (selectedSalary) {
+					newFormData.fixed_salary = selectedSalary.fixed_salary;
+					newFormData.employee_id = selectedSalary.employee.id;
+					newFormData.temp_total = selectedSalary.fixed_salary;
+					const year = prevFormData.year;
+					const month = prevFormData.month_id;
+					const firstName = selectedSalary.employee.full_name.split(' ')[0];
+					const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
+					newFormData.uid = uid;
+				}
+			}
+			// Recalculate temp_total when relevant fields change
+			if (['fixed_salary', 'variable_salary', 'loan', 'cooperative'].includes(name)) {
+				const { fixed_salary, variable_salary, loan, cooperative } = newFormData;
+				newFormData.temp_total = (fixed_salary || 0) + (variable_salary || 0) - (loan || 0) - (cooperative || 0);
+			}
+
+			return newFormData;
+		});
+	};
+	const deleteAccount = async (id: any) => {
+		try {
+			const res = await Penggajian.deleteAccount(token, id);
+			if (res.status === 200) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Data berhasil dihapus',
+				});
+				fetchData();
+			} else {
+				// Handle other status codes if needed
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Terjadi kesalahan saat menghapus data.',
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
+	// const getTypes = async (id: any) => {
+	// 	if (DataTypes[id]) return;
+
+	// 	try {
+	// 		const res = await Bill.getOneTypes(id);
+	// 		setTypes((prevTypes: any) => ({
+	// 			...prevTypes,
+	// 			[id]: res.data.data.result.name,
+	// 		}));
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 	}
+	// };
+	const getTypes = async () => {
+		const typesMap: any = {};
+
+		// Ambil semua type_id dari DataBill dan lakukan fetch sekali
+		const promises = DataBill.map(async (item: any) => {
+			try {
+				if (!typesMap[item.type_id]) {
+					const res = await Bill.getOneTypes(item.type_id); // API call
+					typesMap[item.type_id] = res.data.data.name;
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		});
+
+		await Promise.all(promises);
+		setTypes(typesMap);
+		console.log('test', typesMap);
+	};
+	const getBill = async (id: number) => {
+		try {
+			const res = await Bill.getAllBill(0, '', 0, id);
+			setDataBill(res.data.data.result);
+			console.log('test', res.data.data.result);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const filteredData = DataBill.filter((item: any) => item.type_id === 3 || item.type_id === 4);
+	const remainingData = DataBill.filter((item: any) => item.type_id !== 3 && item.type_id !== 4);
+	const formatSalary = (salary: number) => {
+		return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(salary);
+	};
+	useEffect(() => {
+		fetchData();
+		getAllSalary();
+	}, []);
+
+	useEffect(() => {
+		getTypes();
+	}, [DataBill]);
+	const handleModal = (id: any | null) => {
+		getOne(id);
+		getBill(id);
+		setModalOpen(!isModalOpen);
+	};
+	const exportToXLSX = () => {
+		const formattedData = dataPenggajian.map((item, index) => ({
+			no: index + 1,
+			Nama: item.employee.full_name,
+			Divisi: item.employee.division,
+			status: item.status,
+			gaji_tetap: item.fixed_salary,
+			gaji_tidak_tetap: item.fixed_salary,
+			Pinjaman: item.loan,
+			Koperasi: item.cooperative,
+		}));
+
+		const worksheet = XLSX.utils.json_to_sheet(formattedData);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Penggajian');
+		XLSX.writeFile(workbook, 'Data_Penggajian.xlsx');
+	};
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		createAccount(formData);
+		console.log('Submitted Data: ', formData);
+		// Logic untuk mengirim data
+		setModalAdd(false); // Tutup modal setelah submit
+	};
+	const handleEdit = (id: any) => {
+		Navigate(`/hrd/rekap-gaji/${id}`, { state: { id } });
+	};
 	return (
 		<div className="bg min-h-screen p-5">
+			{/* Modal */}
+			{modalAdd && (
+				<div className="modal modal-open">
+					<div className="modal-box relative">
+						<button
+							className="absolute right-2 top-2"
+							onClick={() => {
+								setModalAdd(false), resetForm();
+							}}
+						>
+							<IoMdClose size={20} />
+						</button>
+						<h3 className="text-lg font-bold">Tambah Gaji</h3>
+						<form onSubmit={handleSubmit}>
+							<div className="mt-4">
+								<label className="label">
+									<span className="label-text">Salary Karyawan</span>
+								</label>
+								<select
+									name="salary_id"
+									value={formData.salary_id}
+									onChange={handleInputChange}
+									className="select select-bordered w-full"
+									required
+								>
+									<option value="">Pilih Karyawan</option>
+
+									{dataSalary?.map((salary: any) => (
+										<option key={salary.id} value={salary.id}>
+											{formatSalary(salary.fixed_salary)} - {salary.employee.full_name}
+										</option>
+									))}
+								</select>
+							</div>
+
+							{/* <div className="mt-4">
+								<label className="label">
+									<span className="label-text">Karyawan</span>
+								</label>
+								<select
+									name="employee_id"
+									value={formData.employee_id}
+									onChange={handleInputChange}
+									className="select select-bordered w-full"
+									required
+								>
+									<option value="">Pilih Karyawan</option>
+									{dataSalary.map((salary: any) => (
+										<option key={salary.id} value={salary.id}>
+											{salary.employee.full_name}
+										</option>
+									))}
+								</select>
+							</div> */}
+
+							{/* {ListEmployee.map((employee: any) => (
+										<option key={employee.id} value={employee.id}>
+											{employee.full_name}
+										</option>
+									))} */}
+							<div className="mt-4">
+								<label className="label">
+									<span className="label-text">Bulan</span>
+								</label>
+								<select
+									name="month_id"
+									value={formData.month_id}
+									onChange={handleInputChange}
+									className="select select-bordered w-full"
+									required
+								>
+									<option value="" disabled>
+										Pilih Bulan
+									</option>
+									{Month.map((item: any) => (
+										<option key={item.month_id} value={item.month_id}>
+											{item.desc}
+										</option>
+									))}
+								</select>
+							</div>
+
+							<div className="mt-4">
+								<label className="label">
+									<span className="label-text">Tahun</span>
+								</label>
+								<input
+									type="number"
+									name="year"
+									value={formData.year}
+									onChange={handleInputChange}
+									className="input input-bordered w-full"
+									required
+								/>
+							</div>
+
+							<div className="mt-4">
+								<label className="label">
+									<span className="label-text">Status</span>
+								</label>
+								<input
+									type="text"
+									name="status"
+									value={formData.status}
+									onChange={handleInputChange}
+									className="input input-bordered w-full"
+									required
+								/>
+							</div>
+
+							<div className="mt-4">
+								<label className="label">
+									<span className="label-text">Sudah Dibayar</span>
+								</label>
+								<input
+									type="checkbox"
+									name="is_paid"
+									checked={formData.is_paid}
+									onChange={handleInputChange}
+									className="checkbox"
+								/>
+							</div>
+
+							<div className="modal-action">
+								<button type="submit" className="btn btn-primary">
+									Simpan
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
+
 			{/* Header */}
 			<div className="mb-3 text-xl font-bold">Penggajian</div>
 			<div className="breadcrumbs mb-5 text-sm">
@@ -42,7 +452,14 @@ const DetailPenggajianPage = () => {
 						</div>
 						<div className="text-lg font-bold">Juni 2024</div>
 					</div>
-					<button className="btn btn-outline btn-primary">Export ke excel</button>
+					<div className="flex gap-5">
+						<button className="btn btn-outline btn-primary" onClick={() => exportToXLSX()}>
+							Export ke excel
+						</button>
+						<button onClick={() => setModalAdd(true)} className="btn btn-outline btn-primary">
+							tambah
+						</button>
+					</div>
 				</div>
 
 				{/* Table */}
@@ -60,44 +477,58 @@ const DetailPenggajianPage = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{/* Repeat these rows dynamically */}
-							<tr>
-								<td>Alya Putri Azzahra</td>
-								<td>Rp 1.750.000</td>
-								<td>Rp 350.000</td>
-								<td className="text-red-500">-Rp 20.000</td>
-								<td>-</td>
-								<td>
-									<span className="badge badge-warning">Tunda</span>
-								</td>
-								<td>
-									<div className="cursor-pointer font-semibold text-blue-400" onClick={handleModal}>
-										Lihat Detail
-									</div>
-								</td>
-							</tr>
+							{dataPenggajian.map((item) => (
+								<tr key={item.id}>
+									<td>{item.employee.full_name}</td>
+									<td>{formatSalary(item.fixed_salary)}</td>
+									<td>{formatSalary(item.variable_salary)}</td>
+									<td>{formatSalary(item.loan)}</td>
+									<td>{formatSalary(item.cooperative)}</td>
+									<td>
+										<span className={`badge ${item.status !== 'sudah' ? 'badge-warning' : 'badge-success'}`}>
+											{item.status}
+										</span>
+									</td>
+									<td>
+										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
+											{/* <IoIosTrash /> */}
+											Delete
+										</div>
+										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleEdit(item.id)}>
+											Edit
+										</div>
+										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleModal(item.id)}>
+											Lihat Detail
+										</div>
+									</td>
+								</tr>
+							))}
 						</tbody>
 						<tfoot>
 							<tr>
 								<th colSpan={6}>Total Karyawan</th>
-								<th>42</th>
+								<th>{filter.totalRows}</th>
 							</tr>
 							<tr>
 								<th colSpan={6}>Total Jumlah</th>
-								<th>Rp 431.034.365</th>
+								<th>
+									{' '}
+									{dataPenggajian
+										.reduce((total, item) => total + (item.fixed_salary || 0), 0)
+										.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
+								</th>
 							</tr>
 						</tfoot>
 					</table>
 				</div>
 			</div>
 
-			{/* Detail Modal */}
 			<input
 				type="checkbox"
 				id="detailPenggajianModal"
 				className="modal-toggle"
 				checked={isModalOpen}
-				onChange={handleModal}
+				onChange={() => setModalOpen(!isModalOpen)}
 			/>
 			<div className="modal">
 				<div className="modal-box w-11/12 max-w-6xl">
@@ -105,17 +536,17 @@ const DetailPenggajianPage = () => {
 						{/* Employee Info */}
 						<div className="flex justify-between border-b pb-3">
 							<div>
-								<p>
-									<strong>Nama:</strong> Alya Putri Azzahra
-								</p>
-								<p>
-									<strong>Jabatan:</strong> Sekretaris
-								</p>
+								<div className="flex gap-2">
+									<strong>Nama:</strong>
+									{ListEmployee?.full_name}
+								</div>
+								<div className="flex gap-2">
+									<strong>Jabatan:</strong>
+									{ListEmployee?.occupation}
+								</div>
 							</div>
 							<div className="text-right">
-								<p>
-									<strong>Juni 2024</strong>
-								</p>
+								<p>{/* <strong> {detailPenggajian?.employee.dob.split('T')[0]}</strong> */}</p>
 							</div>
 						</div>
 
@@ -130,39 +561,23 @@ const DetailPenggajianPage = () => {
 										<div className="space-y-1 border-l-4 border-blue-500 pl-2">
 											<p className="flex justify-between">
 												<span>Gaji Pokok</span>
-												<span>Rp 750.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Tunjangan Hari Raya</span>
-												<span>-</span>
+												<span>{formatSalary(detailPenggajian?.fixed_salary)}</span>
 											</p>
 										</div>
 									</div>
+									{/* Kolom pertama untuk id 3 dan 4 */}
 									<div>
-										<p className="font-semibold">Gaji Tidak Tetap</p>
-										<div className="space-y-1 border-l-4 border-blue-500 pl-2">
-											<p className="flex justify-between">
-												<span>Tunjangan Transportasi</span>
-												<span>Rp 750.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Tunjangan Jabatan</span>
-												<span>-</span>
-											</p>
-										</div>
-									</div>
-									<div>
-										<p className="font-semibold">Fasilitas</p>
-										<div className="space-y-1 border-l-4 border-blue-500 pl-2">
-											<p className="flex justify-between">
-												<span>Makan Siang</span>
-												<span>Rp 250.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>BPJS</span>
-												<span>Rp 750.000</span>
-											</p>
-										</div>
+										{filteredData.map((item: any, index: number) => (
+											<div key={index}>
+												<p className="font-semibold">{DataTypes[item.type_id]}</p>
+												<div className="space-y-1 border-l-4 border-blue-500 pl-2">
+													<p className="flex justify-between">
+														<span>{item.description}</span>
+														<span>{formatSalary(item.amount)}</span>
+													</p>
+												</div>
+											</div>
+										))}
 									</div>
 								</div>
 							</div>
@@ -171,35 +586,19 @@ const DetailPenggajianPage = () => {
 							<div>
 								<h3 className="border-b pb-2 text-lg font-semibold">POTONGAN</h3>
 								<div className="mt-3 space-y-2">
+									{/* <div className="space-y-1 border-l-4 border-red-500 pl-2"> */}
 									<div>
-										<p className="font-semibold">Pinjaman</p>
-										<div className="space-y-1 border-l-4 border-red-500 pl-2">
-											<p className="flex justify-between">
-												<span>Pinjaman</span>
-												<span className="text-red-500">-Rp 250.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Pinjaman</span>
-												<span className="text-red-500">-Rp 250.000</span>
-											</p>
-										</div>
-									</div>
-									<div>
-										<p className="font-semibold">Koperasi</p>
-										<div className="space-y-1 border-l-4 border-red-500 pl-2">
-											<p className="flex justify-between">
-												<span>Simpanan Sukarela</span>
-												<span className="text-red-500">-Rp 250.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Simpanan Wajib</span>
-												<span className="text-red-500">-Rp 250.000</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Cicilan Belanja</span>
-												<span className="text-red-500">-Rp 250.000</span>
-											</p>
-										</div>
+										{remainingData.map((item: any, index: number) => (
+											<div key={index}>
+												<p className="font-semibold">{DataTypes[item.type_id]}</p>
+												<div className="space-y-1 border-l-4 border-red-500 pl-2">
+													<p className="flex justify-between">
+														<span>{item.description}</span>
+														<span>{formatSalary(item.amount)}</span>
+													</p>
+												</div>
+											</div>
+										))}
 									</div>
 								</div>
 							</div>
@@ -208,11 +607,11 @@ const DetailPenggajianPage = () => {
 						{/* Total */}
 						<div className="mt-6 flex justify-between border-t pt-3">
 							<h3 className="text-lg font-semibold">TOTAL</h3>
-							<p className="text-right font-semibold">Rp 1.750.000</p>
+							<p className="text-right font-semibold">{}</p>
 						</div>
 					</div>
 					<div className="modal-action">
-						<label htmlFor="detailPenggajianModal" className="btn" onClick={handleModal}>
+						<label htmlFor="detailPenggajianModal" className="btn" onChange={() => setModalOpen(!isModalOpen)}>
 							Tutup
 						</label>
 					</div>
