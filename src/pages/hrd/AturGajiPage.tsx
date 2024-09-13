@@ -1,7 +1,7 @@
 import { FaRegEdit } from 'react-icons/fa';
 import { Salary, Employee, Bill, Penggajian } from '@/middlewares/api/hrd';
 import { useEffect, useState } from 'react';
-import { IoMdClose } from 'react-icons/io';
+import { IoMdClose, IoIosTrash  } from 'react-icons/io';
 import Swal from 'sweetalert2';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 
@@ -48,6 +48,34 @@ const AturGajiPage = () => {
 		try {
 			const res = await Penggajian.getAllAccount(token, '');
 			setDataAccount(res.data.data.result);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const deleteDataSalary = async (id: number) => {
+		try {
+			const res = await Salary.deleteSalary(id);
+			if (res.status === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Data berhasil dihapus',
+				});
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const deleteDataBill = async (id: number) => {
+		try {
+			const res = await Bill.deleteBill(id);
+			if (res.status === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Data berhasil dihapus',
+				});
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -488,6 +516,15 @@ const AturGajiPage = () => {
 													<FaRegEdit />
 													Edit
 												</button>
+												<button
+													className="btn btn-ghost btn-neutral"
+													onClick={() => {
+														deleteDataSalary(s.id);
+													}}
+												>
+													<IoIosTrash />
+													delete
+												</button>
 											</td>
 										</tr>
 									))}
@@ -541,14 +578,20 @@ const AturGajiPage = () => {
 												<button
 													className="btn btn-ghost btn-neutral"
 													onClick={() => {
-														setModalBill(true),
-															setTypeBillModal('edit'),
-															setUpdateDataBill(item),
-															console.log('test123', item);
+														setModalBill(true), setTypeBillModal('edit'), setUpdateDataBill(item);
 													}}
 												>
 													<FaRegEdit />
 													Edit
+												</button>
+												<button
+													className="btn btn-ghost btn-neutral"
+													onClick={() => {
+														deleteDataBill(item.id);
+													}}
+												>
+													<IoIosTrash />
+													delete
 												</button>
 											</td>
 										</tr>

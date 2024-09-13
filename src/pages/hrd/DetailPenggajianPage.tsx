@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Penggajian, Bill, Salary, Employee } from '@/middlewares/api/hrd';
 import * as XLSX from 'xlsx';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { IoMdClose } from 'react-icons/io';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 const DetailPenggajianPage: React.FC<{}> = () => {
-	// const Navigate = useNavigate();
+	const Navigate = useNavigate();
 	const token = getSessionStorageItem('access_token');
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [modalAdd, setModalAdd] = useState(false);
@@ -281,6 +281,9 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		// Logic untuk mengirim data
 		setModalAdd(false); // Tutup modal setelah submit
 	};
+	const handleEdit = (id: any) => {
+		Navigate(`/hrd/rekap-gaji/${id}`, { state: { id } });
+	};
 	return (
 		<div className="bg min-h-screen p-5">
 			{/* Modal */}
@@ -488,11 +491,12 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 									</td>
 									<td>
 										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
+											{/* <IoIosTrash /> */}
 											Delete
 										</div>
-										{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleEdit(item.id)}>
+										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleEdit(item.id)}>
 											Edit
-										</div> */}
+										</div>
 										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleModal(item.id)}>
 											Lihat Detail
 										</div>
@@ -557,10 +561,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 										<div className="space-y-1 border-l-4 border-blue-500 pl-2">
 											<p className="flex justify-between">
 												<span>Gaji Pokok</span>
-												<span>{formatSalary(detailPenggajian?.fixed_salary)}</span>
-											</p>
-											<p className="flex justify-between">
-												<span>Tunjangan Hari Raya</span>
 												<span>{formatSalary(detailPenggajian?.fixed_salary)}</span>
 											</p>
 										</div>

@@ -283,7 +283,7 @@ const PelatihanPage: React.FC<{}> = () => {
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
 						<li className="font-bold">
-							<a>Rekap Pelatihan</a>
+							<a>Daftar Pelatihan</a>
 						</li>
 					</ul>
 				</div>

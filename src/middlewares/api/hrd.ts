@@ -1,5 +1,5 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
-import axios, { Axios, AxiosPromise } from 'axios';
+import axios, { AxiosPromise } from 'axios';
 // const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
 // const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
 // const token = getSessionStorageItem('access_token');
@@ -58,7 +58,35 @@ const Dashboard = {
 			},
 		}),
 };
+const TrainingSuggest = {
+	getAllTraining: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `training-suggestion?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 
+	editTrainingSuggest: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `training-suggestion/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createTrainingSuggest: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `training-suggestion/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 const Rekrutmen = {
 	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
 		instance({
@@ -374,6 +402,12 @@ const Salary = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	deleteSalary: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-salary/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 const Bill = {
 	getAllBill: (limit: number, search_query: any, page: number, account_id: any): AxiosPromise<any> =>
@@ -414,6 +448,12 @@ const Bill = {
 			params: {
 				limit: limit,
 				page: page,
+			},
+		}),
+	deleteBill: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-bill/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
 			},
 		}),
 	getOneTypes: (id: number): AxiosPromise<any> =>
@@ -565,6 +605,12 @@ const Penggajian = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	getTotalMonth: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/total-month?month=5&year=2024', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 export {
 	Bill,
@@ -581,5 +627,6 @@ export {
 	CustomerCare,
 	Employee,
 	EmployeeJobdesk,
+	TrainingSuggest,
 	Penggajian,
 };
