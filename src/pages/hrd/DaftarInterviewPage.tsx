@@ -149,7 +149,9 @@ const DaftarInterviewPage = () => {
 										<td>{item.status}</td>
 										<td className="relative px-4 py-2">
 											<div className="dropdown dropdown-end">
-												<button className="btn btn-primary btn-sm">...</button>
+												<button className="btn btn-primary btn-sm" disabled={item.is_passed == true}>
+													...
+												</button>
 												<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
 													<li>
 														<a onClick={() => handleDialog('terima', item.id)}>Terima</a>

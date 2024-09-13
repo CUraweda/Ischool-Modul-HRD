@@ -113,7 +113,9 @@ const DetailCardProbationPage = () => {
 		<div className="min-h-screen">
 			<div className="flex items-end justify-end">
 				<div className="dropdown dropdown-end">
-					<button className="btn btn-primary mb-4">Akhir Masa Percobaan</button>
+					<button className="btn btn-primary mb-4" disabled={fetch.still_in_probation == false}>
+						Akhir Masa Percobaan
+					</button>
 					<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
 						<li>
 							<a onClick={() => handleProbation('finish', fetch?.id)}>Akhiri</a>

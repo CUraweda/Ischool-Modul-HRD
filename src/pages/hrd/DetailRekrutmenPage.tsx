@@ -49,6 +49,7 @@ const DetailRekrutmenPage = () => {
 		};
 		try {
 			await Rekrutmen.LulusRekrutmen(data, selectedId);
+			fetchData();
 			closeModal('dialogAccepted');
 		} catch (error) {
 			console.error(error);
@@ -61,6 +62,7 @@ const DetailRekrutmenPage = () => {
 		try {
 			await Rekrutmen.GagalRekrutmen(null, selectedId);
 			closeModal('cvApplicant');
+			fetchData();
 		} catch (error) {
 			console.error(error);
 		}
@@ -177,7 +179,11 @@ const DetailRekrutmenPage = () => {
 										<td>{item.phone}</td>
 										<td className="text-center">{item.status}</td>
 										<th>
-											<button className="btn btn-primary btn-sm" onClick={() => handleOpenPreviewCvDialog(item.id)}>
+											<button
+												className="btn btn-primary btn-sm"
+												onClick={() => handleOpenPreviewCvDialog(item.id)}
+												disabled={item.is_passed_interview == true}
+											>
 												Buka
 											</button>
 										</th>

@@ -41,8 +41,12 @@ const AppRoutes: React.FC = () => {
 		<Router>
 			<Suspense fallback={<div>Loading...</div>}>
 				<Routes>
+					<Route element={<PublicLayout />}>
+						<Route path="/" element={<FormPage />} />
+					</Route>
+
 					<Route
-						path="/"
+						path="/login"
 						element={
 							<AuthLayout>
 								<LoginPage />
@@ -57,6 +61,7 @@ const AppRoutes: React.FC = () => {
 							</AuthLayout>
 						}
 					/>
+
 					<Route path="/hrd/" element={<ProtectedRoute roles={[5]} />}>
 						<Route element={<HrdLayout />}>
 							<Route path="dashboard" element={<DashboardPage />} />
@@ -85,14 +90,10 @@ const AppRoutes: React.FC = () => {
 						</Route>
 					</Route>
 
-					<Route path="/" element={<ProtectedRoute roles={[5, 12]} />}>
+					<Route element={<ProtectedRoute roles={[11]} />}>
 						<Route element={<PublicLayout />}>
 							<Route path="form-data" element={<FormDataPage />} />
 						</Route>
-					</Route>
-
-					<Route path="/" element={<PublicLayout />}>
-						<Route path="career" element={<FormPage />} />
 					</Route>
 
 					<Route path="*" element={<ForbiddenPage />} />

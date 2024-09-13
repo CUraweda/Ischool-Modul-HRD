@@ -154,7 +154,7 @@ const DataKaryawanPage = () => {
 						<option value="" selected>
 							Filter
 						</option>
-						<option>Part Time</option>
+						<option>Probation</option>
 						<option>Kontrak</option>
 						<option>Tetap</option>
 					</select>
@@ -230,240 +230,220 @@ const DataKaryawanPage = () => {
 			</div>
 
 			<Modal id="addKaryawan">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
+				<div className="mx-auto w-full max-w-lg rounded-lg bg-white p-6 shadow-lg">
+					<h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Tambah Penerimaan Baru</h2>
 					<form onSubmit={handleCreateKaryawan}>
-						<div className="mb-4 flex flex-col gap-2">
-							<div>
-								<label className="mb-1 block text-sm font-medium">Nama Lengkap</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={fullName}
-									onChange={(e) => setFullName(e.target.value)}
-									required
-								/>
+						<div className="space-y-6">
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Nama Lengkap</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={fullName}
+										onChange={(e) => setFullName(e.target.value)}
+										placeholder="Masukkan nama lengkap"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Jenis Kelamin</label>
+									<select
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={gender}
+										onChange={(e) => setGender(e.target.value)}
+										required
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Male">Pria</option>
+										<option value="Female">Wanita</option>
+									</select>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Jenis Kelamin</label>
-								<select
-									className="w-full rounded border border-gray-300 p-2"
-									value={gender}
-									onChange={(e) => setGender(e.target.value)}
-									required
-								>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									<option value="Male">Pria</option>
-									<option value="Female">Wanita</option>
-								</select>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Tempat Lahir</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={placeOfBirth}
+										onChange={(e) => setPlaceOfBirth(e.target.value)}
+										placeholder="Masukkan tempat lahir"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
+									<input
+										type="date"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={dateOfBirth}
+										onChange={(e) => setDateOfBirth(e.target.value)}
+										required
+									/>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Tempat Lahir</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={placeOfBirth}
-									onChange={(e) => setPlaceOfBirth(e.target.value)}
-									required
-								/>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Agama</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={religion}
+										onChange={(e) => setReligion(e.target.value)}
+										placeholder="Masukkan agama"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Status Pernikahan</label>
+									<select
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={maritalStatus}
+										onChange={(e) => setMaritalStatus(e.target.value)}
+										required
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Single">Lajang</option>
+										<option value="Married">Menikah</option>
+										<option value="Divorced">Cerai</option>
+									</select>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Tanggal Lahir</label>
-								<input
-									type="date"
-									className="w-full rounded border border-gray-300 p-2"
-									value={dateOfBirth}
-									onChange={(e) => setDateOfBirth(e.target.value)}
-									required
-								/>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Pendidikan Terakhir</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={lastEducation}
+										onChange={(e) => setLastEducation(e.target.value)}
+										placeholder="Masukkan pendidikan terakhir"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Tahun Sertifikat</label>
+									<input
+										type="number"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={certificationYear}
+										onChange={(e) => setCertificationYear(e.target.value)}
+										placeholder="Masukkan tahun sertifikat"
+										required
+									/>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Agama</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={religion}
-									onChange={(e) => setReligion(e.target.value)}
-									required
-								/>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Pendidikan?</label>
+									<select
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={isEducated}
+										onChange={(e) => setIsEducated(e.target.value)}
+										required
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Yes">Ya</option>
+										<option value="No">Tidak</option>
+									</select>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Jurusan</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={major}
+										onChange={(e) => setMajor(e.target.value)}
+										placeholder="Masukkan jurusan"
+										required
+									/>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Status Pernikahan</label>
-								<select
-									className="w-full rounded border border-gray-300 p-2"
-									value={maritalStatus}
-									onChange={(e) => setMaritalStatus(e.target.value)}
-									required
-								>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									<option value="Single">Lajang</option>
-									<option value="Married">Menikah</option>
-									<option value="Divorced">Cerai</option>
-								</select>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Status Karyawan</label>
+									<select
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={employeeStatus}
+										onChange={(e) => setEmployeeStatus(e.target.value)}
+										required
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Tetap">Tetap</option>
+										<option value="Probation">Probation</option>
+										<option value="Contract">Kontrak</option>
+									</select>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Mulai</label>
+									<input
+										type="date"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={startDate}
+										onChange={(e) => setStartDate(e.target.value)}
+										required
+									/>
+								</div>
 							</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Pendidikan Terakhir</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={lastEducation}
-									onChange={(e) => setLastEducation(e.target.value)}
-									required
-								/>
-							</div>
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Jabatan</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={position}
+										onChange={(e) => setPosition(e.target.value)}
+										placeholder="Masukkan jabatan"
+										required
+									/>
+								</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Tahun Sertifikat</label>
-								<input
-									type="number"
-									className="w-full rounded border border-gray-300 p-2"
-									value={certificationYear}
-									onChange={(e) => setCertificationYear(e.target.value)}
-									required
-								/>
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Guru?</label>
+									<select
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={isTeacher}
+										onChange={(e) => setIsTeacher(e.target.value)}
+										required
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Yes">Ya</option>
+										<option value="No">Tidak</option>
+									</select>
+								</div>
 							</div>
+						</div>
 
-							<div>
-								<label className="mb-1 block text-sm font-medium">Apakah Pendidikan?</label>
-								<select
-									className="w-full rounded border border-gray-300 p-2"
-									value={isEducated}
-									onChange={(e) => setIsEducated(e.target.value)}
-									required
-								>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									<option value="Yes">Ya</option>
-									<option value="No">Tidak</option>
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Jurusan</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={major}
-									onChange={(e) => setMajor(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Status Karyawan</label>
-								<select
-									className="w-full rounded border border-gray-300 p-2"
-									value={employeeStatus}
-									onChange={(e) => setEmployeeStatus(e.target.value)}
-									required
-								>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									<option value="Full-time">Full-time</option>
-									<option value="Part-time">Part-time</option>
-									<option value="Contract">Kontrak</option>
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Tanggal Mulai</label>
-								<input
-									type="date"
-									className="w-full rounded border border-gray-300 p-2"
-									value={startDate}
-									onChange={(e) => setStartDate(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Jabatan</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={position}
-									onChange={(e) => setPosition(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Apakah Guru?</label>
-								<select
-									className="w-full rounded border border-gray-300 p-2"
-									value={isTeacher}
-									onChange={(e) => setIsTeacher(e.target.value)}
-									required
-								>
-									<option value="" disabled>
-										-Pilih-
-									</option>
-									<option value="Yes">Ya</option>
-									<option value="No">Tidak</option>
-								</select>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Tugas</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={task}
-									onChange={(e) => setTask(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Deskripsi Pekerjaan</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={jobDescription}
-									onChange={(e) => setJobDescription(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Grade</label>
-								<input
-									type="text"
-									className="w-full rounded border border-gray-300 p-2"
-									value={grade}
-									onChange={(e) => setGrade(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div>
-								<label className="mb-1 block text-sm font-medium">Email</label>
-								<input
-									type="email"
-									className="w-full rounded border border-gray-300 p-2"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									required
-								/>
-							</div>
-
-							<div className="mt-4">
-								<button type="submit" className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-									Simpan
-								</button>
-							</div>
+						<div className="mt-6">
+							<button
+								type="submit"
+								className="w-full rounded-lg bg-blue-500 py-2 text-white transition-colors duration-300 hover:bg-blue-600"
+							>
+								Tambah Karyawan
+							</button>
 						</div>
 					</form>
 				</div>
