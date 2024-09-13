@@ -1,71 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { Training } from '@/middlewares/api/hrd';
-interface EmployeeData {
-	id: number;
-	name: string;
-	email: string;
-	position: string;
-	overallScore: number;
-	details: {
-		startDate: string;
-		division: string;
-		status: string;
-		email: string;
-		remainingInternshipTime: string;
-		image: string;
-	};
-}
+import { EmployeeJobdesk } from '@/middlewares/api/hrd';
+
 const PelatihanPage: React.FC = () => {
 	const Navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState<string>('');
-	const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);
-	// const [DataTraining, setDataTraining] = useState<any[]>([]);
-	// const [filter] = useState({
-	// 	search: '',
-	// 	employee_id: '',
-	// 	status: '',
-	// 	page: 0,
-	// 	limit: 10,
-	// });
-	// const getDataTraining = async () => {
-	// 	try {
-	// 		const response = await Training.getAllTraining(filter.page, filter.limit, filter.status, filter.employee_id);
-	// 		setDataTraining(response.data.data.result);
-	// 		console.log(response.data.data.result);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
-	const employees: EmployeeData[] = [
-		{
-			id: 1,
-			name: 'Alya Putri Azzahra',
-			email: 'alyaputriazzahra52@gmail.com',
-			position: 'Keuangan',
-			overallScore: 90,
-			details: {
-				startDate: '23 Mei 2024',
-				division: 'Keuangan',
-				status: 'Pegawai tetap',
-				email: 'alyaputriazzahra52@gmail.com',
-				remainingInternshipTime: '1 Bulan 15 Hari',
-				image: 'https://i.pravatar.cc/100?img=3',
-			},
-		},
-	];
-	const handleCheckboxChange = (id: number) => {
-		setSelectedEmployees((prevSelected) =>
-			prevSelected.includes(id) ? prevSelected.filter((employeeId) => employeeId !== id) : [...prevSelected, id]
-		);
+	// const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);
+	const [DataJobdesk, setDataJobdesk] = useState<any[]>([]);
+	const [filter, setFilter] = useState({
+		search: '',
+		employee_id: '',
+		status: '',
+		page: 0,
+		limit: 10,
+		totalRows: 0,
+		totalPage: 0,
+	});
+	const getDataJobdesk = async () => {
+		try {
+			const response = await EmployeeJobdesk.getAllJobdesk(filter.page, filter.limit, filter.page);
+			setFilter((prev) => ({
+				...prev,
+				totalRows: response.data.data.totalRows,
+				totalPages: response.data.data.totalPages,
+				limit: response.data.data.limit,
+			}));
+			setDataJobdesk(response.data.data.result);
+			console.log(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
-	const handleDetailClick = (employee: EmployeeData) => {
+	// const handleCheckboxChange = (id: number) => {
+	// 	setSelectedEmployees((prevSelected) =>
+	// 		prevSelected.includes(id) ? prevSelected.filter((employeeId) => employeeId !== id) : [...prevSelected, id]
+	// 	);
+	// };
+
+	const handleDetailClick = (employee: any) => {
 		console.log('Navigating to details for:', employee);
 		Navigate('/hrd/rekap-penilaian/detail', { state: { employee } });
 	};
 	useEffect(() => {
-		// getDataTraining();
+		getDataJobdesk();
 	}, []);
 	return (
 		<div className="w-full p-2">
@@ -104,7 +82,7 @@ const PelatihanPage: React.FC = () => {
 			<div className="flex w-full justify-between">
 				<button className="text-md badge btn badge-md btn-xs my-5 h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
 					Semua
-					<div className="pl-5">{employees.length}</div>
+					<div className="pl-5">{filter.totalRows}</div>
 				</button>
 				<div className="my-auto flex gap-4"></div>
 			</div>
@@ -114,18 +92,19 @@ const PelatihanPage: React.FC = () => {
 						<thead>
 							<tr className="text-center font-bold">
 								<th>
-									<input
+									{/* <input
 										type="checkbox"
 										className="checkbox"
 										onChange={(e) => {
 											if (e.target.checked) {
-												setSelectedEmployees(employees.map((employee) => employee.id));
+												setSelectedEmployees(DataJobdesk.map((employee) => employee.id));
 											} else {
 												setSelectedEmployees([]);
 											}
 										}}
-										checked={selectedEmployees.length === employees.length}
-									/>
+										checked={selectedEmployees.length === filter.totalRows}
+									/> */}
+									No
 								</th>
 								<th>Nama</th>
 								<th>Email</th>
@@ -135,22 +114,23 @@ const PelatihanPage: React.FC = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{employees.map((employee) => (
-								<tr key={employee.id}>
+							{DataJobdesk.map((item, index) => (
+								<tr key={item.id}>
 									<td className="text-center">
-										<input
+										{/* <input
 											type="checkbox"
 											className="checkbox"
-											checked={selectedEmployees.includes(employee.id)}
-											onChange={() => handleCheckboxChange(employee.id)}
-										/>
+											checked={selectedEmployees.includes(item.id)}
+											onChange={() => handleCheckboxChange(item.id)}
+										/> */}
+										{index + 1}
 									</td>
-									<td>{employee.name}</td>
-									<td>{employee.email}</td>
-									<td>{employee.position}</td>
-									<td className="text-center">{employee.overallScore}</td>
+									<td className="text-center">{item?.employee?.full_name}</td>
+									<td className="text-center">{item?.employee?.email ?? '-'}</td>
+									<td className="text-center">{item?.employee?.occupation}</td>
+									<td className="text-center">{item.grade}</td>
 									<td className="text-center">
-										<button className="btn btn-primary" onClick={() => handleDetailClick(employee)}>
+										<button className="btn btn-primary" onClick={() => handleDetailClick(item)}>
 											Buka
 										</button>
 									</td>
@@ -158,6 +138,22 @@ const PelatihanPage: React.FC = () => {
 							))}
 						</tbody>
 					</table>
+				</div>
+				<div className="join m-5">
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => setFilter((prev) => ({ ...prev, page: prev.page - 1 }))}
+						disabled={filter.page === 0}
+					>
+						Previous
+					</button>
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => setFilter((prev) => ({ ...prev, page: prev.page + 1 }))}
+						disabled={filter.page + 1 === filter.totalRows}
+					>
+						Next
+					</button>
 				</div>
 				{/* Detail section */}
 				{/* {employees.map((employee) => (

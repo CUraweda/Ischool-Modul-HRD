@@ -57,7 +57,35 @@ const Dashboard = {
 			},
 		}),
 };
+const TrainingSuggest = {
+	getAllTraining: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `training-suggestion?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 
+	editTrainingSuggest: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `training-suggestion/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createTrainingSuggest: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `training-suggestion/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 const Rekrutmen = {
 	DataRekrutmen: (page: any, limit: any, search: string, division: any): AxiosPromise<any> =>
 		instance({
@@ -342,6 +370,17 @@ const Attendance = {
 			},
 		});
 	},
+
+	getAllEmployeeMonth: (search: string): AxiosPromise<any> => {
+		return instance.get(`employee-attendance/recap-month-employee`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				search_query: search,
+			},
+		});
+	},
 	getAllDivision: (): AxiosPromise<any> => {
 		return instance.get(`division`, {
 			headers: {
@@ -397,8 +436,34 @@ const Attendance = {
 		}),
 };
 const Training = {
-	getAllTraining: (page: number, limit: number, status: string, employee_id: any | null): AxiosPromise<any> =>
-		instance.get(`training?page=${page}&limit=${limit}&status=${status}&employee_id=${employee_id}`, {
+	getAllTraining: (
+		page: number,
+		limit: number,
+		status: any,
+		type: string[],
+		search_query: string,
+		employee_id: any | null
+	): AxiosPromise<any> => {
+		const typeParam = type.length ? type.join(',') : '';
+
+		return instance.get(
+			`training?page=${page}&limit=${limit}&status=${status}&employee_id=${employee_id}&search_query=${search_query}&type=${typeParam}`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+	},
+	requestTraining: (data: any): AxiosPromise<any> =>
+		instance.post('training/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	updateTraining: (id: number, data: any): AxiosPromise<any> =>
+		instance.put(`training/update/${id}`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -435,6 +500,12 @@ const WorkTime = {
 };
 
 const Employee = {
+	getOneEmployee: (id: any): AxiosPromise<any> =>
+		instance.get(`employee/show/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	getAllEmployee: (limit: number, search_query: any): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
@@ -443,6 +514,122 @@ const Employee = {
 			params: {
 				limit: limit,
 				search_query: search_query,
+			},
+		}),
+};
+const Salary = {
+	getAllSalary: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
+		instance.get('employee-salary', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+			},
+		}),
+	createSalary: (data: any): AxiosPromise<any> =>
+		instance.post('employee-salary/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	updateSalary: (data: any, id: number): AxiosPromise<any> =>
+		instance.put(`employee-salary/update/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	deleteSalary: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-salary/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+const Bill = {
+	getAllBill: (limit: number, search_query: any, page: number, account_id: any): AxiosPromise<any> =>
+		instance.get('employee-bill', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+				account_id: account_id,
+			},
+		}),
+	getOneBill: (id: number): AxiosPromise<any> =>
+		instance.get(`employee-bill/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	updateBill: (data: any, id: number): AxiosPromise<any> =>
+		instance.put(`employee-bill/create${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createBill: (data: any): AxiosPromise<any> =>
+		instance.post('employee-bill/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getAllTypes: (limit: number, page: number): AxiosPromise<any> =>
+		instance.get(`bill-type`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				page: page,
+			},
+		}),
+	deleteBill: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-bill/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getOneTypes: (id: number): AxiosPromise<any> =>
+		instance.get(`bill-type/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createTypeAll: (data: any): AxiosPromise<any> =>
+		instance.post('employee-bill/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+const EmployeeJobdesk = {
+	getAllJobdesk: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
+		instance.get('employee-jobdesk', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+			},
+		}),
+	getDifference: (id: number): AxiosPromise<any> =>
+		instance.get(`employee-jobdesk/difference-day/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createJobdesk: (data: any): AxiosPromise<any> =>
+		instance.post('employee-jobdesk/create', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
 			},
 		}),
 };
@@ -513,16 +700,72 @@ const CustomerCare = {
 			}
 		),
 };
+
+const Penggajian = {
+	getAllAccount: (token: string, month: string): AxiosPromise<any> =>
+		instance.get(`/employee-account?page=0&limit0&this_month=${month}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getMonthAccount: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/total-month', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getYearAccount: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/recap-year', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getOneAccount: (id: number, token: string): AxiosPromise<any> =>
+		instance.get(`/employee-account/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getDetailAccount: (id: number, token: string): AxiosPromise<any> =>
+		instance.get(`/employee-account/detail/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	createAccount: (token: string, data: any): AxiosPromise<any> =>
+		instance.post(`/employee-account/create`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	deleteAccount: (token: string, id: number): AxiosPromise<any> =>
+		instance.delete(`/employee-account/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	getTotalMonth: (token: string): AxiosPromise<any> =>
+		instance.get('/employee-account/total-month?month=5&year=2024', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 export {
-	Training,
+	Bill,
+	Salary,
+	Dashboard,
 	Rekrutmen,
 	Probation,
+	Training,
 	Karyawan,
 	Form,
 	Attendance,
 	WorkTime,
 	EmployeeDivision,
 	CustomerCare,
-	Dashboard,
 	Employee,
+	EmployeeJobdesk,
+	TrainingSuggest,
+	Penggajian,
 };

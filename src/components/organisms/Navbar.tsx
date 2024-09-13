@@ -32,7 +32,7 @@ const Navbar = () => {
 		<div>
 			<div className="navbar bg-base-100 shadow-md">
 				<div className="flex-1">
-					<label className="btn btn-ghost text-3xl lg:hidden" htmlFor="my-drawer-2">
+					<label className="btn btn-ghost text-3xl xl:hidden" htmlFor="my-drawer-2">
 						<BsList />
 					</label>
 				</div>

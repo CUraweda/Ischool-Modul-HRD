@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Attendance, Employee } from '@/middlewares/api/hrd';
+import { Training } from '@/middlewares/api/hrd';
+// import { Training, Employee } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import Swal from 'sweetalert2';
 import { TbFaceId } from 'react-icons/tb';
-import { MdPeopleAlt } from 'react-icons/md';
 import * as XLSX from 'xlsx';
-import { GrStatusUnknown } from 'react-icons/gr';
+import { RiArrowDropDownLine } from 'react-icons/ri';
 import { FaFileExport } from 'react-icons/fa6';
 import { Formik, Field } from 'formik';
-
+import { BsThreeDotsVertical } from 'react-icons/bs';
 const PelatihanPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
-	const [filterStatus, setFilterStatus] = useState<string[]>([]);
-	const [filterDivision, setFilterDivision] = useState<any>('');
+	const [filterStatus, setFilterStatus] = useState<any>('');
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
-	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
-	const [search_query] = useState<string>('');
-	const [ListDivision, setListDivision] = useState<any[]>([]);
+	const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
+	// const [search_query, setSearch_query] = useState<string>('');
+	// const [filterDivision, setFilterDivision] = useState<any>('');
+	// const [ListEmployee, setEmployeeList] = useState<any[]>([]);
 	const [forCreate, setForCreate] = useState<boolean>(false);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
@@ -28,11 +28,10 @@ const PelatihanPage: React.FC<{}> = () => {
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Masuk' },
 		{ id: 2, category: 'Type', value: 'Keluar' },
-		{ id: 3, category: 'Status', value: 'Tepat Waktu' },
-		{ id: 4, category: 'Status', value: 'Terlambat' },
+		{ id: 3, category: 'Status', value: 'Proses Pelatihan' },
+		{ id: 4, category: 'Status', value: 'Tuntas' },
 	];
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const [selectedItemEmployee, setSelectedItemEmployee] = useState<string[]>([]);
 
 	const handleCheckType = (value: string, category: 'Type' | 'Status') => {
 		if (category === 'Type') {
@@ -44,45 +43,26 @@ const PelatihanPage: React.FC<{}> = () => {
 				}
 			});
 		} else if (category === 'Status') {
-			setFilterStatus((prev) => {
-				if (prev.includes(value)) {
-					return prev.filter((item) => item !== value);
-				} else {
-					return [...prev, value];
-				}
-			});
-		}
-	};
-	const getAllEmployee = async () => {
-		try {
-			const response = await Employee.getAllEmployee(100000, search_query);
-			const { result } = response.data.data || {};
-			// setDataEmployee(result);
-
-			setDataEmployee(Array.isArray(result) ? result : []);
-			if (response.data.code !== 200) {
-				Swal.fire({
-					title: 'Silahkan coba lagi',
-					icon: 'error',
-					text: 'Data yang dicari tidak ditemukan',
-				});
+			// setFilterStatus((prev) => {
+			// 	if (prev.includes(value)) {
+			// 		return prev.filter((item) => item !== value);
+			// 	} else {
+			// 		return [...prev, value];
+			// 	}
+			// });
+			if (filterStatus === value) {
+				// Uncheck
+				setFilterStatus('');
+			} else {
+				// Check
+				setFilterStatus(value);
 			}
-		} catch (err) {
-			console.error(err);
 		}
 	};
 
 	const getAllAttendance = async () => {
 		try {
-			const result = await Attendance.getEmployeeAttendance(
-				currentPage,
-				limit,
-				filterType,
-				filterStatus,
-				searchQuery,
-				filterDivision,
-				filterDate
-			);
+			const result = await Training.getAllTraining(currentPage, limit, filterStatus, filterType, searchQuery, '');
 			setDataAttendance(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
 			setTotalPages(result.data.data.totalPage);
@@ -90,22 +70,22 @@ const PelatihanPage: React.FC<{}> = () => {
 			console.error(err);
 		}
 	};
-	const fetchAllDivision = async () => {
-		try {
-			const response = await Attendance.getAllDivision();
-			const { result } = response.data.data || {};
-			setListDivision(Array.isArray(result) ? result : []);
-			if (response.data.code !== 200) {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Something went wrong!',
-				});
-			}
-		} catch (err) {
-			console.error(err);
-		}
-	};
+	// const fetchAllEmployee = async () => {
+	// 	try {
+	// 		const response = await Employee.getAllEmployee(100000000, '');
+	// 		const { result } = response.data.data || {};
+	// 		setEmployeeList(result);
+	// 		if (response.data.code !== 200) {
+	// 			Swal.fire({
+	// 				icon: 'error',
+	// 				title: 'Oops...',
+	// 				text: 'Something went wrong!',
+	// 			});
+	// 		}
+	// 	} catch (err) {
+	// 		console.error(err);
+	// 	}
+	// };
 	const handlePageChange = (newPage: number) => {
 		setCurrentPage(newPage);
 	};
@@ -114,22 +94,12 @@ const PelatihanPage: React.FC<{}> = () => {
 
 	useEffect(() => {
 		getAllAttendance();
-		fetchAllDivision();
 	}, []);
 
 	useEffect(() => {
 		getAllAttendance();
-	}, [searchQuery, limit, filterType, filterStatus, filterDivision, filterDate]);
+	}, [searchQuery, limit, filterType, filterStatus, filterDate]);
 
-	const handleCheckDivision = (id: number) => {
-		if (filterDivision === id) {
-			// Uncheck
-			setFilterDivision(null); // Atau nilai default
-		} else {
-			// Check
-			setFilterDivision(id);
-		}
-	};
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(e.target.value);
 		setCurrentPage(0);
@@ -144,31 +114,74 @@ const PelatihanPage: React.FC<{}> = () => {
 	const exportToXLSX = () => {
 		const formattedData = filterData.map((item, index) => ({
 			no: index + 1,
-			id: item.id,
 			Nama: item.employee.full_name,
-			Divisi: item.employee.division,
-			uid: item.uid,
-			Deskripsi: item.description,
+			Divisi: item.employee.occupation,
+			Deskripsi: item.purpose,
 			status: item.status,
-			Pukul: item.createdAt.split('T')[1].split('.')[0],
-			Tanggal: formatDate(item.createdAt),
+			Lokasi: item.location,
+			Dari: formatDate(item.start_date),
+			Sampai: formatDate(item.end_date),
 		}));
 		const worksheet = XLSX.utils.json_to_sheet(formattedData);
 		const workbook = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Data Pelatihan');
 		XLSX.writeFile(workbook, 'Data_Pelatihan.xlsx');
 	};
-	const handleSubmit = () => {};
-	const showModalHandle = (type: any) => {
+	const requestTraining = async (formData: any) => {
+		try {
+			const response = await Training.requestTraining(formData);
+			if (response.data.code === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil',
+					text: 'Data berhasil ditambahkan',
+				});
+				getAllAttendance();
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Data gagal ditambahkan',
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+	const updateTraining = async (id: any, formData: any) => {
+		try {
+			const response = await Training.updateTraining(id, formData);
+			if (response.data.code === 200) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil',
+					text: 'Data berhasil ditambahkan',
+				});
+				getAllAttendance();
+				setShowModal((showModal) => !showModal);
+			} else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Data gagal ditambahkan',
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+	const handleSubmit = (values: any) => {
+		if (forCreate) {
+			requestTraining(values);
+		} else {
+			updateTraining(selectedUpdate?.id, values);
+		}
+	};
+	const showModalHandle = (type: any, item: any) => {
+		// fetchAllEmployee();
+		setSelectedUpdate(item);
 		setShowModal((showModal) => !showModal);
 		setForCreate(type === 'add' ? true : false);
-	};
-	const handleCheckboxChange = (employeeName: string) => {
-		setSelectedItemEmployee((prevSelected) =>
-			prevSelected.includes(employeeName)
-				? prevSelected.filter((name) => name !== employeeName)
-				: [...prevSelected, employeeName]
-		);
 	};
 	const handleOpenDetailModal = (item: any) => {
 		setSelectedItem(item);
@@ -270,7 +283,7 @@ const PelatihanPage: React.FC<{}> = () => {
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
 						<li className="font-bold">
-							<a>Rekap Pelatihan</a>
+							<a>Daftar Pelatihan</a>
 						</li>
 					</ul>
 				</div>
@@ -300,7 +313,7 @@ const PelatihanPage: React.FC<{}> = () => {
 					</button>
 					<button
 						className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
-						onClick={() => showModalHandle('add')}
+						onClick={() => showModalHandle('add', null)}
 					>
 						Tambah Pelatihan
 					</button>
@@ -314,45 +327,18 @@ const PelatihanPage: React.FC<{}> = () => {
 						<div className="pl-1">{totalRows}</div>
 						Export
 					</button>
-					<div className="dropdown shrink-0">
-						<div
-							onClick={() => getAllEmployee()}
-							tabIndex={0}
-							role="button"
-							className="text-md btn badge-info badge-md btn-xs h-fit rounded-badge text-white drop-shadow-sm"
-						>
-							<MdPeopleAlt /> Karyawan
-						</div>
-						<ul
-							tabIndex={0}
-							className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-y-scroll rounded-box bg-base-100 p-2 shadow"
-						>
-							<div className="checkbox-group">
-								{dataEmployee.map((employee) => (
-									<label key={employee.id} className="flex items-center space-x-2">
-										<input
-											type="checkbox"
-											checked={selectedItemEmployee.includes(employee.full_name)}
-											onChange={() => handleCheckboxChange(employee.full_name)}
-										/>
-										<span>{employee.full_name}</span>
-									</label>
-								))}
-							</div>
-						</ul>
-					</div>
 
 					<div className="my-auto flex gap-4">
 						<div className="dropdown">
 							<div
 								tabIndex={0}
 								role="button"
-								className="text-md btn badge-warning badge-md btn-xs flex h-fit truncate rounded-badge text-white drop-shadow-sm"
+								className="text-md btn badge-md btn-xs flex h-fit rounded-badge drop-shadow-sm"
 							>
-								<GrStatusUnknown /> Tipe, Status dan Divisi
+								Sortir <RiArrowDropDownLine className="text-xl" />
 							</div>
 							<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
-								<h4 className="mt-2">Tipe</h4>
+								{/* <h4 className="mt-2">Tipe</h4>
 								<div className="checkbox-group">
 									{listType
 										.filter((item) => item.category === 'Type')
@@ -366,7 +352,7 @@ const PelatihanPage: React.FC<{}> = () => {
 												<span>{item.value}</span>
 											</label>
 										))}
-								</div>
+								</div> */}
 								<h4 className="mt-2">Status</h4>
 								<div className="checkbox-group">
 									{listType
@@ -375,15 +361,15 @@ const PelatihanPage: React.FC<{}> = () => {
 											<label key={item.id} className="flex items-center space-x-2">
 												<input
 													type="checkbox"
-													checked={filterStatus.includes(item.value)}
+													checked={filterStatus === item.value}
 													onChange={() => handleCheckType(item.value, 'Status')}
 												/>
 												<span>{item.value}</span>
 											</label>
 										))}
 								</div>
-								<h4 className="mt-2">Divisi</h4>
-								<div className="checkbox-group">
+								{/* <h4 className="mt-2">Divisi</h4>
+									<div className="checkbox-group">
 									{ListDivision.map((item) => (
 										<label key={item.id} className="flex items-center space-x-2">
 											<input
@@ -394,16 +380,16 @@ const PelatihanPage: React.FC<{}> = () => {
 											<span>{item.name}</span>
 										</label>
 									))}
-								</div>
+								</div> */}
 							</ul>
 						</div>
+						<input
+							type="date"
+							className="badge input input-xs input-bordered btn-xs rounded-full outline-none"
+							value={filterDate}
+							onChange={(e) => setFilterDate(e.target.value)}
+						/>
 					</div>
-					<input
-						type="date"
-						className="input input-xs input-bordered rounded-full outline-none"
-						value={filterDate}
-						onChange={(e) => setFilterDate(e.target.value)}
-					/>
 				</div>{' '}
 			</div>
 			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">
@@ -412,51 +398,31 @@ const PelatihanPage: React.FC<{}> = () => {
 						<tr className="text-center font-bold">
 							<th>No</th>
 							<th>Nama</th>
+							<th>Absen Pelatihan</th>
 							<th>Posisi</th>
 							<th>Status</th>
-							<th>Bukti Dinas</th>
+							<th>Detail</th>
 						</tr>
 					</thead>
 					<tbody>
 						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
-								{/* <td>{item.employee.division || '-'}</td> */}
-								<td>{item.employee.full_name}</td>
+								<td>{item.employee?.full_name}</td>
 								<td className="text-center">
 									<button className="btn btn-ghost" onClick={() => handleOpenDetailModal(item)}>
 										<TbFaceId className="text-xl" />
 									</button>
 								</td>
-								<td>{item?.employee?.division}</td>
-								<td>
-									<div
-										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.worktime.type === 'MASUK' || 'MASUK'
-												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.worktime.type === 'Keluar' || 'KELUAR'
-													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: ''
-										}`}
+								<td className="text-center">{item?.employee?.occupation}</td>
+								<td className="text-center">{item.status}</td>
+								<td className="text-center">
+									<button
+										className="text-md btn btn-ghost h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
+										onClick={() => showModalHandle('change', item)}
 									>
-										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
-									</div>
-								</td>
-								<td>{item.status}</td>
-								<td>
-									<div
-										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
-											item.status === 'Tepat Waktu'
-												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.status === 'Diluar Jadwal'
-													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: item.status === 'Terlambat'
-														? 'bg-[#f9f46a] text-[#6b2e2e]'
-														: ''
-										}`}
-									>
-										{item.status}
-									</div>
+										<BsThreeDotsVertical />
+									</button>
 								</td>
 							</tr>
 						))}

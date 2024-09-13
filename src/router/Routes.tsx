@@ -16,6 +16,7 @@ const RekapPenilaianPage = lazy(() => import('@/pages/hrd/RekapPenilaian'));
 const DetailRekapPage = lazy(() => import('@/pages/hrd/DetailRekap'));
 const PenilaianPage = lazy(() => import('@/pages/hrd/PenilaianPage'));
 const PelatihanPage = lazy(() => import('@/pages/hrd/PelatihanPage'));
+const RekapPelatihan = lazy(() => import('@/pages/hrd/RekapPelatihan'));
 const RekrutmenPage = lazy(() => import('@/pages/hrd/RekrutmenPage'));
 const DetailRekrutmenPage = lazy(() => import('@/pages/hrd/DetailRekrutmenPage'));
 const ProbationPage = lazy(() => import('@/pages/hrd/ProbationPage'));
@@ -71,7 +72,8 @@ const AppRoutes: React.FC = () => {
 							<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 							<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
 							<Route path="penilaian" element={<PenilaianPage />} />
-							<Route path="pelatihan" element={<PelatihanPage />} />
+							<Route path="daftar-pelatihan" element={<PelatihanPage />} />
+							<Route path="rekap-pelatihan" element={<RekapPelatihan />} />
 							<Route path="rekrutmen" element={<RekrutmenPage />} />
 							<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
 							<Route path="employee" element={<ProbationPage />} />
@@ -84,7 +86,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="daftar-penilaian" element={<DaftarPenilaianPage />} />
 							<Route path="dashboard-penggajian" element={<PenggajianPage />} />
 							<Route path="rekap-gaji" element={<DetailPenggajianPage />} />
-							<Route path="rekap-gaji/1" element={<DetailPenggajianUserPage />} />
+							<Route path="rekap-gaji/:id" element={<DetailPenggajianUserPage />} />
 							<Route path="atur-gaji" element={<AturGajiPage />} />
 							<Route path="customer-care" element={<CustomerCarePage />} />
 						</Route>
