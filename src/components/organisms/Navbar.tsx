@@ -17,7 +17,6 @@ const Navbar = () => {
 		if (accessToken || role) {
 			setLogin(true);
 		}
-		
 	}, []);
 
 	const logout = () => {
@@ -25,7 +24,7 @@ const Navbar = () => {
 		sessionStorage.clear();
 		localStorage.clear();
 		dispatch(clearUser());
-
+		window.location.reload();
 		navigate('/', { replace: true });
 	};
 
@@ -43,7 +42,9 @@ const Navbar = () => {
 					</button>
 				</div>
 				<div className="flex-none gap-5">
-					<button className={`btn btn-primary ${isLogin ? 'hidden' : ''}`} onClick={() => navigate('/')}>Login</button>
+					<button className={`btn btn-primary ${isLogin ? 'hidden' : ''}`} onClick={() => navigate('/login')}>
+						Login
+					</button>
 					<div className={`dropdown dropdown-end ${isLogin ? '' : 'hidden'}`}>
 						<div tabIndex={0} role="button" className="avatar btn btn-circle btn-ghost">
 							<div className="w-10 rounded-full">

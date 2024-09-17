@@ -51,8 +51,8 @@ const LoginPage: React.FC = () => {
 
 					role_id == '5'
 						? navigate('/hrd/dashboard')
-						: role_id == '12'
-							? navigate('/public/career')
+						: role_id == '11'
+							? navigate('/')
 							: toast.warn('anda tidak memiliki akses');
 				}
 			} catch (error) {

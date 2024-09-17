@@ -2,7 +2,6 @@ import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
 // const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
 // const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
-// const token = getSessionStorageItem('access_token');
 const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
 const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
@@ -88,10 +87,10 @@ const TrainingSuggest = {
 		}),
 };
 const Rekrutmen = {
-	DataRekrutmen: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DataRekrutmen: (page: any, limit: any, search: string, division: any): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1`,
+			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1&division_id=${division}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -101,6 +100,15 @@ const Rekrutmen = {
 		instance({
 			method: `GET`,
 			url: `applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	DataCv: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `applicant-form/detail/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -142,7 +150,7 @@ const Rekrutmen = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	GagalRekrutmen: (data: any, id: number): AxiosPromise =>
+	GagalRekrutmen: (data: null, id: number): AxiosPromise =>
 		instance({
 			method: `POST`,
 			url: `applicant-form/first-evaluate/gagal/${id}`,
@@ -162,13 +170,73 @@ const Probation = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	DetailByUser: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DetailPresensi: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-attendance?page=0&limit=1000&employee_id=${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DetailChart: (id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-jobdesk/recap-week-employee/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	AcceptedProbation: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/second-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	RejectedProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/second-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	FinishProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee/finish-probation/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	ContracthProbation: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee/contract/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 
 const Karyawan = {
-	DataKaryawan: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DataKaryawan: (page: any, limit: any, search: string, status: string): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
-			url: `employee?page=${page}&limit=${limit}&search=${search}`,
+			url: `employee?page=${page}&limit=${limit}&search=${search}&status=${status}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -182,10 +250,27 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	EditKaryawan: (data: any, id: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `employee/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	HapusKaryawan: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `employee/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	ProfilKaryawan: (id: string | undefined): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `employee/show/${id}`,
+			url: `employee/detail/${id}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -194,6 +279,59 @@ const Karyawan = {
 		instance({
 			method: `GET`,
 			url: `employee-jobdesk?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	AddPenilaian: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-jobdesk/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	EditPenilaian: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-jobdesk/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	EditNilai: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-jobdesk/grade/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DaftarAsessor: (page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-asessor?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	AktifAsessor: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-asessor/activate/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	NonaktifAsessor: (data: null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-asessor/deactivate/${id}`,
+			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -208,6 +346,7 @@ const Form = {
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
+				'Content-Type': 'multipart/form-data',
 			},
 		}),
 };
@@ -231,7 +370,12 @@ const Attendance = {
 			},
 		});
 	},
-
+	deleteAttendance: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-attendance/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	getAllEmployeeMonth: (search: string): AxiosPromise<any> => {
 		return instance.get(`employee-attendance/recap-month-employee`, {
 			headers: {
@@ -547,7 +691,7 @@ const CustomerCare = {
 		}),
 
 	sendMessage: (token: string | null, currentReceiverId: number | string, inputMessage: any, id: string | null) =>
-		instance.post(
+		apics.post(
 			`/message/create`,
 			{
 				user_id: id,
@@ -563,8 +707,8 @@ const CustomerCare = {
 };
 
 const Penggajian = {
-	getAllAccount: (token: string, month: string): AxiosPromise<any> =>
-		instance.get(`/employee-account?page=0&limit0&this_month=${month}`, {
+	getAllAccount: (token: string, month: any, year: any, limit: number, page: number): AxiosPromise<any> =>
+		instance.get(`/employee-account?page=${page}}&limit${limit}&this_month=${month}&this_year=${year}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

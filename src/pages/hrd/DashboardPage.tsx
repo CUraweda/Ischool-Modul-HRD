@@ -182,6 +182,22 @@ const DashboardPage = () => {
 
 			<div className="mb-8 flex w-full flex-wrap gap-6 lg:flex-nowrap">
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
+					<h2 className="text-xl font-semibold">Kehadiran</h2>
+					{/* <div className="mb-4 flex justify-between">
+						<div className="text-lg">
+							<span className="font-bold text-blue-500">
+								Hadir: {chart.reduce((total, item) => total + item.hadir, 0)}
+							</span>
+							|
+							<span className="font-bold text-red-500">
+								Hadir: {chart.reduce((total, item) => total + item.izin, 0)}
+							</span>
+							|
+							<span className="font-bold text-yellow-500">
+								Hadir: {chart.reduce((total, item) => total + item.cuti, 0)}
+							</span>
+						</div>
+					</div> */}
 					<Line
 						data={{
 							labels: chart.map((item) => item.name),
@@ -222,14 +238,17 @@ const DashboardPage = () => {
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
 					<div className="mb-4 h-[10rem] overflow-auto">
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
-						{pengumuman.map((item, index) => (
-							<div className="mt-4 text-gray-700" key={index}>
-								<p>
-									{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} - {item.title}
-								</p>
-								<p>{item.notes}</p>
-							</div>
-						))}
+						<div className="h-52 overflow-auto">
+							{pengumuman.map((item, index) => (
+								<div className="mt-4 text-gray-700" key={index}>
+									<p>
+										{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} -{' '}
+										<span className="font-bold">{item.title}</span>
+									</p>
+									<p>{item.notes}</p>
+								</div>
+							))}
+						</div>
 					</div>
 					<button className="h-10 w-10 rounded-full bg-blue-500 text-white" onClick={handleDialog}>
 						+

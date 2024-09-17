@@ -33,6 +33,7 @@ const CustomerCarePage = lazy(() => import('@/pages/hrd/CustomerPage'));
 const DetailPenggajianUserPage = lazy(() => import('@/pages/hrd/DetailPenggajianUserPage'));
 const DaftarAsessorPage = lazy(() => import('@/pages/hrd/DaftarAsessorPage'));
 const DaftarPenilaianPage = lazy(() => import('@/pages/hrd/DaftarPenilaianPage'));
+const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 
@@ -41,8 +42,12 @@ const AppRoutes: React.FC = () => {
 		<Router>
 			<Suspense fallback={<div>Loading...</div>}>
 				<Routes>
+					<Route element={<PublicLayout />}>
+						<Route path="/" element={<FormPage />} />
+					</Route>
+
 					<Route
-						path="/"
+						path="/login"
 						element={
 							<AuthLayout>
 								<LoginPage />
@@ -57,7 +62,8 @@ const AppRoutes: React.FC = () => {
 							</AuthLayout>
 						}
 					/>
-					<Route path="/hrd/" element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} />}>
+
+					<Route path="/hrd/" element={<ProtectedRoute roles={[5]} />}>
 						<Route element={<HrdLayout />}>
 							<Route path="dashboard" element={<DashboardPage />} />
 							<Route path="rekap-presensi" element={<RekapPresensiPage />} />
@@ -73,6 +79,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="employee" element={<ProbationPage />} />
 							<Route path="employee/:id" element={<DetailProbationPage />} />
 							<Route path="employee/:id/:id2" element={<DetailCardProbationPage />} />
+							<Route path="employee/interview/:id" element={<DaftarInterviewPage />} />
 							<Route path="data-karyawan" element={<DataKaryawanPage />} />
 							<Route path="data-karyawan/:id" element={<DetailProfilKaryawanPage />} />
 							<Route path="daftar-asessor" element={<DaftarAsessorPage />} />
@@ -85,14 +92,10 @@ const AppRoutes: React.FC = () => {
 						</Route>
 					</Route>
 
-					<Route path="/public/" element={<ProtectedRoute roles={[5, 11]} />}>
+					<Route element={<ProtectedRoute roles={[11]} />}>
 						<Route element={<PublicLayout />}>
 							<Route path="form-data" element={<FormDataPage />} />
 						</Route>
-					</Route>
-
-					<Route path="/public/" element={<PublicLayout />}>
-						<Route path="career" element={<FormPage />} />
 					</Route>
 
 					<Route path="*" element={<ForbiddenPage />} />

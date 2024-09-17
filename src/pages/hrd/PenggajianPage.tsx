@@ -21,11 +21,16 @@ const PenggajianPage = () => {
 	const [rekapYear, setRekapYear] = useState<any[]>([]);
 	const [dataPenggajian, setDataPenggajian] = useState<any[]>([]);
 	const [attendanceData, setAttendanceData] = useState<any[]>([]);
-	// const [filter, setFilter] = useState({
-	// 	search: '',
-	// 	month: '',
-	// 	year: '',
-	// });
+	const [filterTable, setFilterTable] = useState({
+		search: '',
+		limit: 0,
+		page: 0,
+		totalPage: 0,
+		totalRows: 0,
+		status: '',
+		month: new Date().getMonth() + 1,
+		year: new Date().getFullYear(),
+	});
 	const getRecapMonth = async () => {
 		try {
 			const res = await Penggajian.getMonthAccount(token);
@@ -61,9 +66,22 @@ const PenggajianPage = () => {
 	};
 	const getAllAcc = async () => {
 		try {
-			const res = await Penggajian.getAllAccount(token, 'Y');
+			const res = await Penggajian.getAllAccount(
+				token,
+				filterTable.month,
+				filterTable.year,
+				filterTable.limit,
+				filterTable.page
+			);
 			console.log(res.data.data.result);
 			setDataPenggajian(res.data.data.result);
+			setFilterTable((prev) => ({
+				...prev,
+				totalRows: res.data.data.totalRows,
+				totalPage: res.data.data.totalPage,
+				limit: res.data.data.limit,
+				page: res.data.data.page,
+			}));
 		} catch (error) {
 			console.error(error);
 		}

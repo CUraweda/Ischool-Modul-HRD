@@ -5,12 +5,12 @@ import Modal, { openModal, closeModal } from '@/components/ModalProps';
 
 const DetailRekrutmenPage = () => {
 	const [DataDetailRekrutmen, setDataDetailRekrutmen] = useState<any[]>([]);
+	const [dataCv, setDataCv] = useState<any>();
 	const { id } = useParams<{ id: string }>();
 	const [search, setSearch] = useState('');
 	const [planDate, setPlanDate] = useState('');
 	const [portal, setPortal] = useState('');
 	const [selectedId, setSelectedId] = useState<any>(null);
-	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const fetchData = async () => {
 		try {
@@ -21,9 +21,19 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
+	const handleDetailCv = async (id: any) => {
+		try {
+			const response = await Rekrutmen.DataCv(id);
+			setDataCv(response.data.data);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const handleOpenPreviewCvDialog = (id: any) => {
 		setSelectedId(id);
-		setIsModalOpen(true);
+		handleDetailCv(id);
+		openModal('cvApplicant');
 	};
 
 	const handleOpenAcceptedDialog = () => {
@@ -39,6 +49,7 @@ const DetailRekrutmenPage = () => {
 		};
 		try {
 			await Rekrutmen.LulusRekrutmen(data, selectedId);
+			fetchData();
 			closeModal('dialogAccepted');
 		} catch (error) {
 			console.error(error);
@@ -48,14 +59,10 @@ const DetailRekrutmenPage = () => {
 	const handleRejected = async () => {
 		if (!selectedId) return;
 
-		const data = {
-			plan_date: null,
-			portal: null,
-		};
-
 		try {
-			await Rekrutmen.GagalRekrutmen(data, selectedId);
-			setIsModalOpen(false);
+			await Rekrutmen.GagalRekrutmen(null, selectedId);
+			closeModal('cvApplicant');
+			fetchData();
 		} catch (error) {
 			console.error(error);
 		}
@@ -67,13 +74,16 @@ const DetailRekrutmenPage = () => {
 		}
 	}, [id, search]);
 
+	const title = localStorage.getItem('title');
+	const subtitle = localStorage.getItem('subtitle');
+
 	return (
 		<div>
 			{/* Existing Content */}
 			<div className="mb-3 flex items-center justify-between">
 				<div>
-					<h3 className="font-bold">Karyawan</h3>
-					<div className="text-sm">Keuangan</div>
+					<h3 className="font-bold">{title}</h3>
+					<div className="text-sm">{subtitle}</div>
 				</div>
 				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input type="text" className="grow" placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
@@ -94,7 +104,7 @@ const DetailRekrutmenPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="mt-6 flex justify-between">
+			{/* <div className="mt-6 flex justify-between">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
@@ -116,7 +126,7 @@ const DetailRekrutmenPage = () => {
 						<option>Tiny Tomato</option>
 					</select>
 				</div>
-			</div>
+			</div> */}
 
 			<div className="card mt-10 w-full bg-base-100 shadow-xl">
 				<div className="card-body">
@@ -169,7 +179,11 @@ const DetailRekrutmenPage = () => {
 										<td>{item.phone}</td>
 										<td className="text-center">{item.status}</td>
 										<th>
-											<button className="btn btn-primary btn-sm" onClick={() => handleOpenPreviewCvDialog(item.id)}>
+											<button
+												className="btn btn-primary btn-sm"
+												onClick={() => handleOpenPreviewCvDialog(item.id)}
+												disabled={item.is_passed_interview == true}
+											>
 												Buka
 											</button>
 										</th>
@@ -181,92 +195,104 @@ const DetailRekrutmenPage = () => {
 				</div>
 			</div>
 
-			{/* Preview CV Modal */}
-			{isModalOpen && (
-				<div
-					className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ${
-						isModalOpen ? 'opacity-100' : 'opacity-0'
-					}`}
-				>
-					<div
-						className={`w-full max-w-3xl transform rounded bg-white p-6 shadow-xl transition-transform duration-300 ${
-							isModalOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
-						}`}
-					>
-						{/* Close Button */}
-						<button
-							className="absolute right-4 top-4 text-gray-600 hover:text-gray-800"
-							onClick={() => setIsModalOpen(false)}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth={2}
-								stroke="currentColor"
-								className="h-6 w-6"
-							>
-								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</button>
-
-						{/* Contoh Layout CV */}
-						<div className="text-center">
-							<h2 className="text-2xl font-bold">NUR CAHYANTO</h2>
-							<p className="text-sm">
-								Purwokerto, Indonesia • nurcahyanto804@gmail.com • 081548424561 • LinkedIn • Github
-							</p>
-						</div>
-
-						<div className="mt-4">
-							<h3 className="text-xl font-bold">SUMMARY</h3>
-
-							<div className="my-1 h-[1px] w-full bg-black"></div>
-
-							<p>
-								As an experienced full-stack engineer with expertise in developing front-end and back-end applications
-								using React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing
-								efficient UI/UX with Figma. I am committed to providing an intuitive user interface and always looking
-								for opportunities to keep up with the latest trends in web development.
-							</p>
-						</div>
-
-						<div className="mt-4">
-							<h3 className="text-xl font-bold">TECHNICAL SKILLS</h3>
-
-							<div className="my-1 h-[1px] w-full bg-black"></div>
-
-							<p>
-								<strong>Languages:</strong> JavaScript, TypeScript, HTML, CSS, SASS <br />
-								<strong>Technologies:</strong> React JS, Figma, Firebase, Tailwind, Bootstrap, Zustand, Node.js, Express
-								JS, AWS EC2, S3 <br />
-								<strong>Other:</strong> Algorithms, Data Structures, Advance Problem Solving
-							</p>
-						</div>
-
-						<div className="mt-6 flex items-center justify-center gap-4">
-							<button
-								className="btn btn-error text-white"
-								onClick={() => {
-									setIsModalOpen(false);
-									handleRejected();
-								}}
-							>
-								Tolak
-							</button>
-							<button
-								className="btn btn-success text-white"
-								onClick={() => {
-									setIsModalOpen(false);
-									handleOpenAcceptedDialog();
-								}}
-							>
-								Terima
-							</button>
-						</div>
-					</div>
+			<Modal id="cvApplicant">
+				<div className="text-center">
+					<h2 className="text-2xl font-bold">{dataCv?.full_name}</h2>
+					<p className="text-sm">
+						{dataCv?.address} • {dataCv?.email} • {dataCv?.phone}
+					</p>
 				</div>
-			)}
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">SUMMARY</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
+						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
+						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
+						opportunities to keep up with the latest trends in web development. */}
+						{dataCv?.applicant_description}
+					</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">VISION</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
+						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
+						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
+						opportunities to keep up with the latest trends in web development. */}
+						{dataCv?.applicant_vision}
+					</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">REASON</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
+						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
+						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
+						opportunities to keep up with the latest trends in web development. */}
+						{dataCv?.applicant_reason}
+					</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">QUESTION</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
+						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
+						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
+						opportunities to keep up with the latest trends in web development. */}
+						{dataCv?.applicant_question}
+					</p>
+				</div>
+
+				{/* <div className="mt-4">
+					<h3 className="text-xl font-bold">TECHNICAL SKILLS</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						<strong>Languages:</strong> JavaScript, TypeScript, HTML, CSS, SASS <br />
+						<strong>Technologies:</strong> React JS, Figma, Firebase, Tailwind, Bootstrap, Zustand, Node.js, Express JS,
+						AWS EC2, S3 <br />
+						<strong>Other:</strong> Algorithms, Data Structures, Advance Problem Solving
+					</p>
+				</div> */}
+
+				<div className="mt-6 flex items-center justify-center gap-4">
+					<button
+						className="btn btn-error text-white"
+						onClick={() => {
+							closeModal('cvApplicant');
+							handleRejected();
+						}}
+					>
+						Tolak
+					</button>
+					<button
+						className="btn btn-success text-white"
+						onClick={() => {
+							closeModal('cvApplicant');
+							handleOpenAcceptedDialog();
+						}}
+					>
+						Terima
+					</button>
+				</div>
+			</Modal>
 
 			<Modal id="dialogAccepted">
 				<div>
