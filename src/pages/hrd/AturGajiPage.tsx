@@ -1,7 +1,7 @@
 import { FaRegEdit } from 'react-icons/fa';
 import { Salary, Employee, Bill, Penggajian } from '@/middlewares/api/hrd';
 import { useEffect, useState } from 'react';
-import { IoMdClose, IoIosTrash  } from 'react-icons/io';
+import { IoMdClose, IoIosTrash } from 'react-icons/io';
 import Swal from 'sweetalert2';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 
@@ -16,7 +16,22 @@ const AturGajiPage = () => {
 	const [dataBill, setDataBill] = useState<any[]>([]);
 	const [DataTypes, setTypes] = useState<any[]>([]);
 	const [dataAccount, setDataAccount] = useState<any[]>([]);
-
+	const [filterTable, setFilterTable] = useState({
+		search: '',
+		limit: 0,
+		page: 0,
+		totalPage: 0,
+		totalRows: 0,
+		status: '',
+	});
+	const [filterBill, setFilterBill] = useState({
+		search: '',
+		limit: 0,
+		page: 0,
+		totalPage: 0,
+		totalRows: 0,
+		status: '',
+	});
 	const [formData, setFormData] = useState({
 		employee_id: dataUpdateSalary?.employee.id ?? 0,
 		fixed_salary: dataUpdateSalary?.fixed_salary ?? 0,
@@ -37,8 +52,15 @@ const AturGajiPage = () => {
 	};
 	const getSalary = async () => {
 		try {
-			const res = await Salary.getAllSalary(0, '', 0);
+			const res = await Salary.getAllSalary(filterTable.limit, filterTable.search, filterTable.page);
 			setDataSalary(res.data.data.result);
+			setFilterTable((prev) => ({
+				...prev,
+				totalRows: res.data.data.totalRows,
+				totalPage: res.data.data.totalPage,
+				limit: res.data.data.limit,
+				page: res.data.data.page,
+			}));
 			console.log(res.data.data.result);
 		} catch (err) {
 			console.error(err);
@@ -46,7 +68,7 @@ const AturGajiPage = () => {
 	};
 	const getAccount = async () => {
 		try {
-			const res = await Penggajian.getAllAccount(token, '');
+			const res = await Penggajian.getAllAccount(token, '', '', 0, 0);
 			setDataAccount(res.data.data.result);
 		} catch (err) {
 			console.error(err);
@@ -84,6 +106,13 @@ const AturGajiPage = () => {
 		try {
 			const res = await Bill.getAllBill(0, '', 0, '');
 			setDataBill(res.data.data.result);
+			setFilterBill((prev) => ({
+				...prev,
+				totalRows: res.data.data.totalRows,
+				totalPage: res.data.data.totalPage,
+				limit: res.data.data.limit,
+				page: res.data.data.page,
+			}));
 			console.log('test', res);
 		} catch (err) {
 			console.error(err);
@@ -108,12 +137,16 @@ const AturGajiPage = () => {
 	};
 
 	useEffect(() => {
-		getAccount();
-		getSalary();
 		getTypes();
+		getAccount();
 		getEmployee();
-		getAllBill();
 	}, []);
+
+	useEffect(() => {
+		getSalary();
+		getAllBill();
+	}, [filterTable.limit, filterBill.limit]);
+
 	const [formattedSalary, setFormattedSalary] = useState(formatCurrency(formData.fixed_salary));
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const { name, type, value } = e.target as HTMLInputElement | HTMLSelectElement;
@@ -530,6 +563,55 @@ const AturGajiPage = () => {
 									))}
 								</tbody>
 							</table>
+							<div className="join m-5">
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page - 1 }))}
+									disabled={filterTable.page === 0} // Disable jika halaman pertama
+								>
+									Previous
+								</button>
+
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page + 1 }))}
+									disabled={filterTable.page + 1 >= filterTable.totalPage} // Disable jika halaman terakhir
+								>
+									Next
+								</button>
+
+								<button className="btn join-item btn-sm">
+									<div className="flex justify-between">
+										<span>
+											Page {filterTable.page + 1} of {filterTable.totalPage}
+										</span>
+									</div>
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10 }))}
+								>
+									10
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, limit: 50 }))}
+								>
+									50
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, limit: 100 }))}
+								>
+									100
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterTable((prev) => ({ ...prev, limit: 0 }))}
+								>
+									All
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -598,6 +680,55 @@ const AturGajiPage = () => {
 									))}
 								</tbody>
 							</table>
+							<div className="join m-5">
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, page: prev.page - 1 }))}
+									disabled={filterBill.page === 0} // Disable jika halaman pertama
+								>
+									Previous
+								</button>
+
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, page: prev.page + 1 }))}
+									disabled={filterBill.page + 1 >= filterBill.totalPage} // Disable jika halaman terakhir
+								>
+									Next
+								</button>
+
+								<button className="btn join-item btn-sm">
+									<div className="flex justify-between">
+										<span>
+											Page {filterBill.page + 1} of {filterBill.totalPage}
+										</span>
+									</div>
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, limit: 10 }))}
+								>
+									10
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, limit: 50 }))}
+								>
+									50
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, limit: 100 }))}
+								>
+									100
+								</button>
+								<button
+									className="btn join-item btn-sm"
+									onClick={() => setFilterBill((prev) => ({ ...prev, limit: 0 }))}
+								>
+									All
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -15,7 +15,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 		search: '',
 		limit: 0,
 		page: 0,
-		totalPages: 0,
+		totalPage: 0,
 		totalRows: 0,
 		status: '',
 	});
@@ -32,13 +32,13 @@ const RekapPelatihan: React.FC<{}> = () => {
 	});
 	const fetchDataTraining = async () => {
 		try {
-			const response = await TrainingSuggest.getAllTraining(filterTable.limit, filterTable.page);
+			const response = await TrainingSuggest.getAllTraining(filterTable.page, filterTable.limit);
 			setFilterTable((prev) => ({
 				...prev,
 				limit: response.data.data.limit,
 				page: response.data.data.page,
 				totalRows: response.data.data.totalRows,
-				totalPages: response.data.data.totalPages,
+				totalPage: response.data.data.totalPage,
 			}));
 			setDataTraining(response.data.data.result);
 		} catch (error) {
@@ -108,7 +108,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 	useEffect(() => {
 		fetchDataTraining();
 		fetchAllEmployee();
-	}, []);
+	}, [filterTable.limit, filterTable.search]);
 	return (
 		<div className="w-full flex-wrap md:flex">
 			<div className="flex w-full justify-between">
@@ -201,6 +201,43 @@ const RekapPelatihan: React.FC<{}> = () => {
 						))}
 					</tbody>
 				</table>
+				<div className="join m-5">
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page - 1 }))}
+						disabled={filterTable.page === 0} // Disable jika halaman pertama
+					>
+						Previous
+					</button>
+
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page + 1 }))}
+						disabled={filterTable.page + 1 >= filterTable.totalPage} // Disable jika halaman terakhir
+					>
+						Next
+					</button>
+
+					<button className="btn join-item btn-sm">
+						<div className="flex justify-between">
+							<span>
+								Page {filterTable.page + 1} of {filterTable.totalPage}
+							</span>
+						</div>
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10 }))}>
+						10
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 50 }))}>
+						50
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 100 }))}>
+						100
+					</button>
+					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 0 }))}>
+						All
+					</button>
+				</div>
 			</div>
 			{modalCreateUpdate && (
 				<dialog className="modal modal-open" onClick={() => setmodalCreateUpdate(!modalCreateUpdate)}>

@@ -137,6 +137,21 @@ const PresensiPage: React.FC = () => {
 			console.error(err);
 		}
 	};
+	const DeleteAttendance = async (id: number) => {
+		try {
+			const response = await Attendance.deleteAttendance(id);
+			if (response.status === 200) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil',
+					text: 'Berhasil dihapus!',
+				});
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	// const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
 	const handleCheckType = (value: string, category: 'Type' | 'Status') => {
 		if (category === 'Type') {
@@ -409,6 +424,9 @@ const PresensiPage: React.FC = () => {
 									>
 										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
 									</div>
+								</td>
+								<td>
+									<button onClick={() => DeleteAttendance(item.id)}>Delete</button>
 								</td>
 							</tr>
 						))}
