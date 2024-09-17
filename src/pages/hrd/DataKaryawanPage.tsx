@@ -99,9 +99,9 @@ const DataKaryawanPage = () => {
 		setCurrentPage(pageNumber);
 	};
 
-	const handleAction = (action: string, itemId: number) => {
-		console.log(`${action} item with id ${itemId}`);
-	};
+	// const handleAction = (action: string, itemId: number) => {
+	// 	console.log(`${action} item with id ${itemId}`);
+	// };
 
 	const detailProfil = (id: number) => {
 		navigate(`/hrd/data-karyawan/${id}`);
