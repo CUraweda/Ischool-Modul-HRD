@@ -44,7 +44,11 @@ interface Employee {
 	division_id: number | null;
 	createdAt: string;
 	updatedAt: string;
-	division: string | null;
+	division: {
+		id: number;
+		name: string;
+		color: string;
+	};
 }
 
 interface Attendance {
@@ -62,8 +66,8 @@ interface Attendance {
 }
 
 const PresensiPage: React.FC = () => {
-	const [filterType, setFilterType] = useState<string[]>([]);
-	const [filterStatus, setFilterStatus] = useState<string[]>([]);
+	const [filterType, setFilterType] = useState<any[]>([]);
+	const [filterStatus, setFilterStatus] = useState<any[]>([]);
 	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [searchQuery, setSearchQuery] = useState<string>('');
@@ -73,7 +77,7 @@ const PresensiPage: React.FC = () => {
 	const [totalRows, setTotalRows] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
-	const [selectedItem, setSelectedItem] = useState<string[]>([]);
+	const [selectedItem, setSelectedItem] = useState<any[]>([]);
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Masuk' },
 		{ id: 2, category: 'Type', value: 'Keluar' },
@@ -298,10 +302,10 @@ const PresensiPage: React.FC = () => {
 										<label key={employee.id} className="flex items-center space-x-2">
 											<input
 												type="checkbox"
-												checked={selectedItem.includes(employee.full_name)}
-												onChange={() => handleCheckboxChange(employee.full_name)}
+												checked={selectedItem.includes(employee?.full_name)}
+												onChange={() => handleCheckboxChange(employee?.full_name)}
 											/>
-											<span>{employee.full_name}</span>
+											<span>{employee?.full_name || 'Unknown'}</span>
 										</label>
 									))}
 								</div>
@@ -392,11 +396,11 @@ const PresensiPage: React.FC = () => {
 						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
-								<td>{item.employee.division}</td>
-								<td>{item.employee.full_name}</td>
-								<td>{item.createdAt.split('T')[0]}</td>
-								<td>{item.createdAt.split('T')[1].split('.')[0]}</td>
-								<td className="w-5 truncate text-ellipsis">{item.description}</td>
+								<td>{item?.employee?.division?.name}</td>
+								<td>{item?.employee?.full_name}</td>
+								<td>{item?.createdAt.split('T')[0]}</td>
+								<td>{item?.createdAt.split('T')[1].split('.')[0]}</td>
+								<td className="w-5 truncate text-ellipsis">{item?.description}</td>
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
@@ -409,20 +413,20 @@ const PresensiPage: React.FC = () => {
 														: ''
 										}`}
 									>
-										{item.status}
+										{item?.status}
 									</div>
 								</td>
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.worktime.type === 'MASUK' || 'MASUK'
+											item?.worktime?.type === 'MASUK' || 'MASUK'
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
 												: item.worktime.type === 'Keluar' || 'KELUAR'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
 													: ''
 										}`}
 									>
-										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
+										{item?.worktime?.type.charAt(0).toUpperCase() + item?.worktime?.type.slice(1).toLowerCase()}
 									</div>
 								</td>
 								<td>

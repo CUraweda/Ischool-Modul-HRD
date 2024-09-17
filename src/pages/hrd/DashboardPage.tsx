@@ -236,7 +236,7 @@ const DashboardPage = () => {
 				</div>
 
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
-					<div className="mb-4">
+					<div className="mb-4 h-[10rem] overflow-auto">
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
 						<div className="h-52 overflow-auto">
 							{pengumuman.map((item, index) => (
@@ -271,7 +271,7 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarApplicant.map((applicant, index) => (
@@ -300,7 +300,7 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarTraining.map((applicant, index) => (
