@@ -39,16 +39,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
 		}
 	};
 
-	const UploadFIle = async () => {
-		const data = {
-			employee_id: employee_id,
-		};
-		try {
-			await Default.UploadFile(data);
-		} catch (error) {
-			console.error(error);
-		}
-	};
+	// const UploadFIle = async () => {
+	// 	const data = {
+	// 		employee_id: employee_id,
+	// 	};
+	// 	try {
+	// 		await Default.UploadFile(data);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// };
 
 	useEffect(() => {
 		FetchData();
