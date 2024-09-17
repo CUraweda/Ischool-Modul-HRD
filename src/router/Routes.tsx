@@ -34,6 +34,7 @@ const DetailPenggajianUserPage = lazy(() => import('@/pages/hrd/DetailPenggajian
 const DaftarAsessorPage = lazy(() => import('@/pages/hrd/DaftarAsessorPage'));
 const DaftarPenilaianPage = lazy(() => import('@/pages/hrd/DaftarPenilaianPage'));
 const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage'));
+const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 
@@ -95,6 +96,12 @@ const AppRoutes: React.FC = () => {
 					<Route element={<ProtectedRoute roles={[11]} />}>
 						<Route element={<PublicLayout />}>
 							<Route path="form-data" element={<FormDataPage />} />
+						</Route>
+					</Route>
+
+					<Route element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]} />}>
+						<Route element={<PublicLayout />}>
+							<Route path="default" element={<DefaultPage />} />
 						</Route>
 					</Route>
 

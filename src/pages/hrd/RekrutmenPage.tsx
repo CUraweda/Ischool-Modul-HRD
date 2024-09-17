@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
+import Swal from 'sweetalert2';
 
 function formatDateRange(startDate: any, endDate: any) {
 	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -85,17 +86,56 @@ const RekrutmenPage = () => {
 			await Rekrutmen.AddRekrutmen(data);
 			fetchData();
 			closeModal('addRekrutmen');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Rekrutmen',
+			});
+		} catch (error: any) {
 			console.error(error);
+			closeModal('addRekrutmen');
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
+	};
+
+	const trigerClose = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				CloseRekrutmen(id);
+			}
+		});
 	};
 
 	const CloseRekrutmen = async (id: any) => {
 		try {
 			await Rekrutmen.CloseRekrutment(id);
 			fetchData();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Penerimaan berhasil ditutup',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: message,
+			});
 		}
 	};
 
@@ -317,7 +357,7 @@ const RekrutmenPage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+											<span className="ml-2 font-semibold" onClick={() => trigerClose(item.id)}>
 												Tutup Penerimaan
 											</span>
 										</div>
@@ -366,9 +406,7 @@ const RekrutmenPage = () => {
 						<div>
 							<label className="mb-1 block text-sm font-medium">Role</label>
 							<select className="w-full rounded border border-gray-300 p-2" onChange={(e) => setRole(e.target.value)}>
-								<option value="" disabled>
-									-Pilih-
-								</option>
+								<option value="">-Pilih-</option>
 								<option value="KARYAWAN">Karyawan</option>
 								<option value="GURU">Guru</option>
 							</select>

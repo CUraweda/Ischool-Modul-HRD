@@ -13,6 +13,7 @@ import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { Dashboard } from '@/middlewares/api';
 import CheckboxSelect from '../../components/SelectComponent';
+import Swal from 'sweetalert2';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Legend, Tooltip);
 
@@ -156,9 +157,34 @@ const DashboardPage = () => {
 			notes: notes,
 		};
 
-		await Dashboard.PostPengumuman(data);
-		GetPengumuman();
-		closeModal('addPengumuman');
+		try {
+			await Dashboard.PostPengumuman(data);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Pengumuman',
+			});
+			GetPengumuman();
+			closeModal('addPengumuman');
+		} catch (error: any) {
+			const apiErrorMessage = error.response?.data?.message;
+
+			if (apiErrorMessage) {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: apiErrorMessage,
+				});
+			} else {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Terjadi kesalahan, silakan coba lagi.',
+				});
+			}
+		}
 	};
 
 	useEffect(() => {
@@ -236,7 +262,7 @@ const DashboardPage = () => {
 				</div>
 
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
-					<div className="mb-4 h-[10rem] overflow-auto">
+					<div className="mb-4">
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
 						<div className="h-52 overflow-auto">
 							{pengumuman.map((item, index) => (

@@ -33,6 +33,7 @@ const LoginPage: React.FC = () => {
 				if (res.status === 200 && res.data.data) {
 					const userData = res.data.data;
 					const accessToken = res.data.tokens.access.token;
+					const employee_id = res.data.data.employee.id;
 
 					dispatch(setUser(userData));
 					dispatch(
@@ -40,20 +41,33 @@ const LoginPage: React.FC = () => {
 							access_token: accessToken,
 							role_id: userData.role_id,
 							full_name: userData.full_name,
+							employee_id: userData.employee.id,
 						})
 					);
 
 					setSessionStorageItem('access_token', accessToken);
 					setSessionStorageItem('role_id', userData.role_id);
 					setSessionStorageItem('id', userData.id);
+					setSessionStorageItem('employee_id', employee_id);
 
 					const role_id = sessionStorage.getItem('role_id');
+					const id_employee = sessionStorage.getItem('employee_id');
 
-					role_id == '5'
-						? navigate('/hrd/dashboard')
-						: role_id == '11'
-							? navigate('/')
-							: toast.warn('anda tidak memiliki akses');
+					// role_id == '5'
+					// 	? navigate('/hrd/dashboard')
+					// 	: role_id == '11'
+					// 		? navigate('/')
+					// 		: toast.warn('anda tidak memiliki akses');
+
+					if (role_id == '5') {
+						navigate('/hrd/dashboard');
+					} else if (role_id == '11') {
+						navigate('/');
+					} else if (id_employee != null) {
+						navigate('/default');
+					} else {
+						toast.warn('anda tidak memiliki akses');
+					}
 				}
 			} catch (error) {
 				console.error('Login error:', error);
