@@ -2,12 +2,10 @@ import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Probation, Rekrutmen } from '@/middlewares/api';
-import { useNavigate } from 'react-router-dom';
 
 const DaftarInterviewPage = () => {
 	const [search, setSearch] = useState('');
 	const { id } = useParams<{ id: string }>();
-	const navigate = useNavigate();
 	const [fetch, setFetch] = useState<any[]>([]);
 	const [id2, setId2] = useState<number | null>();
 	const [startDate, setStartDate] = useState('');

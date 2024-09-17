@@ -19,10 +19,10 @@ const DataKaryawanPage = () => {
 	const [startDate, setStartDate] = useState('');
 	const [position, setPosition] = useState('');
 	const [isTeacher, setIsTeacher] = useState('');
-	const [task, setTask] = useState('');
-	const [jobDescription, setJobDescription] = useState('');
-	const [grade, setGrade] = useState('');
-	const [email, setEmail] = useState('');
+	const [task] = useState('');
+	const [jobDescription] = useState('');
+	const [grade] = useState('');
+	const [email] = useState('');
 
 	// Additional states
 	const [search, setSearch] = useState('');
