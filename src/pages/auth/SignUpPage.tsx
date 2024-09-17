@@ -27,7 +27,7 @@ const SignUp: React.FC = () => {
 			email: '',
 			password: '',
 			confirm_password: '',
-			role_id: 12,
+			role_id: 11,
 		},
 		validateOnChange: false,
 		validationSchema: registrationSchema,
@@ -49,7 +49,7 @@ const SignUp: React.FC = () => {
 
 					toast.success('Registrasi berhasil!');
 
-					navigate('/login');
+					navigate('/');
 				}
 			} catch (error) {
 				toast.error('Registrasi gagal, silakan coba lagi.');

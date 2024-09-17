@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
+import Swal from 'sweetalert2';
 
 function formatDateRange(startDate: any, endDate: any) {
 	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -9,7 +10,6 @@ function formatDateRange(startDate: any, endDate: any) {
 	const start = new Date(startDate).toLocaleDateString('id-ID', options);
 	const end = new Date(endDate).toLocaleDateString('id-ID', options);
 
-	// Jika bulan dan tahun sama, hanya tampilkan tanggal akhir berbeda
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
@@ -24,6 +24,7 @@ const RekrutmenPage = () => {
 	const [dataRekrutmen, setDataRekrutmen] = useState<any[]>([]);
 	const [dropdownDivision, setDropdownDivision] = useState<any[]>([]);
 	const [search, setSearch] = useState('');
+	const [divisionId, setDivisionId] = useState('');
 	const navigate = useNavigate();
 	const handleDialog = () => {
 		openModal('addRekrutmen');
@@ -37,6 +38,10 @@ const RekrutmenPage = () => {
 	const [academic, setAcademic] = useState('');
 	const [note, setNote] = useState('');
 	const [statusCards, setStatusCards] = useState([{ title: '', description: '' }]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [page, setPage] = useState(0);
+	const [itemsPerPage] = useState(20);
 
 	const addStatusCards = () => {
 		setStatusCards([...statusCards, { title: '', description: '' }]);
@@ -49,8 +54,10 @@ const RekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, search);
+			const response = await Rekrutmen.DataRekrutmen(page, itemsPerPage, search, divisionId);
 			setDataRekrutmen(response.data.data.result);
+			setTotalPages(response.data.data.totalPages);
+			setPage(response.data.data.page);
 			const responseDropdownDivison = await Rekrutmen.DropdownDivision();
 			setDropdownDivision(responseDropdownDivison.data.data.result);
 		} catch (error) {
@@ -66,6 +73,7 @@ const RekrutmenPage = () => {
 
 		const data = {
 			title: titleRekrutmen,
+			role: role,
 			division_id: division,
 			start_date: startDate,
 			end_date: endDate,
@@ -78,17 +86,56 @@ const RekrutmenPage = () => {
 			await Rekrutmen.AddRekrutmen(data);
 			fetchData();
 			closeModal('addRekrutmen');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Rekrutmen',
+			});
+		} catch (error: any) {
 			console.error(error);
+			closeModal('addRekrutmen');
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
+	};
+
+	const trigerClose = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				CloseRekrutmen(id);
+			}
+		});
 	};
 
 	const CloseRekrutmen = async (id: any) => {
 		try {
 			await Rekrutmen.CloseRekrutment(id);
 			fetchData();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Penerimaan berhasil ditutup',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: message,
+			});
 		}
 	};
 
@@ -102,10 +149,16 @@ const RekrutmenPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, [search]);
+	}, [search, divisionId]);
 
-	const handleCardClick = (id: number) => {
+	const handleCardClick = (id: number, title: string, subtitle: string) => {
 		navigate(`/hrd/rekrutmen/${id}`);
+		localStorage.setItem('title', title);
+		localStorage.setItem('subtitle', subtitle);
+	};
+
+	const handlePageChange = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
 	};
 
 	return (
@@ -133,7 +186,7 @@ const RekrutmenPage = () => {
 
 			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
-					<button className="btn btn-outline btn-info btn-xs">
+					{/* <button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
@@ -141,20 +194,25 @@ const RekrutmenPage = () => {
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
 						Ditutup <span>25</span>
-					</button>
+					</button> */}
 				</div>
 
 				<div className="flex items-center gap-2">
 					<button className="btn btn-xs" onClick={handleDialog}>
 						<span>+</span> Tambah
 					</button>
-					<select className="select select-bordered select-xs w-full max-w-xs">
+					<select
+						className="select select-bordered select-xs w-full max-w-xs"
+						onChange={(e) => setDivisionId(e.target.value)}
+					>
 						<option disabled selected>
 							Filter
 						</option>
-						<option>Tiny Apple</option>
-						<option>Tiny Orange</option>
-						<option>Tiny Tomato</option>
+						{dropdownDivision.map((item, index) => (
+							<option value={item.id} key={index}>
+								{item.name}
+							</option>
+						))}
 					</select>
 				</div>
 			</div>
@@ -162,7 +220,10 @@ const RekrutmenPage = () => {
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex flex-wrap items-center justify-between gap-2">
-							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
+							<div
+								onClick={() => handleCardClick(item.id, item.title, divisionMap[item.division_id])}
+								className="cursor-pointer"
+							>
 								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
@@ -296,7 +357,7 @@ const RekrutmenPage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+											<span className="ml-2 font-semibold" onClick={() => trigerClose(item.id)}>
 												Tutup Penerimaan
 											</span>
 										</div>
@@ -307,6 +368,27 @@ const RekrutmenPage = () => {
 					</div>
 				</div>
 			))}
+
+			{/* Pagination */}
+			<div className="mt-5 flex items-center justify-center">
+				<div className="join">
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === 1}
+						onClick={() => handlePageChange(currentPage - 1)}
+					>
+						«
+					</button>
+					<button className="btn join-item btn-sm">Page {page}</button>
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === totalPages}
+						onClick={() => handlePageChange(currentPage + 1)}
+					>
+						»
+					</button>
+				</div>
+			</div>
 
 			<Modal id="addRekrutmen">
 				<div>
@@ -323,16 +405,10 @@ const RekrutmenPage = () => {
 						</div>
 						<div>
 							<label className="mb-1 block text-sm font-medium">Role</label>
-							<select
-								className="w-full rounded border border-gray-300 p-2"
-								value={role}
-								onChange={(e) => setRole(e.target.value)}
-							>
-								<option value="" disabled>
-									-Pilih-
-								</option>
-								<option value="Karyawan">Karyawan</option>
-								<option value="Guru">Guru</option>
+							<select className="w-full rounded border border-gray-300 p-2" onChange={(e) => setRole(e.target.value)}>
+								<option value="">-Pilih-</option>
+								<option value="KARYAWAN">Karyawan</option>
+								<option value="GURU">Guru</option>
 							</select>
 						</div>
 

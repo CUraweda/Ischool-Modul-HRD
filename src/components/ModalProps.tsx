@@ -17,11 +17,11 @@ const closeModal = (id: string) => {
 	if (modal) modal.close();
 };
 
-const Modal: FC<Props> = ({ id, children, width = 'w-1/2', onClose = () => {} }) => {
+const Modal: FC<Props> = ({ id, children, onClose = () => {} }) => {
 	return (
 		<div>
 			<dialog id={id} onClose={onClose} className="modal modal-middle">
-				<div className={`modal-box bg-white ${width}`}>
+				<div className={`modal-box w-11/12 max-w-2xl bg-white`}>
 					<form method="dialog" onSubmit={() => onClose()}>
 						<button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
 					</form>

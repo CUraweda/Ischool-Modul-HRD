@@ -12,11 +12,11 @@ import {
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { Dashboard } from '@/middlewares/api';
-import CheckboxSelect from '../../components/SelectComponent'; // Import your new component
+import CheckboxSelect from '../../components/SelectComponent';
+import Swal from 'sweetalert2';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Legend, Tooltip);
 
-// Define TypeScript interfaces for the data
 interface ChartDataItem {
 	name: string;
 	hadir: number;
@@ -157,9 +157,34 @@ const DashboardPage = () => {
 			notes: notes,
 		};
 
-		await Dashboard.PostPengumuman(data);
-		GetPengumuman();
-		closeModal('addPengumuman');
+		try {
+			await Dashboard.PostPengumuman(data);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Pengumuman',
+			});
+			GetPengumuman();
+			closeModal('addPengumuman');
+		} catch (error: any) {
+			const apiErrorMessage = error.response?.data?.message;
+
+			if (apiErrorMessage) {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: apiErrorMessage,
+				});
+			} else {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Terjadi kesalahan, silakan coba lagi.',
+				});
+			}
+		}
 	};
 
 	useEffect(() => {
@@ -183,7 +208,8 @@ const DashboardPage = () => {
 
 			<div className="mb-8 flex w-full flex-wrap gap-6 lg:flex-nowrap">
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
-					<div className="mb-4 flex justify-between">
+					<h2 className="text-xl font-semibold">Kehadiran</h2>
+					{/* <div className="mb-4 flex justify-between">
 						<div className="text-lg">
 							<span className="font-bold text-blue-500">
 								Hadir: {chart.reduce((total, item) => total + item.hadir, 0)}
@@ -197,7 +223,7 @@ const DashboardPage = () => {
 								Hadir: {chart.reduce((total, item) => total + item.cuti, 0)}
 							</span>
 						</div>
-					</div>
+					</div> */}
 					<Line
 						data={{
 							labels: chart.map((item) => item.name),
@@ -238,14 +264,17 @@ const DashboardPage = () => {
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
 					<div className="mb-4">
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
-						{pengumuman.map((item, index) => (
-							<div className="mt-4 text-gray-700" key={index}>
-								<p>
-									{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} - {item.title}
-								</p>
-								<p>{item.notes}</p>
-							</div>
-						))}
+						<div className="h-52 overflow-auto">
+							{pengumuman.map((item, index) => (
+								<div className="mt-4 text-gray-700" key={index}>
+									<p>
+										{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} -{' '}
+										<span className="font-bold">{item.title}</span>
+									</p>
+									<p>{item.notes}</p>
+								</div>
+							))}
+						</div>
 					</div>
 					<button className="h-10 w-10 rounded-full bg-blue-500 text-white" onClick={handleDialog}>
 						+
@@ -268,14 +297,11 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarApplicant.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.full_name}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>
@@ -300,14 +326,11 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarTraining.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.title}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>

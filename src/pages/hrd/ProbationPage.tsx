@@ -30,7 +30,7 @@ const Probationpage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, search);
+			const response = await Rekrutmen.DataRekrutmen(0, 20, search, '');
 			setDataProbation(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -50,8 +50,12 @@ const Probationpage = () => {
 		fetchData();
 	}, [search]);
 
-	const handleCardClick = (id: number) => {
-		navigate(`/hrd/employee/${id}`);
+	const handleCardClick = (page: string, id: number) => {
+		if (page == 'seleksi') {
+			navigate(`/hrd/employee/${id}`);
+		} else {
+			navigate(`/hrd/employee/interview/${id}`);
+		}
 	};
 
 	return (
@@ -79,7 +83,7 @@ const Probationpage = () => {
 
 			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
-					<button className="btn btn-outline btn-info btn-xs">
+					{/* <button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
@@ -87,20 +91,20 @@ const Probationpage = () => {
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
 						Ditutup <span>25</span>
-					</button>
+					</button> */}
 				</div>
 			</div>
 			{dataProbation.map((item, index) => (
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex flex-wrap items-center justify-between gap-2">
-							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
+							<div onClick={() => handleCardClick('seleksi', item.id)} className="cursor-pointer">
 								<h4 className="font-bold">{item.title}</h4>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
 							<div>
 								<div className="text-xs">Job Title</div>
-								<div className="badge badge-primary text-xs">{item.sub_title}</div>
+								<div className="badge badge-primary text-xs">{item?.division?.name}</div>
 							</div>
 							<div className="flex items-center gap-2">
 								<div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#BFDCFE]">
@@ -153,7 +157,7 @@ const Probationpage = () => {
 							<div>
 								<div className="text-center text-xs">Status </div>
 								<div className="flex items-center gap-2">
-									<div className="text-sm font-bold">{item.status}</div>
+									<div className="text-sm font-bold">{item.is_open == true ? 'Dibuka' : 'Ditutup'}</div>
 								</div>
 							</div>
 
@@ -179,6 +183,29 @@ const Probationpage = () => {
 										Rubah Status
 										<div className="mt-1 h-[1px] w-full bg-gray-300"></div>
 									</div>
+									<li>
+										<div className="flex items-center p-[0.40rem]">
+											<div className="rounded-full">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													fill="none"
+													viewBox="0 0 24 24"
+													strokeWidth={1.5}
+													stroke="currentColor"
+													className="h-5 w-5"
+												>
+													<path
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+													/>
+												</svg>
+											</div>
+											<span className="ml-2 font-semibold" onClick={() => handleCardClick('interview', item.id)}>
+												Daftar Interview
+											</span>
+										</div>
+									</li>
 									<li>
 										<div className="flex items-center p-2">
 											<div className="rounded-full bg-yellow-500 p-1">

@@ -1,5 +1,6 @@
 import { Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal, { openModal } from '@/components/ModalProps';
 
 function formatRelativeDate(createdAt: string) {
@@ -23,7 +24,6 @@ function formatDateRange(startDate: any, endDate: any) {
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
-	// When startDate and endDate are in the same month and year
 	if (startDateObj.getMonth() === endDateObj.getMonth() && startDateObj.getFullYear() === endDateObj.getFullYear()) {
 		return `${startDateObj.getDate()} - ${endDateObj.toLocaleDateString('id-ID', options)}`;
 	}
@@ -35,20 +35,28 @@ function formatDateRange(startDate: any, endDate: any) {
 	return `${start} - ${end}`;
 }
 
-const handleDialog = () => {
-	openModal('detailForm');
-};
-
 const FormPage = () => {
 	const [dataJob, setDataJob] = useState<any[]>([]);
+	const navigate = useNavigate();
+	const [id, setId] = useState('');
+
+	const handleDialog = (id: any) => {
+		openModal('detailForm');
+		setId(id);
+	};
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, '');
+			const response = await Rekrutmen.DataRekrutmen(0, 20, '', '');
 			setDataJob(response.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const handleNavigate = () => {
+		navigate('/form-data');
+		sessionStorage.setItem('vacancy_id', id);
 	};
 
 	useEffect(() => {
@@ -63,7 +71,7 @@ const FormPage = () => {
 					<div
 						key={index}
 						className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow"
-						onClick={handleDialog}
+						onClick={() => handleDialog(item.id)}
 					>
 						<div>
 							<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
@@ -122,7 +130,9 @@ const FormPage = () => {
 						</div>
 					</div>
 
-					<button className="btn btn-primary mt-4 text-white">Lamar Sekarang</button>
+					<button className="btn btn-primary mt-4 text-white" onClick={() => handleNavigate()}>
+						Lamar Sekarang
+					</button>
 				</div>
 			</Modal>
 		</div>
