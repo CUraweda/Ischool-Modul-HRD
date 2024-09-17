@@ -4,6 +4,7 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Lege
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Probation } from '@/middlewares/api';
+import Swal from 'sweetalert2';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -69,16 +70,38 @@ const DetailCardProbationPage = () => {
 	const Finish = async (id: any) => {
 		try {
 			await Probation.FinishProbation(null, id);
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diakhiri',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
 	const Contract = async (id: any) => {
 		try {
 			await Probation.ContracthProbation(null, id);
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil dikontrak',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -113,7 +136,7 @@ const DetailCardProbationPage = () => {
 		<div className="min-h-screen">
 			<div className="flex items-end justify-end">
 				<div className="dropdown dropdown-end">
-					<button className="btn btn-primary mb-4" disabled={fetch.still_in_probation == false}>
+					<button className="btn btn-primary mb-4" disabled={fetch?.still_in_probation == false}>
 						Akhir Masa Percobaan
 					</button>
 					<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">

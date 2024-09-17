@@ -321,7 +321,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
-								<td>{item.employee.division || '-'}</td>
+								<td>{item?.employee?.division?.name}</td>
 								<td>{item.employee.full_name}</td>
 								<td>{item.createdAt.split('T')[0]}</td>
 								<td>{item.createdAt.split('T')[1].split('.')[0]}</td>

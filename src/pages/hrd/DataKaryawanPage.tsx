@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps'; // Assuming closeModal exists
 import { Karyawan } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const DataKaryawanPage = () => {
 	// State variables for modal inputs
@@ -21,7 +22,6 @@ const DataKaryawanPage = () => {
 	const [isTeacher, setIsTeacher] = useState('');
 	const [task, setTask] = useState('');
 	const [jobDescription, setJobDescription] = useState('');
-	const [grade, setGrade] = useState('');
 	const [email, setEmail] = useState('');
 
 	// Additional states
@@ -49,12 +49,39 @@ const DataKaryawanPage = () => {
 		}
 	};
 
+	const trigerDelete = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				DeleteKaryawan(id);
+			}
+		});
+	};
+
 	const DeleteKaryawan = async (id: any) => {
 		try {
 			await Karyawan.HapusKaryawan(id);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Karyawan berhasil dihapus',
+			});
 			fetchData();
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -78,7 +105,6 @@ const DataKaryawanPage = () => {
 			is_teacher: isTeacher,
 			duty: task,
 			job_desc: jobDescription,
-			grade: grade,
 			email: email,
 		};
 
@@ -86,8 +112,19 @@ const DataKaryawanPage = () => {
 			await Karyawan.TambahKaryawan(data);
 			fetchData();
 			closeModal('addKaryawan');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Karyawan berhasil ditambahkan',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -97,10 +134,6 @@ const DataKaryawanPage = () => {
 
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
-	};
-
-	const handleAction = (action: string, itemId: number) => {
-		console.log(`${action} item with id ${itemId}`);
 	};
 
 	const detailProfil = (id: number) => {
@@ -196,7 +229,7 @@ const DataKaryawanPage = () => {
 													<a onClick={() => detailProfil(item.id)}>Edit Profil</a>
 												</li>
 												<li>
-													<a onClick={() => DeleteKaryawan(item.id)}>Hapus Karyawan</a>
+													<a onClick={() => trigerDelete(item.id)}>Hapus Karyawan</a>
 												</li>
 											</ul>
 										</div>
@@ -414,6 +447,42 @@ const DataKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={position}
 										onChange={(e) => setPosition(e.target.value)}
+										placeholder="Masukkan jabatan"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Tugas</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={position}
+										onChange={(e) => setTask(e.target.value)}
+										placeholder="Masukkan Tugas"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Deskripsi Pekerjaan</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={position}
+										onChange={(e) => setJobDescription(e.target.value)}
+										placeholder="Masukkan deskripsi Pekerjaan"
+										required
+									/>
+								</div>
+
+								<div>
+									<label className="mb-1 block text-sm font-medium text-gray-600">Email</label>
+									<input
+										type="text"
+										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+										value={position}
+										onChange={(e) => setEmail(e.target.value)}
 										placeholder="Masukkan jabatan"
 										required
 									/>

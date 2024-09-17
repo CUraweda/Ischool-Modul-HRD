@@ -13,6 +13,7 @@ import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { Dashboard } from '@/middlewares/api';
 import CheckboxSelect from '../../components/SelectComponent';
+import Swal from 'sweetalert2';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Legend, Tooltip);
 
@@ -156,9 +157,34 @@ const DashboardPage = () => {
 			notes: notes,
 		};
 
-		await Dashboard.PostPengumuman(data);
-		GetPengumuman();
-		closeModal('addPengumuman');
+		try {
+			await Dashboard.PostPengumuman(data);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Pengumuman',
+			});
+			GetPengumuman();
+			closeModal('addPengumuman');
+		} catch (error: any) {
+			const apiErrorMessage = error.response?.data?.message;
+
+			if (apiErrorMessage) {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: apiErrorMessage,
+				});
+			} else {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Terjadi kesalahan, silakan coba lagi.',
+				});
+			}
+		}
 	};
 
 	useEffect(() => {
@@ -271,7 +297,7 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarApplicant.map((applicant, index) => (
@@ -300,7 +326,7 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarTraining.map((applicant, index) => (
