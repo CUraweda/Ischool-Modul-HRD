@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Penggajian, Bill, Salary, Employee } from '@/middlewares/api/hrd';
 import * as XLSX from 'xlsx';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { IoMdClose } from 'react-icons/io';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 const DetailPenggajianPage: React.FC<{}> = () => {
-	const Navigate = useNavigate();
+	// const Navigate = useNavigate();
 	const token = getSessionStorageItem('access_token');
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [modalAdd, setModalAdd] = useState(false);
@@ -16,6 +16,16 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 	const [DataTypes, setTypes] = useState<any>({});
 	const [DataBill, setDataBill] = useState<any>([]);
 	const [ListEmployee, setListEmployee] = useState<any>(null);
+	const [filterTable, setFilterTable] = useState({
+		search: '',
+		limit: 0,
+		page: 0,
+		totalPage: 0,
+		totalRows: 0,
+		status: '',
+		month: new Date().getMonth() + 1,
+		year: new Date().getFullYear(),
+	});
 	const monthNames = [
 		'Januari',
 		'Februari',
@@ -35,12 +45,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		month_id: index + 1,
 		desc: name,
 	}));
-	const [filter, setFilter] = useState({
-		totalRows: 0,
-		totalPages: 0,
-		search: '',
-		limit: 0,
-	});
 	const [formData, setFormData] = useState({
 		salary_id: 0,
 		employee_id: 0,
@@ -73,10 +77,22 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 	};
 	const fetchData = async () => {
 		try {
-			const res = await Penggajian.getAllAccount(token, '');
+			const res = await Penggajian.getAllAccount(
+				token,
+				filterTable.month,
+				filterTable.year,
+				filterTable.limit,
+				filterTable.page
+			);
 			console.log('Response object:', res.data.data.result);
 			setDataPenggajian(res.data.data.result);
-			setFilter((prev) => ({ ...prev, totalPages: res.data.data.totalPages, totalRows: res.data.data.totalRows }));
+			setFilterTable((prev) => ({
+				...prev,
+				totalRows: res.data.data.totalRows,
+				totalPage: res.data.data.totalPage,
+				limit: res.data.data.limit,
+				page: res.data.data.page,
+			}));
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		}
@@ -175,28 +191,28 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			return newFormData;
 		});
 	};
-	const deleteAccount = async (id: any) => {
-		try {
-			const res = await Penggajian.deleteAccount(token, id);
-			if (res.status === 200) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Success',
-					text: 'Data berhasil dihapus',
-				});
-				fetchData();
-			} else {
-				// Handle other status codes if needed
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Terjadi kesalahan saat menghapus data.',
-				});
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
+	// const deleteAccount = async (id: any) => {
+	// 	try {
+	// 		const res = await Penggajian.deleteAccount(token, id);
+	// 		if (res.status === 200) {
+	// 			Swal.fire({
+	// 				icon: 'success',
+	// 				title: 'Success',
+	// 				text: 'Data berhasil dihapus',
+	// 			});
+	// 			fetchData();
+	// 		} else {
+	// 			// Handle other status codes if needed
+	// 			Swal.fire({
+	// 				icon: 'error',
+	// 				title: 'Oops...',
+	// 				text: 'Terjadi kesalahan saat menghapus data.',
+	// 			});
+	// 		}
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// };
 
 	// const getTypes = async (id: any) => {
 	// 	if (DataTypes[id]) return;
@@ -245,13 +261,13 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(salary);
 	};
 	useEffect(() => {
-		fetchData();
 		getAllSalary();
 	}, []);
 
 	useEffect(() => {
 		getTypes();
-	}, [DataBill]);
+		fetchData();
+	}, [DataBill, filterTable.limit, filterTable.month, filterTable.year]);
 	const handleModal = (id: any | null) => {
 		getOne(id);
 		getBill(id);
@@ -281,8 +297,20 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		// Logic untuk mengirim data
 		setModalAdd(false); // Tutup modal setelah submit
 	};
-	const handleEdit = (id: any) => {
-		Navigate(`/hrd/rekap-gaji/${id}`, { state: { id } });
+	// const handleEdit = (id: any) => {
+	// 	Navigate(`/hrd/rekap-gaji/${id}`, { state: { id } });
+	// };
+	const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setFilterTable((prev) => ({
+			...prev,
+			month: parseInt(e.target.value, 10),
+		}));
+	};
+	const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setFilterTable((prev) => ({
+			...prev,
+			year: parseInt(e.target.value, 10),
+		}));
 	};
 	return (
 		<div className="bg min-h-screen p-5">
@@ -320,32 +348,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 									))}
 								</select>
 							</div>
-
-							{/* <div className="mt-4">
-								<label className="label">
-									<span className="label-text">Karyawan</span>
-								</label>
-								<select
-									name="employee_id"
-									value={formData.employee_id}
-									onChange={handleInputChange}
-									className="select select-bordered w-full"
-									required
-								>
-									<option value="">Pilih Karyawan</option>
-									{dataSalary.map((salary: any) => (
-										<option key={salary.id} value={salary.id}>
-											{salary.employee.full_name}
-										</option>
-									))}
-								</select>
-							</div> */}
-
-							{/* {ListEmployee.map((employee: any) => (
-										<option key={employee.id} value={employee.id}>
-											{employee.full_name}
-										</option>
-									))} */}
 							<div className="mt-4">
 								<label className="label">
 									<span className="label-text">Bulan</span>
@@ -453,6 +455,32 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 						<div className="text-lg font-bold">Juni 2024</div>
 					</div>
 					<div className="flex gap-5">
+						<div className="">
+							<select
+								value={filterTable.month}
+								onChange={handleMonthChange}
+								className="select select-bordered w-full"
+								required
+							>
+								<option value="" disabled>
+									Pilih Bulan
+								</option>
+								{Month.map((item: any) => (
+									<option key={item.month_id} value={item.month_id}>
+										{item.desc}
+									</option>
+								))}
+							</select>
+						</div>
+						<div>
+							<select onChange={handleYearChange} value={filterTable.year} className="select select-bordered w-full">
+								{[2022, 2023, 2024].map((year) => (
+									<option key={year} value={year}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
 						<button className="btn btn-outline btn-primary" onClick={() => exportToXLSX()}>
 							Export ke excel
 						</button>
@@ -489,14 +517,15 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 											{item.status}
 										</span>
 									</td>
-									<td>
-										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
-											{/* <IoIosTrash /> */}
+									{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
+											<IoIosTrash />
 											Delete
 										</div>
 										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleEdit(item.id)}>
 											Edit
-										</div>
+										</div> 
+										*/}
+									<td>
 										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleModal(item.id)}>
 											Lihat Detail
 										</div>
@@ -507,7 +536,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 						<tfoot>
 							<tr>
 								<th colSpan={6}>Total Karyawan</th>
-								<th>{filter.totalRows}</th>
+								<th>{filterTable.totalRows}</th>
 							</tr>
 							<tr>
 								<th colSpan={6}>Total Jumlah</th>
@@ -520,6 +549,46 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							</tr>
 						</tfoot>
 					</table>
+					<div className="join m-5">
+						<button
+							className="btn join-item btn-sm"
+							onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page - 1 }))}
+							disabled={filterTable.page === 0} // Disable jika halaman pertama
+						>
+							Previous
+						</button>
+
+						<button
+							className="btn join-item btn-sm"
+							onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page + 1 }))}
+							disabled={filterTable.page + 1 >= filterTable.totalPage} // Disable jika halaman terakhir
+						>
+							Next
+						</button>
+
+						<button className="btn join-item btn-sm">
+							<div className="flex justify-between">
+								<span>
+									Page {filterTable.page + 1} of {filterTable.totalPage}
+								</span>
+							</div>
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10 }))}>
+							10
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 50 }))}>
+							50
+						</button>
+						<button
+							className="btn join-item btn-sm"
+							onClick={() => setFilterTable((prev) => ({ ...prev, limit: 100 }))}
+						>
+							100
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 0 }))}>
+							All
+						</button>
+					</div>
 				</div>
 			</div>
 

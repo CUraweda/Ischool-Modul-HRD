@@ -370,7 +370,12 @@ const Attendance = {
 			},
 		});
 	},
-
+	deleteAttendance: (id: number): AxiosPromise<any> =>
+		instance.delete(`employee-attendance/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	getAllEmployeeMonth: (search: string): AxiosPromise<any> => {
 		return instance.get(`employee-attendance/recap-month-employee`, {
 			headers: {
@@ -702,8 +707,8 @@ const CustomerCare = {
 };
 
 const Penggajian = {
-	getAllAccount: (token: string, month: string): AxiosPromise<any> =>
-		instance.get(`/employee-account?page=0&limit0&this_month=${month}`, {
+	getAllAccount: (token: string, month: any, year: any, limit: number, page: number): AxiosPromise<any> =>
+		instance.get(`/employee-account?page=${page}}&limit${limit}&this_month=${month}&this_year=${year}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

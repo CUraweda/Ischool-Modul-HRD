@@ -17,7 +17,7 @@ const closeModal = (id: string) => {
 	if (modal) modal.close();
 };
 
-const Modal: FC<Props> = ({ id, children, width = 'w-1/2', onClose = () => {} }) => {
+const Modal: FC<Props> = ({ id, children, onClose = () => {} }) => {
 	return (
 		<div>
 			<dialog id={id} onClose={onClose} className="modal modal-middle">
