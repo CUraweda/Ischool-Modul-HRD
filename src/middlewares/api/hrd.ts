@@ -58,10 +58,10 @@ const Dashboard = {
 		}),
 };
 const TrainingSuggest = {
-	getAllTraining: (page: any, limit: any): AxiosPromise<any> =>
+	getAllTraining: (page: any, limit: any, search: string): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `training-suggestion?page=${page}&limit=${limit}`,
+			url: `training-suggestion?page=${page}&limit=${limit}&search=${search}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -518,9 +518,21 @@ const Employee = {
 			},
 			params: {
 				limit: limit,
-				search_query: search_query,
+				search: search_query,
 			},
 		}),
+	updateDivisi: (id: number, data: any): AxiosPromise<any> =>
+		instance.put(
+			`employee/update/${id}`,
+			{
+				division_id: data,
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		),
 };
 const Salary = {
 	getAllSalary: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
@@ -573,7 +585,7 @@ const Bill = {
 			},
 		}),
 	updateBill: (data: any, id: number): AxiosPromise<any> =>
-		instance.put(`employee-bill/create${id}`, data, {
+		instance.put(`employee-bill/update/${id}`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -653,7 +665,26 @@ const EmployeeDivision = {
 			},
 		}),
 };
+const Jobdesk = {
+	getAllJobdesk: (limit: number, search_query: any, page: number, id: any): AxiosPromise<any> =>
+		instance.get(`employee-jobdesk?employee_id=${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search_query: search_query,
+				page: page,
+			},
+		}),
 
+	createJobdesk: (data: any): AxiosPromise<any> =>
+		instance.post('employee-jobdesk?page=0&limit=20&employee_id=1', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
 const CustomerCare = {
 	getUserChats: (token: string | null, id: string | null) =>
 		apics.get(`user-chat/show-by-user/${id}`, {
@@ -773,4 +804,5 @@ export {
 	EmployeeJobdesk,
 	TrainingSuggest,
 	Penggajian,
+	Jobdesk,
 };

@@ -452,7 +452,9 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 								</svg>
 							</span>
 						</div>
-						<div className="text-lg font-bold">Juni 2024</div>
+						<div className="text-lg font-bold">
+							{Month.find((item) => item.month_id === filterTable.month)?.desc} {filterTable.year}
+						</div>
 					</div>
 					<div className="flex gap-5">
 						<div className="">

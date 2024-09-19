@@ -83,6 +83,7 @@ const AturGajiPage = () => {
 					title: 'Success',
 					text: 'Data berhasil dihapus',
 				});
+				getSalary();
 			}
 		} catch (err) {
 			console.error(err);
@@ -91,18 +92,19 @@ const AturGajiPage = () => {
 	const deleteDataBill = async (id: number) => {
 		try {
 			const res = await Bill.deleteBill(id);
-			if (res.status === 201) {
+			if (res.status === 200) {
 				Swal.fire({
 					icon: 'success',
 					title: 'Success',
 					text: 'Data berhasil dihapus',
 				});
+				getDataBill();
 			}
 		} catch (err) {
 			console.error(err);
 		}
 	};
-	const getAllBill = async () => {
+	const getDataBill = async () => {
 		try {
 			const res = await Bill.getAllBill(0, '', 0, '');
 			setDataBill(res.data.data.result);
@@ -144,7 +146,7 @@ const AturGajiPage = () => {
 
 	useEffect(() => {
 		getSalary();
-		getAllBill();
+		getDataBill();
 	}, [filterTable.limit, filterBill.limit]);
 
 	const [formattedSalary, setFormattedSalary] = useState(formatCurrency(formData.fixed_salary));
@@ -193,11 +195,14 @@ const AturGajiPage = () => {
 		try {
 			const res = await Salary.updateSalary(values, dataUpdateSalary.id);
 			console.log(res.data.data);
-			Swal.fire({
-				icon: 'success',
-				title: 'Success',
-				text: 'Data berhasil ditambahkan',
-			});
+			if (res.status === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Data berhasil ditambahkan',
+				});
+				getSalary();
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -212,7 +217,7 @@ const AturGajiPage = () => {
 					title: 'Success',
 					text: 'Data berhasil ditambahkan',
 				});
-				getAllBill();
+				getDataBill();
 			}
 		} catch (err) {
 			console.error(err);
@@ -222,13 +227,13 @@ const AturGajiPage = () => {
 		try {
 			const res = await Bill.updateBill(values, dataUpdateBill.id);
 			console.log(res.data.data);
-			if (res.status === 201) {
+			if (res.status === 200) {
 				Swal.fire({
 					icon: 'success',
 					title: 'Success',
 					text: 'Data berhasil ditambahkan',
 				});
-				getAllBill();
+				getDataBill();
 			}
 		} catch (err) {
 			console.error(err);
@@ -429,7 +434,7 @@ const AturGajiPage = () => {
 									<option value="">Pilih Karyawan</option>
 									{dataAccount.map((item) => (
 										<option key={item.id} value={item.id}>
-											{item.employee.full_name} {item.id}
+											{item.employee.full_name}
 										</option>
 									))}
 								</select>
@@ -522,8 +527,8 @@ const AturGajiPage = () => {
 										<th>No</th>
 										<th>Divisi</th>
 										<th>Gaji Tetap</th>
-										<th>Status</th>
-										<th>Action</th>
+										<th className="text-center">Status</th>
+										<th className="text-center">Action</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -531,13 +536,13 @@ const AturGajiPage = () => {
 										<tr key={i}>
 											<td>{i + 1}</td>
 											<td>{s.employee.full_name}</td>
-											<td>{formatCurrency(s.fixed_salary)}</td>
-											<td className="flex items-center gap-2">
+											<td>{formatCurrency(s?.fixed_salary)}</td>
+											<td className="text-center">
 												<button className={`${s.is_active ? 'btn btn-success' : 'btn btn-warning'}`}>
 													{s.is_active ? 'Aktif' : 'Tidak Aktif'}
 												</button>
 											</td>
-											<td>
+											<td className="text-center">
 												<button
 													className="btn btn-ghost btn-neutral"
 													onClick={() => {
@@ -646,7 +651,7 @@ const AturGajiPage = () => {
 										<th>Nama</th>
 										<th>Tipe</th>
 										<th>Nominal</th>
-										<th>Action</th>
+										<th className="text-center">Action</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -656,7 +661,8 @@ const AturGajiPage = () => {
 											<td>{getAccountNameById(item.account_id)}</td>
 											<td>{getTypeNameById(item.type_id)}</td>
 											<td>{formatCurrency(item.amount)}</td>
-											<td>
+											<td>{item.description}</td>
+											<td className="text-center">
 												<button
 													className="btn btn-ghost btn-neutral"
 													onClick={() => {
