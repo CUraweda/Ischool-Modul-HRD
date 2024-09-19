@@ -20,19 +20,19 @@ const RekapPelatihan: React.FC<{}> = () => {
 		status: '',
 	});
 	const validationSchema = Yup.object({
-		employee_id: Yup.number().required('Employee ID is required'),
+		employee_id: Yup.number().required('Karyawan tidak boleh kosong'),
 		// proposer_id: Yup.number().required('Proposer ID is required'),
-		title: Yup.string().required('Title is required'),
-		purpose: Yup.string().required('Purpose is required'),
+		title: Yup.string().required('Judul pelatihan tidak boleh kosong'),
+		purpose: Yup.string().required('Keterangan pelatihan tidak boleh kosong'),
 		// status: Yup.string().required('Status is required'),
-		location: Yup.string().required('Location is required'),
-		start_date: Yup.date().required('Start date is required'),
-		end_date: Yup.date().required('End date is required'),
-		is_active: Yup.boolean(),
+		location: Yup.string().required('Lokasi pelatihan tidak boleh kosong'),
+		start_date: Yup.date().required('Tanggal mulai pelatihan tidak boleh kosong'),
+		end_date: Yup.date().required('Tanggal selesai pelatihan tidak boleh kosong'),
+		is_approved: Yup.boolean(),
 	});
 	const fetchDataTraining = async () => {
 		try {
-			const response = await TrainingSuggest.getAllTraining(filterTable.page, filterTable.limit);
+			const response = await TrainingSuggest.getAllTraining(filterTable.page, filterTable.limit, filterTable.search);
 			setFilterTable((prev) => ({
 				...prev,
 				limit: response.data.data.limit,
@@ -47,7 +47,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 	};
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(0, '');
+			const response = await Employee.getAllEmployee(1000000000000000, '');
 			setDataEmployee(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -84,14 +84,14 @@ const RekapPelatihan: React.FC<{}> = () => {
 			console.error(error);
 		}
 	};
-	const handleupdate = (data: any, is_active: boolean) => {
+	const handleupdate = (data: any, is_approved: boolean) => {
 		const id = getSessionStorageItem('id');
 		const payload = {
 			employee_id: data.employee_id,
 			approver_id: id,
-			title: data.title || '',
-			notes: data.notes || '',
-			is_active: is_active,
+			title: data.title || '-',
+			notes: data.notes || '-',
+			is_approved: is_approved,
 		};
 		updateTraining(data.id, payload);
 	};
@@ -157,18 +157,19 @@ const RekapPelatihan: React.FC<{}> = () => {
 							<th>Deskripsi</th>
 							<th>Durasi Pelatihan</th>
 							<th>Status</th>
-							<th>Aksi</th>
+							<th className="text-center">Aksi</th>
 						</tr>
 					</thead>
 					<tbody>
 						{dataTraining.map((item, index) => (
 							<tr key={index}>
 								<td>{index + 1 + filterTable.page * filterTable.limit}</td>
-								<td>{item?.employee?.name ?? '-'}</td>
+								<td>{dataEmployee.find((emp) => emp.id === item.employee_id)?.full_name ?? '-'}</td>
+
 								<td>{item.title}</td>
 								<td>{item.notes}</td>
 								<td>{item.start_date.split('T')[0] + ' - ' + item.end_date.split('T')[0]}</td>
-								<td>{item.is_approved ? 'Approved' : 'Pending'}</td>
+								<td>{item.is_approved === null ? 'Pending' : item.is_approved ? 'Diterima' : 'Ditolak'}</td>
 								<td>
 									<div className="dropdown dropdown-end">
 										<div tabIndex={0} role="button" className="hover:btn-transparent btn btn-ghost m-1">
@@ -242,7 +243,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 			{modalCreateUpdate && (
 				<dialog className="modal modal-open" onClick={() => setmodalCreateUpdate(!modalCreateUpdate)}>
 					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
-						<h3 className="text-lg font-bold">Hello!</h3>
+						<h3 className="text-lg font-bold">Tambah Pengajuan Pelatihan</h3>
 						<Formik
 							initialValues={{
 								employee_id: '',
@@ -253,7 +254,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 								location: '',
 								start_date: '',
 								end_date: '',
-								is_active: true,
+								is_approved: true,
 							}}
 							validationSchema={validationSchema}
 							onSubmit={handleSubmit}
@@ -337,7 +338,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 								<div className="form-control mb-4">
 									<label className="label cursor-pointer">
 										<span className="label-text">Status</span>
-										<Field type="checkbox" name="is_active" className="toggle toggle-primary" />
+										<Field type="checkbox" name="is_approved" className="toggle toggle-primary" />
 									</label>
 								</div>
 
