@@ -2,6 +2,7 @@ import { Karyawan, Probation } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const DetailProfilKaryawanPage = () => {
 	const { id } = useParams<{ id: string }>();
@@ -107,9 +108,36 @@ const DetailProfilKaryawanPage = () => {
 			await Karyawan.EditKaryawan(data, id);
 			fetchData();
 			closeModal('editModal');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Karyawan berhasil diubah',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
+	};
+
+	const trigerDelete = () => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				DeleteKaryawan();
+			}
+		});
 	};
 
 	const DeleteKaryawan = async () => {
@@ -150,7 +178,7 @@ const DetailProfilKaryawanPage = () => {
 									<a onClick={editDialog}>Edit Profil</a>
 								</li>
 								<li>
-									<a onClick={DeleteKaryawan}>Hapus Karyawan</a>
+									<a onClick={trigerDelete}>Hapus Karyawan</a>
 								</li>
 							</ul>
 						</div>

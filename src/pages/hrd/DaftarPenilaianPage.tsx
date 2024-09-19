@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Karyawan } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '@/components/ModalProps';
+import Swal from 'sweetalert2';
 
 const DaftarPenilaianPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
@@ -14,10 +15,11 @@ const DaftarPenilaianPage = () => {
 	const [editMode, setEditMode] = useState(false);
 	const [editId, setEditId] = useState<number | null>(null);
 	const [id, setId] = useState();
+	const [search, setSearch] = useState('');
 
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.DaftarPenilaian(0, 20);
+			const response = await Karyawan.DaftarPenilaian(0, 20, search);
 			setFetch(response.data.data.result);
 			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
 			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
@@ -46,8 +48,19 @@ const DaftarPenilaianPage = () => {
 			fetchData();
 			closeModal('addPenilaian');
 			resetForm();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Penilaian berhasil ditambah',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -69,8 +82,19 @@ const DaftarPenilaianPage = () => {
 		};
 		try {
 			await Karyawan.EditNilai(data, id);
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Penilaian berhasil diubah',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -98,14 +122,14 @@ const DaftarPenilaianPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [search]);
 
 	return (
 		<div className="min-h-screen">
 			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Penilaian</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Cari" />
+					<input type="text" className="grow" placeholder="Cari" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"

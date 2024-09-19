@@ -113,7 +113,11 @@ const DetailProbationPage = () => {
 										</td>
 										<td>{item.status}</td>
 										<th>
-											<button className="btn btn-primary btn-sm" onClick={() => handleNavigation(item.employee_id)}>
+											<button
+												className="btn btn-primary btn-sm"
+												onClick={() => handleNavigation(item.employee_id)}
+												disabled={item.employee_id == null}
+											>
 												...
 											</button>
 										</th>

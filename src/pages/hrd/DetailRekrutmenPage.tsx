@@ -2,6 +2,7 @@ import { Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Modal, { openModal, closeModal } from '@/components/ModalProps';
+import Swal from 'sweetalert2';
 
 const DetailRekrutmenPage = () => {
 	const [DataDetailRekrutmen, setDataDetailRekrutmen] = useState<any[]>([]);
@@ -51,8 +52,19 @@ const DetailRekrutmenPage = () => {
 			await Rekrutmen.LulusRekrutmen(data, selectedId);
 			fetchData();
 			closeModal('dialogAccepted');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diterima',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -63,8 +75,19 @@ const DetailRekrutmenPage = () => {
 			await Rekrutmen.GagalRekrutmen(null, selectedId);
 			closeModal('cvApplicant');
 			fetchData();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil ditolak',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -160,8 +183,8 @@ const DetailRekrutmenPage = () => {
 													<div className="mask mask-squircle h-12 w-12">
 														<img
 															src={
-																item.user.avatar != null
-																	? item.user.avatar
+																item?.user?.avatar != null
+																	? item?.user?.avatar
 																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
 															}
 															alt="Avatar Tailwind CSS Component"

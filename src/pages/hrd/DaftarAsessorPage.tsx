@@ -1,15 +1,17 @@
 import Modal, { closeModal, openModal } from '@/components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
 import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 const DaftarAsessorPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
 	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
 	const [employeeId, setEmployeeId] = useState<number>();
+	const [search, setSearch] = useState('');
 
 	const FetchData = async () => {
 		try {
-			const response = await Karyawan.DaftarAsessor(0, 20);
+			const response = await Karyawan.DaftarAsessor(0, 20, search);
 			setFetch(response.data.data.result);
 			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
 			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
@@ -23,8 +25,19 @@ const DaftarAsessorPage = () => {
 			await Karyawan.AktifAsessor(null, id);
 			FetchData();
 			closeModal('addAsessor');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Asessor berhasil diaktifkan',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -33,8 +46,19 @@ const DaftarAsessorPage = () => {
 			await Karyawan.NonaktifAsessor(null, id);
 			FetchData();
 			closeModal('addAsessor');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Asessor berhasil dinonaktifkan',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -44,13 +68,13 @@ const DaftarAsessorPage = () => {
 
 	useEffect(() => {
 		FetchData();
-	}, []);
+	}, [search]);
 	return (
 		<div className="min-h-screen">
 			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Asessor</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Cari" />
+					<input type="text" className="grow" placeholder="Cari" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -73,7 +97,7 @@ const DaftarAsessorPage = () => {
 			</div>
 
 			<div className="card bg-white p-4 shadow-md">
-				<div>
+				<div className="overflow-auto">
 					<table className="table table-zebra w-full">
 						<thead>
 							<tr>

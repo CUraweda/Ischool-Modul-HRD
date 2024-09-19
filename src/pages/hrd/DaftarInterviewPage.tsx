@@ -2,7 +2,7 @@ import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Probation, Rekrutmen } from '@/middlewares/api';
-
+import Swal from 'sweetalert2';
 const DaftarInterviewPage = () => {
 	const [search, setSearch] = useState('');
 	const { id } = useParams<{ id: string }>();
@@ -29,16 +29,38 @@ const DaftarInterviewPage = () => {
 			await Probation.AcceptedProbation(data, id2);
 			closeModal('handleInterview');
 			fetchData();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diterima',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
 	const RejectedProbation = async (id: any) => {
 		try {
 			await Probation.RejectedProbation(null, id);
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil ditolak',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
