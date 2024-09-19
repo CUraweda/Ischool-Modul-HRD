@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Jobdesk } from '@/middlewares/api';
 const RekapPenilaianPage = () => {
 	const Navigate = useNavigate();
-	const [searchQuery, setSearchQuery] = useState<string>('');
 	const [employees, setEmployees] = useState<any[]>([]);
 	const [filter, setFilter] = useState({
 		limit: 10,
