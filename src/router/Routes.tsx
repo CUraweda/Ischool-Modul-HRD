@@ -14,7 +14,6 @@ const PengajuanCutiPage = lazy(() => import('../pages/hrd/PengajuanCuti'));
 const DinasLuarPage = lazy(() => import('@/pages/hrd/DinasLuarPage'));
 const RekapPenilaianPage = lazy(() => import('@/pages/hrd/RekapPenilaian'));
 const DetailRekapPage = lazy(() => import('@/pages/hrd/DetailRekap'));
-const PenilaianPage = lazy(() => import('@/pages/hrd/PenilaianPage'));
 const PelatihanPage = lazy(() => import('@/pages/hrd/PelatihanPage'));
 const RekapPelatihan = lazy(() => import('@/pages/hrd/RekapPelatihan'));
 const RekrutmenPage = lazy(() => import('@/pages/hrd/RekrutmenPage'));
@@ -37,6 +36,7 @@ const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage')
 const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
+import PageDivisi from '@/pages/hrd/PageDivisi';
 
 const AppRoutes: React.FC = () => {
 	return (
@@ -72,7 +72,6 @@ const AppRoutes: React.FC = () => {
 							<Route path="dinas-luar" element={<DinasLuarPage />} />
 							<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 							<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
-							<Route path="penilaian" element={<PenilaianPage />} />
 							<Route path="daftar-pelatihan" element={<PelatihanPage />} />
 							<Route path="rekap-pelatihan" element={<RekapPelatihan />} />
 							<Route path="rekrutmen" element={<RekrutmenPage />} />
@@ -90,6 +89,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="rekap-gaji/:id" element={<DetailPenggajianUserPage />} />
 							<Route path="atur-gaji" element={<AturGajiPage />} />
 							<Route path="customer-care" element={<CustomerCarePage />} />
+							<Route path="division" element={<PageDivisi />} />
 						</Route>
 					</Route>
 

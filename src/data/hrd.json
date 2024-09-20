@@ -64,20 +64,22 @@
 		]
 	},
 	{
-		"submenu": true,
-		"title": "Pelatihan",
+		"submenu": false,
+		"title": "Divisi",
+		"icon": "<BsDiagram3Fill />",
+		"url": "/hrd/division"
+	},
+	{
+		"submenu": false,
+		"title": "Rekap Pelatihan",
 		"icon": "<MdOutlineDateRange />",
-		"url": "",
-		"subtitle": [
-			{
-				"name": "Daftar Pelatihan",
-				"url": "/hrd/daftar-pelatihan"
-			},
-			{
-				"name": "Rekap Pelatihan",
-				"url": "/hrd/rekap-pelatihan"
-			}
-		]
+		"url": "/hrd/rekap-pelatihan"
+	},
+	{
+		"submenu": false,
+		"title": "Rekap Penilaian",
+		"icon": "<MdOutlineGrade />",
+		"url": "/hrd/rekap-penilaian"
 	},
 	{
 		"submenu": true,

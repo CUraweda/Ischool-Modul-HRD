@@ -136,7 +136,7 @@ const DetailRekapPage: React.FC = () => {
 											<option value="" disabled>
 												Pilih Peserta
 											</option>
-											{ListEmployee.map((employee: any) => (
+											{ListEmployee?.map((employee: any) => (
 												<option key={employee.id} value={employee.id}>
 													{employee?.full_name}
 												</option>
@@ -184,7 +184,7 @@ const DetailRekapPage: React.FC = () => {
 					<div className="my-2 w-full md:w-[70%]">
 						<div className="card h-fit w-full overflow-x-auto bg-base-100 p-4 shadow-xl md:h-[255px]">
 							{employee && (
-								<div className="my-auto block justify-evenly gap-5 space-y-4 md:flex">
+								<div className="my-auto block gap-5 space-y-4 md:flex">
 									<div className="flex w-full items-center justify-center md:w-1/3 xl:w-1/4">
 										<div className="avatar mx-auto">
 											<div className="m-auto h-40 w-40 rounded-full">
@@ -195,18 +195,18 @@ const DetailRekapPage: React.FC = () => {
 											</div>
 										</div>
 									</div>
-									<div className="block md:flex md:flex-wrap">
+									<div className="m-5 block md:flex md:flex-wrap">
 										<div className="grid grid-flow-col grid-rows-3 gap-5 xl:grid-rows-2">
 											<div>
 												<p className="text-md font-semibold">Nama</p>
-												<p>{employee?.employee.full_name ?? '-'}</p>
+												<p>{employee?.name ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Tgl mulai bekerja</p>
 												<p>{employee?.employee?.work_start_date ?? '-'}</p>
 											</div>
 											<div>
-												<p className="text-md font-semibold">Divisi</p>
+												<p className="text-md font-semibold">Posisi</p>
 												<p>{employee?.employee?.occupation ?? '-'}</p>
 											</div>
 											<div>

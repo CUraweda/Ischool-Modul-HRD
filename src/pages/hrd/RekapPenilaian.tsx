@@ -1,53 +1,45 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface EmployeeData {
-	id: number;
-	name: string;
-	email: string;
-	position: string;
-	overallScore: number;
-	details: {
-		startDate: string;
-		division: string;
-		status: string;
-		email: string;
-		remainingInternshipTime: string;
-		image: string;
-	};
-}
+import { Jobdesk } from '@/middlewares/api';
 const RekapPenilaianPage = () => {
 	const Navigate = useNavigate();
-	const [searchQuery, setSearchQuery] = useState<string>('');
-	const [selectedEmployees, setSelectedEmployees] = useState<number[]>([]);
-	const employees: EmployeeData[] = [
-		{
-			id: 1,
-			name: 'Alya Putri Azzahra',
-			email: 'alyaputriazzahra52@gmail.com',
-			position: 'Keuangan',
-			overallScore: 90,
-			details: {
-				startDate: '23 Mei 2024',
-				division: 'Keuangan',
-				status: 'Pegawai tetap',
-				email: 'alyaputriazzahra52@gmail.com',
-				remainingInternshipTime: '1 Bulan 15 Hari',
-				image: 'https://i.pravatar.cc/100?img=3',
-			},
-		},
-	];
-	const handleCheckboxChange = (id: number) => {
-		setSelectedEmployees((prevSelected) =>
-			prevSelected.includes(id) ? prevSelected.filter((employeeId) => employeeId !== id) : [...prevSelected, id]
-		);
+	const [employees, setEmployees] = useState<any[]>([]);
+	const [filter, setFilter] = useState({
+		limit: 10,
+		page: 0,
+		totalPage: 0,
+		totalRows: 0,
+		search: '',
+		id: '',
+	});
+	const getAllDataJob = async () => {
+		try {
+			const response = await Jobdesk.getAllJobdesk(filter.limit, filter.search, filter.page, filter.id);
+			setEmployees(response.data.data.result);
+			setFilter((prev) => ({
+				...prev,
+				totalRows: response.data.data.totalRows,
+				totalPages: response.data.data.totalPages,
+				limit: response.data.data.limit,
+			}));
+		} catch (error) {
+			console.error(error);
+		}
 	};
+	// const handleCheckboxChange = (id: number) => {
+	// 	setSelectedEmployees((prevSelected) =>
+	// 		prevSelected.includes(id) ? prevSelected.filter((employeeId) => employeeId !== id) : [...prevSelected, id]
+	// 	);
+	// };
 
-	const handleDetailClick = (employee: EmployeeData) => {
+	const handleDetailClick = (employee: any) => {
 		console.log('Navigating to details for:', employee);
 		Navigate('/hrd/rekap-penilaian/detail', { state: { employee } });
 	};
 
+	useEffect(() => {
+		getAllDataJob();
+	}, [filter.limit, filter.search, filter.id]);
 	return (
 		<div className="w-full p-2">
 			<div className="w-full flex-wrap md:flex">
@@ -75,8 +67,8 @@ const RekapPenilaianPage = () => {
 						type="text"
 						className="grow"
 						placeholder="Search"
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
+						value={filter.search}
+						onChange={(e) => setFilter((prev) => ({ ...prev, search: e.target.value, page: 0 }))}
 					/>
 				</label>
 			</div>
@@ -93,9 +85,9 @@ const RekapPenilaianPage = () => {
 				<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">
 					<table className="text-md table">
 						<thead>
-							<tr className="text-center font-bold">
-								<th>
-									<input
+							<tr className="font-bold">
+								<th className="text-center">
+									{/* <input
 										type="checkbox"
 										className="checkbox"
 										onChange={(e) => {
@@ -106,30 +98,32 @@ const RekapPenilaianPage = () => {
 											}
 										}}
 										checked={selectedEmployees.length === employees.length}
-									/>
+									/> */}
+									No
 								</th>
 								<th>Nama</th>
 								<th>Email</th>
 								<th>Posisi</th>
-								<th>Nilai Keseluruhan</th>
-								<th>Detail</th>
+								<th className="text-center">Nilai Keseluruhan</th>
+								<th className="text-center">Detail</th>
 							</tr>
 						</thead>
 						<tbody>
-							{employees.map((employee) => (
-								<tr key={employee.id}>
+							{employees.map((employee, index) => (
+								<tr key={index}>
 									<td className="text-center">
-										<input
+										{/* <input
 											type="checkbox"
 											className="checkbox"
 											checked={selectedEmployees.includes(employee.id)}
 											onChange={() => handleCheckboxChange(employee.id)}
-										/>
+										/> */}
+										{index + 1}
 									</td>
 									<td>{employee.name}</td>
-									<td>{employee.email}</td>
-									<td>{employee.position}</td>
-									<td className="text-center">{employee.overallScore}</td>
+									<td>{employee.employee.email ?? '-'}</td>
+									<td>{employee.employee.occupation ?? '-'}</td>
+									<td className="text-center">{employee.grade}</td>
 									<td className="text-center">
 										<button className="btn btn-primary" onClick={() => handleDetailClick(employee)}>
 											Buka
@@ -139,24 +133,44 @@ const RekapPenilaianPage = () => {
 							))}
 						</tbody>
 					</table>
-				</div>
-				{/* Detail section */}
-				{/* {employees.map((employee) => (
-					<div key={employee.id} className="mt-8">
-						<div className="flex items-center">
-							<img src={employee.details.image} alt={employee.name} className="h-20 w-20 rounded-full" />
-							<div className="ml-4">
-								<h3 className="text-xl font-bold">{employee.name}</h3>
-								<p>Email: {employee.details.email}</p>
-								<p>Posisi: {employee.position}</p>
-								<p>Tanggal Mulai Bekerja: {employee.details.startDate}</p>
-								<p>Divisi: {employee.details.division}</p>
-								<p>Status: {employee.details.status}</p>
-								<p>Sisa Waktu Magang: {employee.details.remainingInternshipTime}</p>
+					<div className="join m-5">
+						<button
+							className="btn join-item btn-sm"
+							onClick={() => setFilter((prev) => ({ ...prev, page: prev.page - 1 }))}
+							disabled={filter.page === 0} // Disable jika halaman pertama
+						>
+							Previous
+						</button>
+
+						<button
+							className="btn join-item btn-sm"
+							onClick={() => setFilter((prev) => ({ ...prev, page: prev.page + 1 }))}
+							disabled={filter.page + 1 >= filter.totalPage} // Disable jika halaman terakhir
+						>
+							Next
+						</button>
+
+						<button className="btn join-item btn-sm">
+							<div className="flex justify-between">
+								<span>
+									Page {filter.page + 1} of {filter.totalPage}
+								</span>
 							</div>
-						</div>
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilter((prev) => ({ ...prev, limit: 10 }))}>
+							10
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilter((prev) => ({ ...prev, limit: 50 }))}>
+							50
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilter((prev) => ({ ...prev, limit: 100 }))}>
+							100
+						</button>
+						<button className="btn join-item btn-sm" onClick={() => setFilter((prev) => ({ ...prev, limit: 0 }))}>
+							All
+						</button>
 					</div>
-				))} */}
+				</div>
 			</div>
 		</div>
 	);
