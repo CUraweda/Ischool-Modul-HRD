@@ -521,6 +521,17 @@ const Employee = {
 				search: search_query,
 			},
 		}),
+	getAllEmployeePage: (limit: number, search_query: any, page: any): AxiosPromise<any> =>
+		instance.get('employee', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				limit: limit,
+				search: search_query,
+				page: page,
+			},
+		}),
 	updateDivisi: (id: number, data: any): AxiosPromise<any> =>
 		instance.put(
 			`employee/update/${id}`,

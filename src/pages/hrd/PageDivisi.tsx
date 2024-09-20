@@ -23,7 +23,7 @@ const PageDivisi: React.FC<{}> = () => {
 	});
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(filterTable.limit, filterTable.search);
+			const response = await Employee.getAllEmployeePage(filterTable.limit, filterTable.search, filterTable.page);
 			setDataEmployee(response.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
@@ -84,7 +84,7 @@ const PageDivisi: React.FC<{}> = () => {
 	}, []);
 	useEffect(() => {
 		fetchAllEmployee();
-	}, [filterTable.limit, filterTable.search]);
+	}, [filterTable.limit, filterTable.search, filterTable.page]);
 	return (
 		<div className="w-full flex-wrap md:flex">
 			<div className="flex w-full justify-between">
@@ -176,7 +176,10 @@ const PageDivisi: React.FC<{}> = () => {
 					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 100 }))}>
 						100
 					</button>
-					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 0 }))}>
+					<button
+						className="btn join-item btn-sm"
+						onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10000000000000000000 }))}
+					>
 						All
 					</button>
 				</div>
