@@ -54,11 +54,11 @@ const RekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(page, itemsPerPage, search, divisionId);
+			const response = await Rekrutmen.DataRekrutmen(page, itemsPerPage, search, divisionId, access_token);
 			setDataRekrutmen(response.data.data.result);
 			setTotalPages(response.data.data.totalPages);
 			setPage(response.data.data.page);
-			const responseDropdownDivison = await Rekrutmen.DropdownDivision();
+			const responseDropdownDivison = await Rekrutmen.DropdownDivision(access_token);
 			setDropdownDivision(responseDropdownDivison.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -83,7 +83,7 @@ const RekrutmenPage = () => {
 			details: statusData,
 		};
 		try {
-			await Rekrutmen.AddRekrutmen(data);
+			await Rekrutmen.AddRekrutmen(data, access_token);
 			fetchData();
 			closeModal('addRekrutmen');
 			Swal.fire({
@@ -160,6 +160,10 @@ const RekrutmenPage = () => {
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
 	return (
 		<div className="h-screen">

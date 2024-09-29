@@ -11,9 +11,13 @@ const DaftarInterviewPage = () => {
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id);
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token);
 			setFetch(response.data.data);
 		} catch (error) {
 			console.error(error);

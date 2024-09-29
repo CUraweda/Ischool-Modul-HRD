@@ -43,13 +43,19 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			filterType,
 			filterStatus,
 			filterDate,
-			filterDivision
+			filterDivision,
+			access_token
 		);
 		setDataVacation(response.data.data.result);
 		setTotalPages(response.data.data.totalPage);
 		setTotalRows(response.data.data.totalRows);
 		console.log(response.data.data);
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const filterData = dataVacation
 		.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true))
 		.filter((item: any) =>
@@ -58,7 +64,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	const getAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(100000, search_query);
+			const response = await Employee.getAllEmployee(100000, search_query, access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -76,7 +82,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {

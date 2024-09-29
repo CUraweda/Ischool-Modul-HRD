@@ -7,44 +7,44 @@ const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api
 const token = getSessionStorageItem('access_token');
 
 const Dashboard = {
-	DataKaryawan: (): AxiosPromise<any> =>
+	DataKaryawan: (access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
 			url: `employee?limit=10000`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DataPengumuman: (): AxiosPromise<any> =>
+	DataPengumuman: (access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `employee-announcement`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DataChart: (): AxiosPromise =>
+	DataChart: (access_token: string | null): AxiosPromise =>
 		instance({
 			method: `GET`,
 			url: `employee-attendance/recap-week`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DataApplicant: (): AxiosPromise =>
+	DataApplicant: (access_token: string | null): AxiosPromise =>
 		instance({
 			method: `GET`,
 			url: `applicant-form/rekap-dashboard`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DataTraining: (): AxiosPromise =>
+	DataTraining: (access_token: string | null): AxiosPromise =>
 		instance({
 			method: `GET`,
 			url: `training/recap-dashboard`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	PostPengumuman: (data: any): AxiosPromise<any> =>
@@ -87,21 +87,33 @@ const TrainingSuggest = {
 		}),
 };
 const Rekrutmen = {
-	DataRekrutmen: (page: any, limit: any, search: string, division: any): AxiosPromise<any> =>
+	DataRekrutmen: (
+		page: any,
+		limit: any,
+		search: string,
+		division: any,
+		access_token: string | null
+	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1&division_id=${division}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 
-	DataDetailRekrutmen: (page: any, limit: any, search: string, id: string | undefined): AxiosPromise<any> =>
+	DataDetailRekrutmen: (
+		page: any,
+		limit: any,
+		search: string,
+		id: string | undefined,
+		access_token: string | null
+	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 
@@ -123,22 +135,22 @@ const Rekrutmen = {
 			},
 		}),
 
-	DropdownDivision: (): AxiosPromise<any> =>
+	DropdownDivision: (access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `division?limit=100`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 
-	AddRekrutmen: (data: any): AxiosPromise<any> =>
+	AddRekrutmen: (data: any, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: 'POST',
 			url: `job-vacancy/create-detail`,
 			data,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	LulusRekrutmen: (data: any, id: number): AxiosPromise =>
@@ -170,28 +182,28 @@ const Probation = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	DetailByUser: (id: any): AxiosPromise =>
+	DetailByUser: (id: any, access_token: string | null): AxiosPromise =>
 		instance({
 			method: `GET`,
 			url: `employee/detail/${id}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DetailPresensi: (id: any): AxiosPromise<any> =>
+	DetailPresensi: (id: any, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `employee-attendance?page=0&limit=1000&employee_id=${id}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DetailChart: (id: any): AxiosPromise =>
+	DetailChart: (id: any, access_token: string | null): AxiosPromise =>
 		instance({
 			method: `GET`,
 			url: `employee-jobdesk/recap-week-employee/${id}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	AcceptedProbation: (data: any, id: any): AxiosPromise<any> =>
@@ -233,12 +245,18 @@ const Probation = {
 };
 
 const Karyawan = {
-	DataKaryawan: (page: any, limit: any, search: string, status: string): AxiosPromise<any> =>
+	DataKaryawan: (
+		page: any,
+		limit: any,
+		search: string,
+		status: string,
+		access_token: string | null
+	): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
 			url: `employee?page=${page}&limit=${limit}&search=${search}&status=${status}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	TambahKaryawan: (data: any): AxiosPromise<any> =>
@@ -267,20 +285,20 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	ProfilKaryawan: (id: string | undefined): AxiosPromise<any> =>
+	ProfilKaryawan: (id: string | undefined, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `employee/detail/${id}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	DaftarPenilaian: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DaftarPenilaian: (page: any, limit: any, search: string, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `employee-jobdesk?page=${page}&limit=${limit}&search=${search}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	AddPenilaian: (data: any): AxiosPromise<any> =>
@@ -310,12 +328,12 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	DaftarAsessor: (page: any, limit: any, search: string): AxiosPromise<any> =>
+	DaftarAsessor: (page: any, limit: any, search: string, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url: `employee-asessor?page=${page}&limit=${limit}&search=${search}`,
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	AktifAsessor: (data: null, id: any): AxiosPromise<any> =>
@@ -358,7 +376,8 @@ const Attendance = {
 		status: string[],
 		search: string,
 		division: any,
-		date: string
+		date: string,
+		access_token: string | null
 	): AxiosPromise<any> => {
 		const typeParam = type.length ? type.join(',') : '';
 		const statusParam = status.length ? status.join(',') : '';
@@ -366,7 +385,7 @@ const Attendance = {
 		return instance.get(`employee-attendance`, {
 			params: { search, type: typeParam, status: statusParam, division_id: division, date, page, limit },
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		});
 	},
@@ -376,20 +395,20 @@ const Attendance = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	getAllEmployeeMonth: (search: string): AxiosPromise<any> => {
+	getAllEmployeeMonth: (search: string, access_token: string | null): AxiosPromise<any> => {
 		return instance.get(`employee-attendance/recap-month-employee`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				search_query: search,
 			},
 		});
 	},
-	getAllDivision: (): AxiosPromise<any> => {
+	getAllDivision: (access_token: string | null): AxiosPromise<any> => {
 		return instance.get(`division`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		});
 	},
@@ -400,7 +419,8 @@ const Attendance = {
 		type: string[],
 		status: string[],
 		date: string,
-		divisi: any
+		divisi: any,
+		access_token: string | null
 	): AxiosPromise<any> => {
 		const typeParam = type.length ? type.join(',') : '';
 		const statusParam = status.length ? status.join(',') : '';
@@ -408,7 +428,7 @@ const Attendance = {
 		return instance.get('employee-vacation', {
 			params: { search, page, limit, type: typeParam, status: statusParam, date, division_id: divisi },
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		});
 	},
@@ -505,26 +525,26 @@ const WorkTime = {
 };
 
 const Employee = {
-	getOneEmployee: (id: any): AxiosPromise<any> =>
+	getOneEmployee: (id: any, access_token: string | null): AxiosPromise<any> =>
 		instance.get(`employee/show/${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	getAllEmployee: (limit: number, search_query: any): AxiosPromise<any> =>
+	getAllEmployee: (limit: number, search_query: any, access_token: string | null): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				limit: limit,
 				search: search_query,
 			},
 		}),
-	getAllEmployeePage: (limit: number, search_query: any, page: any): AxiosPromise<any> =>
+	getAllEmployeePage: (limit: number, search_query: any, page: any, access_token: string | null): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				limit: limit,
@@ -546,10 +566,10 @@ const Employee = {
 		),
 };
 const Salary = {
-	getAllSalary: (limit: number, search_query: any, page: number): AxiosPromise<any> =>
+	getAllSalary: (limit: number, search_query: any, page: number, access_token: string | null): AxiosPromise<any> =>
 		instance.get('employee-salary', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				limit: limit,
@@ -577,10 +597,16 @@ const Salary = {
 		}),
 };
 const Bill = {
-	getAllBill: (limit: number, search_query: any, page: number, account_id: any): AxiosPromise<any> =>
+	getAllBill: (
+		limit: number,
+		search_query: any,
+		page: number,
+		account_id: any,
+		access_token: string | null
+	): AxiosPromise<any> =>
 		instance.get('employee-bill', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				limit: limit,
@@ -623,10 +649,10 @@ const Bill = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	getOneTypes: (id: number): AxiosPromise<any> =>
+	getOneTypes: (id: number, access_token: string | null): AxiosPromise<any> =>
 		instance.get(`bill-type/${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 	createTypeAll: (data: any): AxiosPromise<any> =>
@@ -669,18 +695,24 @@ const EmployeeDivision = {
 			},
 		}),
 
-	getAllDivision: (): AxiosPromise<any> =>
+	getAllDivision: (access_token: string | null): AxiosPromise<any> =>
 		instance.get('division', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 };
 const Jobdesk = {
-	getAllJobdesk: (limit: number, search_query: any, page: number, id: any): AxiosPromise<any> =>
+	getAllJobdesk: (
+		limit: number,
+		search_query: any,
+		page: number,
+		id: any,
+		access_token: string | null
+	): AxiosPromise<any> =>
 		instance.get(`employee-jobdesk?employee_id=${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 			params: {
 				limit: limit,
@@ -749,37 +781,37 @@ const CustomerCare = {
 };
 
 const Penggajian = {
-	getAllAccount: (token: string, month: any, year: any, limit: number, page: number): AxiosPromise<any> =>
+	getAllAccount: (access_token: string | null, month: any, year: any, limit: number, page: number): AxiosPromise<any> =>
 		instance.get(`/employee-account?page=${page}}&limit${limit}&this_month=${month}&this_year=${year}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	getMonthAccount: (token: string): AxiosPromise<any> =>
+	getMonthAccount: (access_token: string | null): AxiosPromise<any> =>
 		instance.get('/employee-account/total-month', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	getYearAccount: (token: string): AxiosPromise<any> =>
+	getYearAccount: (access_token: string | null): AxiosPromise<any> =>
 		instance.get('/employee-account/recap-year', {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	getOneAccount: (id: number, token: string): AxiosPromise<any> =>
+	getOneAccount: (id: number, access_token: string | null): AxiosPromise<any> =>
 		instance.get(`/employee-account/${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	getDetailAccount: (id: number, token: string): AxiosPromise<any> =>
+	getDetailAccount: (id: number, access_token: string | null): AxiosPromise<any> =>
 		instance.get(`/employee-account/detail/${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	createAccount: (token: string, data: any): AxiosPromise<any> =>
+	createAccount: (token: string | null, data: any): AxiosPromise<any> =>
 		instance.post(`/employee-account/create`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
