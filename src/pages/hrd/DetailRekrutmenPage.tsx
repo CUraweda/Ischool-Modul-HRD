@@ -19,7 +19,7 @@ const DetailRekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token);
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, false, false);
 			setDataDetailRekrutmen(response.data.data);
 		} catch (error) {
 			console.error(error);

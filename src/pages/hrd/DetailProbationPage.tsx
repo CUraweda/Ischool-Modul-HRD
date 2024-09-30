@@ -15,7 +15,7 @@ const DetailProbationPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token);
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, true, true);
 			setDataDetailProbation(response.data.data);
 		} catch (error) {
 			console.error(error);

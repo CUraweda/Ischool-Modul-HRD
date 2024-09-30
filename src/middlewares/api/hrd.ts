@@ -96,7 +96,7 @@ const Rekrutmen = {
 	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&only_open=1&division_id=${division}`,
+			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&division_id=${division}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -107,11 +107,16 @@ const Rekrutmen = {
 		limit: any,
 		search: string,
 		id: string | undefined,
-		access_token: string | null
+		access_token: string | null,
+		isPassed: any,
+		isInterview: any
 	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}`,
+			url:
+				`applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}` +
+				(isPassed ? '&is_passed=1' : '') +
+				(isInterview ? '&is_passed_interview=1' : ''),
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
