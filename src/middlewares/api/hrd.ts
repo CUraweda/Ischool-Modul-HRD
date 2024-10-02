@@ -465,9 +465,9 @@ const Attendance = {
 			},
 		}),
 	downloadPicture: (token: string | null, path: string | null): AxiosPromise<any> =>
-		apics({
+		instance({
 			method: 'GET',
-			url: `/student-task/download?filepath=${path}`,
+			url: `/employee-vacation/download?filepath=${path}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
