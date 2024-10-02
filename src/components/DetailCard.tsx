@@ -11,18 +11,22 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 	const [hour, setHour] = useState('');
 	const [fileImage, setFileImage] = useState<any>();
 	let access_token = sessionStorage.getItem('access_token');
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 	const getPicture = async () => {
 		const response = await Attendance.downloadPicture(access_token, dataProps.file_path);
+		const lowerCasePath = dataProps.file_path.toLowerCase();
+		let mimeType = 'application/pdf';
 
-		const contentType = response.headers['content-type'];
-		const typePath = dataProps.file_path.split('.');
-		const fileExtension = typePath[typePath.length - 1];
-		const blob = new Blob([response.data], {
-			type: fileExtension === 'pdf' ? 'application/pdf' : contentType,
-		});
-		// const blob = new Blob([response.data], { type: "application/pdf" }); //
+		if (lowerCasePath.endsWith('.png')) {
+			mimeType = 'image/png';
+		} else if (lowerCasePath.endsWith('.jpg') || lowerCasePath.endsWith('.jpeg')) {
+			mimeType = 'image/jpeg';
+		} else {
+			throw new Error('Unsupported file type');
+		}
+
+		const blob = new Blob([response.data], { type: mimeType });
 		const blobUrl = window.URL.createObjectURL(blob);
-		// const fileUrl = URL.createObjectURL(blob);
 		setFileImage(blobUrl);
 	};
 	useEffect(() => {
@@ -53,12 +57,12 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 							<img
 								src={fileImage || `https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png`}
 								alt="Detail Image"
-								className="h-[200px] w-full object-cover"
+								className="mx-auto h-[200px] bg-auto bg-center bg-no-repeat"
 							/>
 						</figure>
 						<div className="text-md card-body">
 							<h2 className="card-title font-semibold">
-								{dataProps?.employee.full_name} {'*' + dataProps?.status}
+								{dataProps?.employee.full_name} {'   *' + dataProps?.status}
 							</h2>
 							<div className="grid w-full grid-cols-2">
 								<div className="mr-1">
