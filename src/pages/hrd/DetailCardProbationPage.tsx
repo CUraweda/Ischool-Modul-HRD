@@ -26,14 +26,18 @@ const DetailCardProbationPage = () => {
 		remainingTime: '',
 	});
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const FetchData = async () => {
 		try {
-			const response = await Probation.DetailByUser(id2);
+			const response = await Probation.DetailByUser(id2, access_token);
 			setFetch(response.data.data);
 			handleInternshipDetails(response.data.data.probation_start_date, response.data.data.probation_end_date);
-			const responseTable = await Probation.DetailPresensi(id2);
+			const responseTable = await Probation.DetailPresensi(id2, access_token);
 			setTable(responseTable.data.data.result);
-			const responseChart = await Probation.DetailChart(id2);
+			const responseChart = await Probation.DetailChart(id2, access_token);
 			setChart(responseChart.data.data);
 		} catch (error) {
 			console.error(error);

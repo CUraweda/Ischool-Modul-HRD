@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 // import { Bar, Doughnut } from 'react-chartjs-2';
 import { Penggajian, Attendance } from '@/middlewares/api/hrd';
-import { getSessionStorageItem } from '@/utils/storageUtils';
 import { Link } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -12,7 +11,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const PenggajianPage = () => {
 	// const Navigate = useNavigate();
-	const token = getSessionStorageItem('access_token');
 	const [selectedOption, setSelectedOption] = useState<'Kehadiran' | 'Lainnya' | 'Penggajian'>('Penggajian');
 	const [rekapMonth, setRekapMonth] = useState({
 		Total: '',
@@ -31,9 +29,14 @@ const PenggajianPage = () => {
 		month: new Date().getMonth() + 1,
 		year: new Date().getFullYear(),
 	});
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const getRecapMonth = async () => {
 		try {
-			const res = await Penggajian.getMonthAccount(token);
+			const res = await Penggajian.getMonthAccount(access_token);
 			const currentDate = new Date();
 			const thisMonth = currentDate.toLocaleString('id-ID', { month: 'long' });
 			console.log(res.data.data.total);
@@ -48,7 +51,7 @@ const PenggajianPage = () => {
 	};
 	const getRecapYear = async () => {
 		try {
-			const res = await Penggajian.getYearAccount(token);
+			const res = await Penggajian.getYearAccount(access_token);
 			const totals = res.data.data.map((item: { total: number }) => item.total);
 
 			setRekapYear(totals);
@@ -58,7 +61,7 @@ const PenggajianPage = () => {
 	};
 	const getAllAttendance = async () => {
 		try {
-			const result = await Attendance.getAllEmployeeMonth('');
+			const result = await Attendance.getAllEmployeeMonth('', access_token);
 			setAttendanceData(result.data.data);
 		} catch (error) {
 			console.error('Error fetching attendance data:', error);
@@ -67,7 +70,7 @@ const PenggajianPage = () => {
 	const getAllAcc = async () => {
 		try {
 			const res = await Penggajian.getAllAccount(
-				token,
+				access_token,
 				filterTable.month,
 				filterTable.year,
 				filterTable.limit,

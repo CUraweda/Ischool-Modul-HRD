@@ -3,20 +3,23 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useLocation } from 'react-router-dom';
 import { Penggajian } from '@/middlewares/api/hrd';
 import React, { useEffect, useState } from 'react';
-import { getSessionStorageItem } from '@/utils/storageUtils';
 import { Link } from 'react-router-dom';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const DetailPenggajianUserPage = () => {
 	const location = useLocation();
-	const token = getSessionStorageItem('access_token');
 	const { id } = location.state;
 	const [userDetail, setUserDetail] = useState<any>(null);
 
 	const [DataBill, setDataBill] = useState<any[]>([]);
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const getDetail = async () => {
 		try {
-			const res = await Penggajian.getDetailAccount(id, token);
+			const res = await Penggajian.getDetailAccount(id, access_token);
 			setUserDetail(res.data.data.account);
 			console.log(res.data.data.account);
 			// getBill(userDetail.id);

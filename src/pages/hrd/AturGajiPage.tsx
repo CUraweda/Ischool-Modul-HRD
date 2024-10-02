@@ -16,6 +16,8 @@ const AturGajiPage = () => {
 	const [dataBill, setDataBill] = useState<any[]>([]);
 	const [DataTypes, setTypes] = useState<any[]>([]);
 	const [dataAccount, setDataAccount] = useState<any[]>([]);
+	let access_token = sessionStorage.getItem('access_token');
+
 	const [filterTable, setFilterTable] = useState({
 		search: '',
 		limit: 0,
@@ -52,7 +54,7 @@ const AturGajiPage = () => {
 	};
 	const getSalary = async () => {
 		try {
-			const res = await Salary.getAllSalary(filterTable.limit, filterTable.search, filterTable.page);
+			const res = await Salary.getAllSalary(filterTable.limit, filterTable.search, filterTable.page, access_token);
 			setDataSalary(res.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
@@ -106,7 +108,7 @@ const AturGajiPage = () => {
 	};
 	const getDataBill = async () => {
 		try {
-			const res = await Bill.getAllBill(0, '', 0, '');
+			const res = await Bill.getAllBill(0, '', 0, '', access_token);
 			setDataBill(res.data.data.result);
 			setFilterBill((prev) => ({
 				...prev,
@@ -130,7 +132,7 @@ const AturGajiPage = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			const res = await Employee.getAllEmployee(1000000000, '');
+			const res = await Employee.getAllEmployee(1000000000, '', access_token);
 			console.log(res.data.data.result);
 			setListEmployee(res.data.data.result);
 		} catch (err) {

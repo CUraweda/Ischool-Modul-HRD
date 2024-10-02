@@ -34,6 +34,7 @@ const DaftarAsessorPage = lazy(() => import('@/pages/hrd/DaftarAsessorPage'));
 const DaftarPenilaianPage = lazy(() => import('@/pages/hrd/DaftarPenilaianPage'));
 const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage'));
 const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
+const VerifEmailPage = lazy(() => import('../pages/VerifEmaillPage'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
@@ -45,6 +46,7 @@ const AppRoutes: React.FC = () => {
 				<Routes>
 					<Route element={<PublicLayout />}>
 						<Route path="/" element={<FormPage />} />
+						<Route path="/verif/:id" element={<VerifEmailPage />} />
 					</Route>
 
 					<Route

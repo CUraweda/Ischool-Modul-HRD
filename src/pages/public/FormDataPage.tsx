@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Form } from '@/middlewares/api';
+import Swal from 'sweetalert2';
+
 const FormDataPage = () => {
 	const [files, setFiles] = useState<any[]>([]);
 	const [profilePhoto, setProfilePhoto] = useState<any>(null);
@@ -250,8 +252,19 @@ const FormDataPage = () => {
 		};
 		try {
 			await Form.PostDataPelamar(data);
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Rekrutmen',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 

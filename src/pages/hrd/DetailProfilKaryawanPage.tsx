@@ -69,9 +69,13 @@ const DetailProfilKaryawanPage = () => {
 	// 	link.click();
 	// };
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.ProfilKaryawan(id);
+			const response = await Karyawan.ProfilKaryawan(id, access_token);
 			const data = response.data.data;
 			setFetch(data);
 			setFormData({

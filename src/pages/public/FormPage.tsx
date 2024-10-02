@@ -28,7 +28,6 @@ function formatDateRange(startDate: any, endDate: any) {
 		return `${startDateObj.getDate()} - ${endDateObj.toLocaleDateString('id-ID', options)}`;
 	}
 
-	// Otherwise, show the full date range
 	const start = startDateObj.toLocaleDateString('id-ID', options);
 	const end = endDateObj.toLocaleDateString('id-ID', options);
 
@@ -39,15 +38,22 @@ const FormPage = () => {
 	const [dataJob, setDataJob] = useState<any[]>([]);
 	const navigate = useNavigate();
 	const [id, setId] = useState('');
+	const [dataDetail, setDataDetail] = useState<any[]>([]);
 
-	const handleDialog = (id: any) => {
+	const handleDialog = (id: any, data: any) => {
 		openModal('detailForm');
 		setId(id);
+		setDataDetail(
+			data.map((detail: any) => ({
+				title: detail.title,
+				descriptions: detail.description.split('\n'),
+			}))
+		);
 	};
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, '', '');
+			const response = await Rekrutmen.DataRekrutmen(0, 20, '', '', '');
 			setDataJob(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -71,7 +77,7 @@ const FormPage = () => {
 					<div
 						key={index}
 						className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow"
-						onClick={() => handleDialog(item.id)}
+						onClick={() => handleDialog(item.id, item.vacancydetails)}
 					>
 						<div>
 							<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
@@ -94,39 +100,18 @@ const FormPage = () => {
 				<div className="flex justify-between">
 					<div>
 						<div>
-							<h3 className="font-bold">Spesifikasi</h3>
-							<div className="mt-4">
-								<span>Posisi:</span> Guru Bahasa Indonesia
-							</div>
-							<div>
-								<span>Lokasi:</span> Sekolah Alam Depok
-							</div>
-
-							<div>
-								<span>Status:</span> Pekerjaan Paruh Waktu
-							</div>
-
-							<div>
-								<span>Periode Pendaftaran:</span> 25 Mei2023
-							</div>
-						</div>
-
-						<div className="mt-5">
-							<h3 className="font-bold">Tugas dan Tanggung Jawab</h3>
-							<div className="mt-4">
-								<span>Posisi:</span> Guru Bahasa Indonesia
-							</div>
-							<div>
-								<span>Lokasi:</span> Sekolah Alam Depok
-							</div>
-
-							<div>
-								<span>Status:</span> Pekerjaan Paruh Waktu
-							</div>
-
-							<div>
-								<span>Periode Pendaftaran:</span> 25 Mei2023
-							</div>
+							{dataDetail.map((item, index) => (
+								<div key={index}>
+									<div>
+										<h3 className="mt-4 font-bold">{item.title}</h3>
+										{item.descriptions.map((detail: any, detailIndex: any) => (
+											<div className="mt-4" key={detailIndex}>
+												{detail}
+											</div>
+										))}
+									</div>
+								</div>
+							))}
 						</div>
 					</div>
 

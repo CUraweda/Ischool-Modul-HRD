@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Modal, { openModal, closeModal } from '../../components/ModalProps'; // Assuming closeModal exists
+import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { Karyawan } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -34,13 +34,17 @@ const DataKaryawanPage = () => {
 	const [itemsPerPage] = useState(20);
 	const navigate = useNavigate();
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const handleDialog = () => {
 		openModal('addKaryawan');
 	};
 
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search, status);
+			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search, status, access_token);
 			setDataKaryawan(response.data.data.result);
 			setTotalPages(response.data.data.totalPages);
 			setPage(response.data.data.page);

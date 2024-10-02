@@ -97,13 +97,17 @@ const DashboardPage = () => {
 	});
 	const [daftarTraining, setDaftarTraining] = useState<any[]>([]);
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const handleDialog = () => {
 		openModal('addPengumuman');
 	};
 
 	const GetTraining = async () => {
 		try {
-			const response = await Dashboard.DataTraining();
+			const response = await Dashboard.DataTraining(access_token);
 			setDataTraining(response.data.data);
 			setDaftarTraining(response.data.data.data);
 		} catch (error) {
@@ -113,7 +117,7 @@ const DashboardPage = () => {
 
 	const GetApplicant = async () => {
 		try {
-			const response = await Dashboard.DataApplicant();
+			const response = await Dashboard.DataApplicant(access_token);
 			setDataApplicant(response.data.data);
 			setDaftarApplicant(response.data.data.data);
 		} catch (error) {
@@ -123,7 +127,7 @@ const DashboardPage = () => {
 
 	const GetPengumuman = async () => {
 		try {
-			const response = await Dashboard.DataPengumuman();
+			const response = await Dashboard.DataPengumuman(access_token);
 			setPengumuman(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -132,7 +136,7 @@ const DashboardPage = () => {
 
 	const DataChart = async () => {
 		try {
-			const response = await Dashboard.DataChart();
+			const response = await Dashboard.DataChart(access_token);
 			setChart(response.data.data);
 		} catch (error) {
 			console.error(error);
@@ -141,7 +145,7 @@ const DashboardPage = () => {
 
 	const dropdownKaryawan = async () => {
 		try {
-			const response = await Dashboard.DataKaryawan();
+			const response = await Dashboard.DataKaryawan(access_token);
 			setDaftarKaryawan(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -193,7 +197,7 @@ const DashboardPage = () => {
 		DataChart();
 		GetApplicant();
 		GetTraining();
-	}, []);
+	}, [access_token]);
 
 	const handleKirimKepadaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		console.log('Kirim Kepada Changed:', e.target.value);

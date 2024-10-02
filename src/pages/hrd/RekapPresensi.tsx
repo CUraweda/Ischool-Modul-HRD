@@ -86,6 +86,10 @@ const PresensiPage: React.FC = () => {
 		{ id: 5, category: 'Status', value: 'Diluar Jadwal' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 	const fetchAttendanceData = async () => {
 		try {
 			const result = await Attendance.getEmployeeAttendance(
@@ -95,7 +99,8 @@ const PresensiPage: React.FC = () => {
 				filterStatus,
 				searchQuery,
 				filterDivision,
-				filterDate
+				filterDate,
+				access_token
 			);
 			setAttendanceData(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
@@ -109,7 +114,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {
@@ -125,7 +130,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(1000000000000, '');
+			const response = await Employee.getAllEmployee(1000000000000, '', access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -297,17 +302,19 @@ const PresensiPage: React.FC = () => {
 								<MdPeopleAlt /> Karyawan
 							</div>
 							<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
-								<div className="checkbox-group">
-									{dataEmployee.map((employee) => (
-										<label key={employee.id} className="flex items-center space-x-2">
-											<input
-												type="checkbox"
-												checked={selectedItem.includes(employee?.full_name)}
-												onChange={() => handleCheckboxChange(employee?.full_name)}
-											/>
-											<span>{employee?.full_name || 'Unknown'}</span>
-										</label>
-									))}
+								<div className="m-2 h-52 w-full overflow-y-scroll">
+									<div className="checkbox-group">
+										{dataEmployee.map((employee) => (
+											<label key={employee.id} className="flex items-center space-x-2">
+												<input
+													type="checkbox"
+													checked={selectedItem.includes(employee?.full_name)}
+													onChange={() => handleCheckboxChange(employee?.full_name)}
+												/>
+												<span>{employee?.full_name || 'Unknown'}</span>
+											</label>
+										))}
+									</div>
 								</div>
 							</ul>
 						</div>
