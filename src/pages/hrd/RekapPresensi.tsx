@@ -302,17 +302,19 @@ const PresensiPage: React.FC = () => {
 								<MdPeopleAlt /> Karyawan
 							</div>
 							<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
-								<div className="checkbox-group">
-									{dataEmployee.map((employee) => (
-										<label key={employee.id} className="flex items-center space-x-2">
-											<input
-												type="checkbox"
-												checked={selectedItem.includes(employee?.full_name)}
-												onChange={() => handleCheckboxChange(employee?.full_name)}
-											/>
-											<span>{employee?.full_name || 'Unknown'}</span>
-										</label>
-									))}
+								<div className="m-2 h-52 w-full overflow-y-scroll">
+									<div className="checkbox-group">
+										{dataEmployee.map((employee) => (
+											<label key={employee.id} className="flex items-center space-x-2">
+												<input
+													type="checkbox"
+													checked={selectedItem.includes(employee?.full_name)}
+													onChange={() => handleCheckboxChange(employee?.full_name)}
+												/>
+												<span>{employee?.full_name || 'Unknown'}</span>
+											</label>
+										))}
+									</div>
 								</div>
 							</ul>
 						</div>

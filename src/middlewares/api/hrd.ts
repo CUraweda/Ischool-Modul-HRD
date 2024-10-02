@@ -438,31 +438,40 @@ const Attendance = {
 		});
 	},
 
-	createVacation: (data: any): AxiosPromise<any> =>
+	createVacation: (data: any, access_token: string | null): AxiosPromise<any> =>
 		instance.post('employee-vacation/create', data, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 
-	updateVacation: (id: number, data: any): AxiosPromise<any> =>
+	updateVacation: (id: number, data: any, access_token: string | null): AxiosPromise<any> =>
 		instance.put(`employee-vacation/update/${id}`, data, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 
-	deleteVacation: (id: number): AxiosPromise<any> =>
+	deleteVacation: (id: number, access_token: string | null): AxiosPromise<any> =>
 		instance.delete(`employee-vacation/delete/${id}`, {
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	requestVacation: (data: any): AxiosPromise<any> =>
+	requestVacation: (data: any, access_token: string | null): AxiosPromise<any> =>
 		instance.post(`employee-vacation/request`, data, {
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	downloadPicture: (token: string | null, path: string | null): AxiosPromise<any> =>
+		apics({
+			method: 'GET',
+			url: `/student-task/download?filepath=${path}`,
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
+			responseType: 'blob',
 		}),
 };
 const Training = {
@@ -528,7 +537,6 @@ const WorkTime = {
 			},
 		}),
 };
-
 const Employee = {
 	getOneEmployee: (id: any, access_token: string | null): AxiosPromise<any> =>
 		instance.get(`employee/show/${id}`, {

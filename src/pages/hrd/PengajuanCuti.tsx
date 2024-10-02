@@ -8,6 +8,7 @@ import { GrStatusUnknown } from 'react-icons/gr';
 import { FaFileExport } from 'react-icons/fa6';
 import * as XLSX from 'xlsx';
 import { Formik, Field } from 'formik';
+import { getSessionStorageItem } from '@/utils/storageUtils';
 const pengajuanCutiPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
 	const [filterStatus, setFilterStatus] = useState<string[]>([]);
@@ -30,6 +31,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		{ id: 4, category: 'Status', value: 'Menunggu' },
 		{ id: 5, category: 'Status', value: 'Tidak Disetujui' },
 	];
+	let access_token = sessionStorage.getItem('access_token');
 	const [ListDivision, setListDivision] = useState<any[]>([]);
 	const [search_query, setSearch_query] = useState<string>('');
 	const getAllVacation = async () => {
@@ -51,8 +53,6 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		setTotalRows(response.data.data.totalRows);
 		console.log(response.data.data);
 	};
-
-	let access_token = sessionStorage.getItem('access_token');
 
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
@@ -136,7 +136,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const updateStatus = async (id: number, status: string) => {
 		try {
-			await Attendance.updateVacation(id, { status });
+			await Attendance.updateVacation(id, { status }, access_token);
 			getAllVacation();
 		} catch (error) {
 			console.error('Error updating status:', error);
@@ -203,14 +203,14 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const requestCuti = async (formData: any) => {
 		try {
-			const response = await Attendance.requestVacation(formData);
+			const response = await Attendance.requestVacation(formData, access_token);
 			Swal.fire({
 				icon: 'success',
 				title: 'Berhasil',
 				text: 'Data berhasil ditambahkan',
 			});
-
-			if (response.data.code !== 200) {
+			getAllVacation();
+			if (response.data.code !== 201) {
 				Swal.fire({
 					icon: 'error',
 					title: 'Oops...',
@@ -250,6 +250,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		formData.append('end_date', values.end_date);
 		formData.append('proposer_id', '1');
 		formData.append('type', 'CUTI');
+		formData.append('status', 'Menunggu');
 		formData.append('employee_id', JSON.stringify(values.employee_id));
 		if (file) {
 			formData.append('file', file);
@@ -458,17 +459,19 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 							<MdPeopleAlt /> Karyawan
 						</div>
 						<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
-							<div className="checkbox-group">
-								{dataEmployee.map((employee) => (
-									<label key={employee.id} className="flex items-center space-x-2">
-										<input
-											type="checkbox"
-											checked={selectedItemEmployee.includes(employee.full_name)}
-											onChange={() => handleCheckboxChange(employee.full_name)}
-										/>
-										<span>{employee.full_name}</span>
-									</label>
-								))}
+							<div className="h-96 overflow-y-scroll">
+								<div className="checkbox-group">
+									{dataEmployee.map((employee) => (
+										<label key={employee.id} className="flex items-center space-x-2">
+											<input
+												type="checkbox"
+												checked={selectedItemEmployee.includes(employee.full_name)}
+												onChange={() => handleCheckboxChange(employee.full_name)}
+											/>
+											<span>{employee.full_name}</span>
+										</label>
+									))}
+								</div>
 							</div>
 						</ul>
 					</div>
@@ -543,9 +546,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						<tr className="text-center font-bold">
 							<th>No</th>
 							<th>Nama</th>
-							<th>Tipe</th>
 							<th>Tanggal</th>
 							<th>Deskripsi</th>
+							<th>Tipe</th>
 							<th>Status</th>
 							<th>Catatan</th>
 							<th>Action</th>
@@ -557,7 +560,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 								<td>{index + 1 + currentPage * limit}</td>
 								<td>{item.employee.full_name}</td>
 
-								<td>{item.start_date.split('T')[0]}</td>
+								<td>{item.start_date.split('T')[0] + ' s/d' + item.end_date.split('T')[0]}</td>
 								<td>{item.description}</td>
 								<td>
 									{/* <div

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Attendance } from '@/middlewares/api/hrd';
 
 interface DetailDialogProps {
 	dataProps: any;
@@ -8,14 +9,29 @@ interface DetailDialogProps {
 const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 	const [date, setDate] = useState('');
 	const [hour, setHour] = useState('');
+	const [fileImage, setFileImage] = useState<any>();
+	let access_token = sessionStorage.getItem('access_token');
+	const getPicture = async () => {
+		const response = await Attendance.downloadPicture(access_token, dataProps.file_path);
 
+		const contentType = response.headers['content-type'];
+		const typePath = dataProps.file_path.split('.');
+		const fileExtension = typePath[typePath.length - 1];
+		const blob = new Blob([response.data], {
+			type: fileExtension === 'pdf' ? 'application/pdf' : contentType,
+		});
+		// const blob = new Blob([response.data], { type: "application/pdf" }); //
+		const blobUrl = window.URL.createObjectURL(blob);
+		// const fileUrl = URL.createObjectURL(blob);
+		setFileImage(blobUrl);
+	};
 	useEffect(() => {
+		getPicture();
 		if (dataProps.start_date) {
-			setDate(dataProps.start_date.split('T')[0]);
-			setHour(dataProps.start_date.split('T')[1].split('.')[0]);
-		} else if (dataProps.createdAt) {
-			setDate(dataProps.createdAt.split('T')[0]);
-			setHour(dataProps.createdAt.split('T')[1].split('.')[0]);
+			setDate(dataProps.start_date.split('T')[0] + ' s/d ' + dataProps.end_date.split('T')[0]);
+			setHour(
+				dataProps.start_date.split('T')[1].substring(0, 5) + ' s/d ' + dataProps.end_date.split('T')[1].substring(0, 5)
+			);
 		}
 	}, [dataProps]);
 
@@ -23,7 +39,7 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 		<>
 			<div className="fixed inset-0 z-30 bg-black bg-opacity-50"></div>
 			<dialog open className="modal modal-open">
-				<div className="modal-box w-[90%] overflow-y-auto md:w-[900px]">
+				<div className="modal-box w-[1000px] overflow-y-auto">
 					<form method="dialog">
 						<div className="flex items-center justify-between align-middle font-bold">
 							<h1 className="text-xl">{dataProps?.title}</h1>
@@ -35,10 +51,7 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 					<div className="mt-5">
 						<figure className="rounded-xl">
 							<img
-								src={
-									dataProps?.file_path ||
-									`https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png`
-								}
+								src={fileImage || `https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png`}
 								alt="Detail Image"
 								className="h-[200px] w-full object-cover"
 							/>
@@ -47,20 +60,22 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 							<h2 className="card-title font-semibold">
 								{dataProps?.employee.full_name} {'*' + dataProps?.status}
 							</h2>
-							<div className="my-2 grid grid-cols-2">
-								<div className="w-1/2">
+							<div className="grid w-full grid-cols-2">
+								<div className="mr-1">
 									<p className="font-semibold">Tanggal</p>
 									<p>{date}</p>
 								</div>
-								<div className="w-1/2">
+								<div className="ml-5">
 									<p className="font-semibold">Hari/ Jam</p>
 									<p>{hour}</p>
 								</div>
+								<div className="mr-1">
+									<ul>
+										<li className="font-semibold">Deskripsi</li>
+										<li>{dataProps?.description}</li>
+									</ul>
+								</div>
 							</div>
-							<ul className="my-2">
-								<li className="font-semibold">Deskripsi</li>
-								<li>{dataProps?.description}</li>
-							</ul>
 						</div>
 					</div>
 				</div>
