@@ -4,7 +4,7 @@ import ApexCharts from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { FaCircleMinus } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
-import { EmployeeJobdesk, Employee } from '@/middlewares/api';
+import { EmployeeJobdesk, Karyawan } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
 import { Formik, Field } from 'formik';
 
@@ -13,16 +13,21 @@ const DetailRekapPage: React.FC = () => {
 	const employee = location.state?.employee;
 	const [Performance, setPerformance] = useState<any>(null);
 	const [showModal, setShowModal] = useState<boolean>(false);
-	const [ListEmployee, setListEmployee] = useState<any>(null);
+	const [jobdeskList, setJobdeskList] = useState<any[]>([]);
+	// const [ListEmployee, setListEmployee] = useState<any>(null);
 	const getDifference = async () => {
 		try {
-			const res = await EmployeeJobdesk.getDifference(employee.id);
+			const res = await EmployeeJobdesk.getDifference(employee.employee_id);
 			setPerformance(res.data.data);
 			console.log(res.data.data);
 		} catch (err) {
 			console.error(err);
 		}
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
 	const createJobdesk = async (values: any) => {
 		try {
@@ -34,9 +39,11 @@ const DetailRekapPage: React.FC = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			const res = await Employee.getAllEmployee(1000000000, '');
-			console.log(res.data.data.result);
-			setListEmployee(res.data.data.result);
+			// const res = await Employee.getAllEmployee(1000000000, '', access_token);
+			const jobdesk = await Karyawan.JobdeskList(access_token, employee.employee_id);
+			setJobdeskList(jobdesk.data.data.result);
+			// console.log(res.data.data.result);
+			// setListEmployee(res.data.data.result);
 		} catch (err) {
 			console.error(err);
 		}
@@ -89,7 +96,7 @@ const DetailRekapPage: React.FC = () => {
 						<h3 className="text-lg font-bold">Tambah Jobdesk</h3>
 						<Formik
 							initialValues={{
-								employee_id: employee.id,
+								employee_id: employee.employee_id,
 								name: '',
 								description: '',
 								due_date: '',
@@ -128,7 +135,7 @@ const DetailRekapPage: React.FC = () => {
 											<option value="3">Low</option>
 										</Field>
 									</div>
-									<div className="my-2 w-full">
+									{/* <div className="my-2 w-full">
 										<label className="label">
 											<span className="label-text">Nama Peserta</span>
 										</label>
@@ -142,7 +149,7 @@ const DetailRekapPage: React.FC = () => {
 												</option>
 											))}
 										</Field>
-									</div>
+									</div> */}
 									<div className="modal-action">
 										<button className="btn btn-primary" type="submit">
 											Submit
@@ -199,7 +206,7 @@ const DetailRekapPage: React.FC = () => {
 										<div className="grid grid-flow-col grid-rows-3 gap-5 xl:grid-rows-2">
 											<div>
 												<p className="text-md font-semibold">Nama</p>
-												<p>{employee?.name ?? '-'}</p>
+												<p>{employee?.employee?.full_name ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Tgl mulai bekerja</p>
@@ -222,7 +229,7 @@ const DetailRekapPage: React.FC = () => {
 												<p>{employee?.internshipDuration ?? '-'}</p>
 											</div>
 										</div>
-									</div>{' '}
+									</div>
 								</div>
 							)}
 						</div>
@@ -232,22 +239,24 @@ const DetailRekapPage: React.FC = () => {
 					<div className="my-2 w-full md:w-[30%]">
 						<div className="card h-[255px] w-full overflow-x-auto overflow-y-auto bg-base-100 p-4 shadow-xl">
 							<h2 className="mb-4 px-5 text-lg font-semibold">Jobdesk List</h2>
-							<div className="mb-4 flex w-full items-center justify-between px-5">
-								<div>
-									<div className="flex justify-start">
-										<p className="flex items-center gap-2 font-semibold">{employee.name ?? '-'}</p>
-										{employee.is_finish ? (
-											<FaCheckCircle
-												className={`mx-auto w-fit text-xl text-green-500 ${employee.is_finish ? 'visible' : 'hidden'}`}
-											/>
-										) : (
-											<FaCircleMinus
-												className={`w-fit text-xl text-red-500 ${!employee.is_finish ? 'visible' : 'hidden'}`}
-											/>
-										)}
+							<div className="mb-4 flex w-full flex-col justify-between gap-2 px-5">
+								{jobdeskList.map((item, index) => (
+									<div key={index}>
+										<div className="flex items-center gap-1">
+											<p className="flex items-center gap-2 font-semibold">{item.name ?? '-'}</p>
+											{employee.is_finish ? (
+												<FaCheckCircle
+													className={`mx-auto w-fit text-xl text-green-500 ${item.is_finish ? 'visible' : 'hidden'}`}
+												/>
+											) : (
+												<FaCircleMinus
+													className={`w-fit text-xl text-red-500 ${!item.is_finish ? 'visible' : 'hidden'}`}
+												/>
+											)}
+										</div>
+										<p className="my-1 text-sm text-gray-600">{item.description ?? '-'}</p>
 									</div>
-									<p className="my-1 text-sm text-gray-600">{employee.description ?? '-'}</p>
-								</div>
+								))}
 							</div>
 						</div>
 					</div>

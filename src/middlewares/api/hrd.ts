@@ -6,6 +6,15 @@ const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api
 // const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
 
+const Verif = {
+	PostVerify: (data: any, id: any): AxiosPromise<any> =>
+		apics({
+			method: 'POST',
+			data,
+			url: `auth/verify-email/${id}`,
+		}),
+};
+
 const Dashboard = {
 	DataKaryawan: (access_token: string | null): AxiosPromise<any> =>
 		instance({
@@ -92,11 +101,16 @@ const Rekrutmen = {
 		limit: any,
 		search: string,
 		division: any,
-		access_token: string | null
+		access_token: string | null,
+		user_id: any,
+		is_active: string
 	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `job-vacancy?page=${page}&limit=${limit}&search=${search}&division_id=${division}`,
+			url:
+				`job-vacancy?page=${page}&limit=${limit}&search=${search}&division_id=${division}` +
+				(user_id ? `&user_id=${user_id}` : '') +
+				(is_active ? `&only_open=${is_active}` : ''),
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -357,6 +371,14 @@ const Karyawan = {
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
+			},
+		}),
+	JobdeskList: (access_token: string | null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-jobdesk?page=0&limit=2000&employee_id=${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 };
@@ -787,7 +809,7 @@ const CustomerCare = {
 
 const Penggajian = {
 	getAllAccount: (access_token: string | null, month: any, year: any, limit: number, page: number): AxiosPromise<any> =>
-		instance.get(`/employee-account?page=${page}}&limit${limit}&this_month=${month}&this_year=${year}`, {
+		instance.get(`/employee-account?page=${page}&limit=${limit}&month=${month}&year=${year}`, {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -845,13 +867,13 @@ const Default = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	UploadFile: (data: any): AxiosPromise<any> =>
+	UploadFile: (data: any, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `POST`,
 			url: `employee-attachment/create`,
 			data,
 			headers: {
-				Authorization: `Beare ${token}`,
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 };
@@ -875,4 +897,5 @@ export {
 	Penggajian,
 	Default,
 	Jobdesk,
+	Verif,
 };

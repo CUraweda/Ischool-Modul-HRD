@@ -15,7 +15,6 @@ const AturGajiPage = () => {
 	const [dataUpdateBill, setUpdateDataBill] = useState<any>(null);
 	const [dataBill, setDataBill] = useState<any[]>([]);
 	const [DataTypes, setTypes] = useState<any[]>([]);
-	const [dataAccount, setDataAccount] = useState<any[]>([]);
 	const [filterTable, setFilterTable] = useState({
 		search: '',
 		limit: 0,
@@ -50,9 +49,14 @@ const AturGajiPage = () => {
 	const parseCurrency = (value: string) => {
 		return parseFloat(value.replace(/[^\d.-]/g, ''));
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const getSalary = async () => {
 		try {
-			const res = await Salary.getAllSalary(filterTable.limit, filterTable.search, filterTable.page);
+			const res = await Salary.getAllSalary(filterTable.limit, filterTable.search, filterTable.page, access_token);
 			setDataSalary(res.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
@@ -66,14 +70,7 @@ const AturGajiPage = () => {
 			console.error(err);
 		}
 	};
-	const getAccount = async () => {
-		try {
-			const res = await Penggajian.getAllAccount(token, '', '', 0, 0);
-			setDataAccount(res.data.data.result);
-		} catch (err) {
-			console.error(err);
-		}
-	};
+
 	const deleteDataSalary = async (id: number) => {
 		try {
 			const res = await Salary.deleteSalary(id);
@@ -106,7 +103,7 @@ const AturGajiPage = () => {
 	};
 	const getDataBill = async () => {
 		try {
-			const res = await Bill.getAllBill(0, '', 0, '');
+			const res = await Bill.getAllBill(0, '', 0, '', access_token);
 			setDataBill(res.data.data.result);
 			setFilterBill((prev) => ({
 				...prev,
@@ -130,7 +127,7 @@ const AturGajiPage = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			const res = await Employee.getAllEmployee(1000000000, '');
+			const res = await Employee.getAllEmployee(1000000000, '', access_token);
 			console.log(res.data.data.result);
 			setListEmployee(res.data.data.result);
 		} catch (err) {
@@ -140,7 +137,6 @@ const AturGajiPage = () => {
 
 	useEffect(() => {
 		getTypes();
-		getAccount();
 		getEmployee();
 	}, []);
 
@@ -324,10 +320,10 @@ const AturGajiPage = () => {
 		});
 	};
 
-	const getAccountNameById = (id: number) => {
-		const account = dataAccount.find((acc) => acc.id === id);
-		return account ? account.employee.full_name : 'Unknown';
-	};
+	// const getAccountNameById = (id: number) => {
+	// 	const account = dataAccount.find((acc) => acc.id == id);
+	// 	return account ? account.employee.full_name : 'Unknown';
+	// };
 
 	const getTypeNameById = (id: number) => {
 		const type = DataTypes.find((t) => t.id === id);
@@ -374,7 +370,7 @@ const AturGajiPage = () => {
 							</div>
 							<div className="mt-4">
 								<label className="label">
-									<span className="label-text">Fixed Salary</span>
+									<span className="label-text">Gaji Tetap</span>
 								</label>
 								{formattedSalary}
 								<input
@@ -420,7 +416,7 @@ const AturGajiPage = () => {
 						<h3 className="text-lg font-bold">Tambah Gaji Karyawan</h3>
 						<form onSubmit={handleSubmitBill}>
 							{/* Employee (account_id) Select */}
-							<div className="mt-4">
+							{/* <div className="mt-4">
 								<label className="label">
 									<span className="label-text">Karyawan</span>
 								</label>
@@ -429,7 +425,6 @@ const AturGajiPage = () => {
 									value={formDataBill.account_id}
 									onChange={handleInputChangeBill}
 									className="select select-bordered w-full"
-									required
 								>
 									<option value="">Pilih Karyawan</option>
 									{dataAccount.map((item) => (
@@ -438,7 +433,7 @@ const AturGajiPage = () => {
 										</option>
 									))}
 								</select>
-							</div>
+							</div> */}
 
 							{/* Type ID Select */}
 							<div className="mt-4">
@@ -651,6 +646,7 @@ const AturGajiPage = () => {
 										<th>Nama</th>
 										<th>Tipe</th>
 										<th>Nominal</th>
+										<th>Deskripsi</th>
 										<th className="text-center">Action</th>
 									</tr>
 								</thead>
@@ -658,7 +654,7 @@ const AturGajiPage = () => {
 									{dataBill.map((item, index) => (
 										<tr key={index}>
 											<td>{index + 1}</td>
-											<td>{getAccountNameById(item.account_id)}</td>
+											<td>{item.employeeaccount?.employee?.full_name}</td>
 											<td>{getTypeNameById(item.type_id)}</td>
 											<td>{formatCurrency(item.amount)}</td>
 											<td>{item.description}</td>

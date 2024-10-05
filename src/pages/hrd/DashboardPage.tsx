@@ -153,9 +153,12 @@ const DashboardPage = () => {
 	};
 
 	const CreatePengumuman = async () => {
+		const localDate = new Date(planDate);
+		const timezoneOffset = localDate.getTimezoneOffset() * 60000; // Offset dalam milidetik
+		const adjustedDate = new Date(localDate.getTime() - timezoneOffset);
 		const data = {
 			title: title,
-			plan_date: planDate,
+			plan_date: adjustedDate.toISOString(),
 			is_specific: kirimKepada === 'Semua' ? false : true,
 			employee_ids: selectedPenerima,
 			notes: notes,

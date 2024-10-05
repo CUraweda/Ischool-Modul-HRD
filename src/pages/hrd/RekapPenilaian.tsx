@@ -125,7 +125,7 @@ const RekapPenilaianPage = () => {
 										/> */}
 										{index + 1}
 									</td>
-									<td>{employee.name}</td>
+									<td>{employee?.employee?.full_name}</td>
 									<td>{employee.employee.email ?? '-'}</td>
 									<td>{employee.employee.occupation ?? '-'}</td>
 									<td className="text-center">{employee.grade}</td>

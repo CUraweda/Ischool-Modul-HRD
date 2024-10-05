@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Form } from '@/middlewares/api';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const FormDataPage = () => {
+	const navigate = useNavigate();
 	const [files, setFiles] = useState<any[]>([]);
 	const [profilePhoto, setProfilePhoto] = useState<any>(null);
 	const [profilePhotoFile, setProfilePhotoFile] = useState<any>(null);
@@ -252,6 +254,7 @@ const FormDataPage = () => {
 		};
 		try {
 			await Form.PostDataPelamar(data);
+			navigate('/');
 			Swal.fire({
 				icon: 'success',
 				title: 'Sukses',

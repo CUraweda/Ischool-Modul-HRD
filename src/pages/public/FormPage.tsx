@@ -39,8 +39,9 @@ const FormPage = () => {
 	const navigate = useNavigate();
 	const [id, setId] = useState('');
 	const [dataDetail, setDataDetail] = useState<any[]>([]);
+	const [status, setStatus] = useState('');
 
-	const handleDialog = (id: any, data: any) => {
+	const handleDialog = (id: any, data: any, status: any) => {
 		openModal('detailForm');
 		setId(id);
 		setDataDetail(
@@ -49,11 +50,14 @@ const FormPage = () => {
 				descriptions: detail.description.split('\n'),
 			}))
 		);
+		setStatus(status);
 	};
+
+	const user_id = sessionStorage.getItem('id');
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, '', '', '');
+			const response = await Rekrutmen.DataRekrutmen(0, 20, '', '', '', user_id, '1');
 			setDataJob(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -61,6 +65,8 @@ const FormPage = () => {
 	};
 
 	const handleNavigate = () => {
+		if (!user_id) return navigate('/login');
+
 		navigate('/form-data');
 		sessionStorage.setItem('vacancy_id', id);
 	};
@@ -73,27 +79,49 @@ const FormPage = () => {
 		<div>
 			<h1 className="mb-4 text-lg font-bold text-gray-700">Lowongan Pekerjaan</h1>
 			<div className="flex flex-col gap-2">
-				{dataJob.map((item, index) => (
-					<div
-						key={index}
-						className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow"
-						onClick={() => handleDialog(item.id, item.vacancydetails)}
-					>
-						<div>
-							<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
-							<p className="text-gray-600">{item.sub_title}</p>
-							<p className="text-sm text-gray-500">{item.min_academic}</p>
-							<p className="mt-2 text-xs text-gray-400">Dibuat {formatRelativeDate(item.createdAt)}</p>
-						</div>
-						<div className="text-right">
-							<span className="font-bold text-gray-500">{item.is_fulltime == true ? 'Full Time' : 'Part Time'}</span>
-							<div className="text-gray-500">{item.location}</div>
-							<div className="mt-8 text-xs text-gray-400">
-								Periode Pendaftaran {formatDateRange(item.start_date, item.end_date)}
+				{dataJob.map((item, index) =>
+					item.applicantforms.length > 0 && user_id ? (
+						<div
+							key={index}
+							className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-gray-300 p-4 shadow"
+							onClick={() => handleDialog(item.id, item.vacancydetails, item.applicantforms.length > 0 && user_id)}
+						>
+							<div>
+								<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
+								<p className="text-gray-600">{item.sub_title}</p>
+								<p className="text-sm text-gray-500">{item.min_academic}</p>
+								<p className="mt-2 text-xs text-gray-400">Dibuat {formatRelativeDate(item.createdAt)}</p>
+							</div>
+							<div className="text-right">
+								<span className="font-bold text-gray-500">{item.is_fulltime == true ? 'Full Time' : 'Part Time'}</span>
+								<div className="text-gray-500">{item.location}</div>
+								<div className="mt-8 text-xs text-gray-400">
+									Periode Pendaftaran {formatDateRange(item.start_date, item.end_date)}
+								</div>
 							</div>
 						</div>
-					</div>
-				))}
+					) : (
+						<div
+							key={index}
+							className="flex cursor-pointer flex-wrap items-center justify-between rounded-lg bg-white p-4 shadow"
+							onClick={() => handleDialog(item.id, item.vacancydetails, item.applicantforms.length > 0 && user_id)}
+						>
+							<div>
+								<h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
+								<p className="text-gray-600">{item.sub_title}</p>
+								<p className="text-sm text-gray-500">{item.min_academic}</p>
+								<p className="mt-2 text-xs text-gray-400">Dibuat {formatRelativeDate(item.createdAt)}</p>
+							</div>
+							<div className="text-right">
+								<span className="font-bold text-gray-500">{item.is_fulltime == true ? 'Full Time' : 'Part Time'}</span>
+								<div className="text-gray-500">{item.location}</div>
+								<div className="mt-8 text-xs text-gray-400">
+									Periode Pendaftaran {formatDateRange(item.start_date, item.end_date)}
+								</div>
+							</div>
+						</div>
+					)
+				)}
 			</div>
 
 			<Modal id="detailForm">
@@ -115,9 +143,13 @@ const FormPage = () => {
 						</div>
 					</div>
 
-					<button className="btn btn-primary mt-4 text-white" onClick={() => handleNavigate()}>
-						Lamar Sekarang
-					</button>
+					{!status ? (
+						<button className="btn btn-primary mt-4 text-white" onClick={() => handleNavigate()}>
+							Lamar Sekarang
+						</button>
+					) : (
+						<div></div>
+					)}
 				</div>
 			</Modal>
 		</div>

@@ -47,11 +47,15 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		month_id: index + 1,
 		desc: name,
 	}));
+
+	const currentYear = new Date().getFullYear();
+	const years = Array.from({ length: 51 }, (_, index) => currentYear + index);
+
 	const [formData, setFormData] = useState({
 		salary_id: 0,
 		employee_id: 0,
-		month_id: 0,
-		year: 0,
+		month_id: 1,
+		year: currentYear,
 		uid: '',
 		status: '',
 		is_paid: true,
@@ -314,6 +318,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			year: parseInt(e.target.value, 10),
 		}));
 	};
+
 	return (
 		<div className="bg min-h-screen p-5">
 			{/* Modal */}
@@ -376,14 +381,22 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 								<label className="label">
 									<span className="label-text">Tahun</span>
 								</label>
-								<input
-									type="number"
+								<select
 									name="year"
 									value={formData.year}
 									onChange={handleInputChange}
-									className="input input-bordered w-full"
+									className="select select-bordered w-full"
 									required
-								/>
+								>
+									<option value="" disabled>
+										Pilih Tahun
+									</option>
+									{years.map((year) => (
+										<option key={year} value={year}>
+											{year}
+										</option>
+									))}
+								</select>
 							</div>
 
 							<div className="mt-4">

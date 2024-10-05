@@ -46,7 +46,7 @@ const DataKaryawanPage = () => {
 		try {
 			const response = await Karyawan.DataKaryawan(currentPage, itemsPerPage, search, status, access_token);
 			setDataKaryawan(response.data.data.result);
-			setTotalPages(response.data.data.totalPages);
+			setTotalPages(response.data.data.totalPage - 1);
 			setPage(response.data.data.page);
 		} catch (error) {
 			console.error(error);
@@ -138,6 +138,8 @@ const DataKaryawanPage = () => {
 
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
+		console.log(currentPage);
+		console.log(totalPages);
 	};
 
 	const detailProfil = (id: number) => {
@@ -449,7 +451,6 @@ const DataKaryawanPage = () => {
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={position}
 										onChange={(e) => setPosition(e.target.value)}
 										placeholder="Masukkan jabatan"
 										required
@@ -461,7 +462,6 @@ const DataKaryawanPage = () => {
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={position}
 										onChange={(e) => setTask(e.target.value)}
 										placeholder="Masukkan Tugas"
 										required
@@ -473,7 +473,6 @@ const DataKaryawanPage = () => {
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={position}
 										onChange={(e) => setJobDescription(e.target.value)}
 										placeholder="Masukkan deskripsi Pekerjaan"
 										required
@@ -485,7 +484,6 @@ const DataKaryawanPage = () => {
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={position}
 										onChange={(e) => setEmail(e.target.value)}
 										placeholder="Masukkan jabatan"
 										required

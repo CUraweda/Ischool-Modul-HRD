@@ -1,0 +1,16 @@
+[
+	{
+		"submenu": false,
+		"title": "Kelengkapan Berkas",
+		"icon": "<BsFillHouseFill />",
+		"url": "/default",
+		"subtitle": []
+	},
+	{
+		"submenu": false,
+		"title": "Daftar Penilaian",
+		"icon": "<BsFillHouseFill />",
+		"url": "/default/daftar-penilaian",
+		"subtitle": []
+	}
+]

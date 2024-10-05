@@ -34,7 +34,7 @@ const Probationpage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, search, '', access_token);
+			const response = await Rekrutmen.DataRekrutmen(0, 20, search, '', access_token, '', '1');
 			setDataProbation(response.data.data.result);
 		} catch (error) {
 			console.error(error);
