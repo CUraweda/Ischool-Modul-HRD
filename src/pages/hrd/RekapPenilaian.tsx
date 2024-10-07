@@ -12,9 +12,14 @@ const RekapPenilaianPage = () => {
 		search: '',
 		id: '',
 	});
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const getAllDataJob = async () => {
 		try {
-			const response = await Jobdesk.getAllJobdesk(filter.limit, filter.search, filter.page, filter.id);
+			const response = await Jobdesk.getAllJobdesk(filter.limit, filter.search, filter.page, filter.id, access_token);
 			setEmployees(response.data.data.result);
 			setFilter((prev) => ({
 				...prev,
@@ -120,7 +125,7 @@ const RekapPenilaianPage = () => {
 										/> */}
 										{index + 1}
 									</td>
-									<td>{employee.name}</td>
+									<td>{employee?.employee?.full_name}</td>
 									<td>{employee.employee.email ?? '-'}</td>
 									<td>{employee.employee.occupation ?? '-'}</td>
 									<td className="text-center">{employee.grade}</td>

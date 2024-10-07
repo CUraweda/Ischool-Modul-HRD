@@ -9,11 +9,15 @@ const DaftarAsessorPage = () => {
 	const [employeeId, setEmployeeId] = useState<number>();
 	const [search, setSearch] = useState('');
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const FetchData = async () => {
 		try {
-			const response = await Karyawan.DaftarAsessor(0, 20, search);
+			const response = await Karyawan.DaftarAsessor(0, 20, search, access_token);
 			setFetch(response.data.data.result);
-			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
+			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '', access_token);
 			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
 		} catch (error) {
 			console.error(error);

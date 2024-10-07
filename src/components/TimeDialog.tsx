@@ -20,6 +20,11 @@ interface dialog {
 	handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 	handleChangeType: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
+
+let access_token = sessionStorage.getItem('access_token');
+
+access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 const DialogAdd: React.FC<dialog> = ({
 	onClose,
 	jamKeluar,
@@ -34,7 +39,7 @@ const DialogAdd: React.FC<dialog> = ({
 }) => {
 	const [optionDivision, setOptionDivision] = useState<any[]>([]);
 	const getDataDivision = async () => {
-		const response = await EmployeeDivision.getAllDivision();
+		const response = await EmployeeDivision.getAllDivision(access_token);
 		setOptionDivision(response.data.data.result);
 	};
 	const handleSave = () => {

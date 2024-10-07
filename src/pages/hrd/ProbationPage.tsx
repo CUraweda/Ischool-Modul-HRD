@@ -28,9 +28,13 @@ const Probationpage = () => {
 	const [search, setSearch] = useState('');
 	const navigate = useNavigate();
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, search, '');
+			const response = await Rekrutmen.DataRekrutmen(0, 20, search, '', access_token, '', '1');
 			setDataProbation(response.data.data.result);
 		} catch (error) {
 			console.error(error);

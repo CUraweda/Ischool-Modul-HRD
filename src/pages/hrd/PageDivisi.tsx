@@ -21,9 +21,19 @@ const PageDivisi: React.FC<{}> = () => {
 	const validationSchema = Yup.object({
 		division_id: Yup.number().required('Divisi tidak boleh kosong'),
 	});
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployeePage(filterTable.limit, filterTable.search, filterTable.page);
+			const response = await Employee.getAllEmployeePage(
+				filterTable.limit,
+				filterTable.search,
+				filterTable.page,
+				access_token
+			);
 			setDataEmployee(response.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
@@ -38,7 +48,7 @@ const PageDivisi: React.FC<{}> = () => {
 	};
 	const fetchDataDivision = async () => {
 		try {
-			const response = await EmployeeDivision.getAllDivision();
+			const response = await EmployeeDivision.getAllDivision(access_token);
 
 			setListDivisi(response.data.data.result);
 			console.log(listDivisi.find((item) => item.id === 56)?.name ?? '-');
