@@ -37,11 +37,12 @@ const RekrutmenPage = () => {
 	const [maxApplicant, setMaxApplicant] = useState<number>();
 	const [academic, setAcademic] = useState('');
 	const [note, setNote] = useState('');
+	const [fulltime, setFulltime] = useState<boolean>(false);
 	const [statusCards, setStatusCards] = useState([{ title: '', description: '' }]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
-	const [page, setPage] = useState(0);
 	const [itemsPerPage] = useState(20);
+	const [isActive, setIsActive] = useState('1');
 
 	const addStatusCards = () => {
 		setStatusCards([...statusCards, { title: '', description: '' }]);
@@ -54,11 +55,18 @@ const RekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(page, itemsPerPage, search, divisionId);
+			const response = await Rekrutmen.DataRekrutmen(
+				currentPage - 1,
+				itemsPerPage,
+				search,
+				divisionId,
+				access_token,
+				'',
+				isActive
+			);
 			setDataRekrutmen(response.data.data.result);
-			setTotalPages(response.data.data.totalPages);
-			setPage(response.data.data.page);
-			const responseDropdownDivison = await Rekrutmen.DropdownDivision();
+			setTotalPages(response.data.data.totalPage);
+			const responseDropdownDivison = await Rekrutmen.DropdownDivision(access_token);
 			setDropdownDivision(responseDropdownDivison.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -81,9 +89,10 @@ const RekrutmenPage = () => {
 			min_academic: academic,
 			notes: note,
 			details: statusData,
+			is_fulltime: fulltime,
 		};
 		try {
-			await Rekrutmen.AddRekrutmen(data);
+			await Rekrutmen.AddRekrutmen(data, access_token);
 			fetchData();
 			closeModal('addRekrutmen');
 			Swal.fire({
@@ -149,7 +158,7 @@ const RekrutmenPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, [search, divisionId]);
+	}, [search, divisionId, isActive, currentPage]);
 
 	const handleCardClick = (id: number, title: string, subtitle: string) => {
 		navigate(`/hrd/rekrutmen/${id}`);
@@ -160,6 +169,10 @@ const RekrutmenPage = () => {
 	const handlePageChange = (pageNumber: number) => {
 		setCurrentPage(pageNumber);
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
 	return (
 		<div className="h-screen">
@@ -198,6 +211,14 @@ const RekrutmenPage = () => {
 				</div>
 
 				<div className="flex items-center gap-2">
+					<label className="label cursor-pointer">
+						<input
+							type="checkbox"
+							defaultChecked
+							className="checkbox"
+							onChange={(e) => setIsActive(e.target.checked == true ? '1' : '')}
+						/>
+					</label>
 					<button className="btn btn-xs" onClick={handleDialog}>
 						<span>+</span> Tambah
 					</button>
@@ -379,7 +400,7 @@ const RekrutmenPage = () => {
 					>
 						«
 					</button>
-					<button className="btn join-item btn-sm">Page {page}</button>
+					<button className="btn join-item btn-sm">Page {currentPage}</button>
 					<button
 						className="btn join-item btn-sm"
 						disabled={currentPage === totalPages}
@@ -391,21 +412,24 @@ const RekrutmenPage = () => {
 			</div>
 
 			<Modal id="addRekrutmen">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
-					<div className="mb-4 grid grid-cols-2 gap-4">
+				<div className="p-6">
+					<h2 className="mb-4 text-center text-2xl font-bold text-gray-800">Tambah Penerimaan Baru</h2>
+					<div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
 						<div>
-							<label className="mb-1 block text-sm font-medium">Judul Rekrutmen</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Judul Rekrutmen</label>
 							<input
 								type="text"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								placeholder="Masukkan judul rekrutmen"
 								onChange={(e) => setTitleRekrutmen(e.target.value)}
 							/>
 						</div>
 						<div>
-							<label className="mb-1 block text-sm font-medium">Role</label>
-							<select className="w-full rounded border border-gray-300 p-2" onChange={(e) => setRole(e.target.value)}>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Role</label>
+							<select
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								onChange={(e) => setRole(e.target.value)}
+							>
 								<option value="">-Pilih-</option>
 								<option value="KARYAWAN">Karyawan</option>
 								<option value="GURU">Guru</option>
@@ -413,9 +437,9 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Divisi</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Divisi</label>
 							<select
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={division}
 								onChange={(e) => setDivision(parseInt(e.target.value))}
 							>
@@ -431,10 +455,10 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Tanggal Mulai</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Tanggal Mulai</label>
 							<input
 								type="date"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={startDate}
 								onChange={(e) => setStartDate(e.target.value)}
 								required
@@ -442,10 +466,10 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Tanggal Akhir</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Tanggal Akhir</label>
 							<input
 								type="date"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={endDate}
 								onChange={(e) => setEndDate(e.target.value)}
 								required
@@ -453,19 +477,19 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Pendaftar yang Dibutuhkan</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Pendaftar yang Dibutuhkan</label>
 							<input
 								type="number"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								placeholder="Masukkan jumlah pendaftar"
 								onChange={(e) => setMaxApplicant(parseInt(e.target.value))}
 							/>
 						</div>
 
 						<div className="col-span-2">
-							<label className="mb-1 block text-sm font-medium">Jenjang Pendidikan</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Jenjang Pendidikan</label>
 							<select
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={academic}
 								onChange={(e) => setAcademic(e.target.value)}
 							>
@@ -479,10 +503,20 @@ const RekrutmenPage = () => {
 							</select>
 						</div>
 
+						<div className="col-span-2 my-2 flex items-center gap-2">
+							<div className="text-sm text-gray-700">Apakah Full Time?</div>
+							<input
+								type="checkbox"
+								defaultChecked
+								className="checkbox"
+								onChange={(e) => setFulltime(e.target.checked)}
+							/>
+						</div>
+
 						<div className="col-span-2">
-							<label className="mb-1 block text-sm font-medium">Note</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Note</label>
 							<textarea
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								rows={4}
 								placeholder="Masukkan catatan tambahan"
 								onChange={(e) => setNote(e.target.value)}
@@ -492,18 +526,18 @@ const RekrutmenPage = () => {
 						{statusCards.map((card, index) => (
 							<div key={index} className="col-span-2">
 								<div className="mb-4">
-									<label className="mb-1 block text-sm font-medium">Judul</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Judul</label>
 									<input
 										type="text"
-										className="w-full rounded border border-gray-300 p-2"
+										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={card.title}
 										onChange={(e) => handleStatusChange(index, 'title', e.target.value)}
 									/>
 								</div>
 								<div>
-									<label className="mb-1 block text-sm font-medium">Deskripsi</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Deskripsi</label>
 									<textarea
-										className="w-full rounded border border-gray-300 p-2"
+										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										rows={4}
 										value={card.description}
 										onChange={(e) => handleStatusChange(index, 'description', e.target.value)}

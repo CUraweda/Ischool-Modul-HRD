@@ -1,24 +1,32 @@
 import { Default } from '@/middlewares/api';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 
 interface FileUploadProps {
 	label: string;
 	instructions: string;
+	description: string;
 	uploadedFile: File | null;
 	setUploadedFile: React.Dispatch<React.SetStateAction<File | null>>;
 	rejectedFiles: FileRejection[];
 	setRejectedFiles: React.Dispatch<React.SetStateAction<FileRejection[]>>;
+	UploadFile: (file: File | null, description: string) => Promise<void>;
+	isHidden: boolean;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
 	label,
 	instructions,
+	description,
 	uploadedFile,
 	setUploadedFile,
 	rejectedFiles,
 	setRejectedFiles,
+	UploadFile,
+	isHidden, // Baru
 }) => {
+	if (isHidden) return null;
+
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		accept: { 'image/jpeg': [], 'image/png': [] },
 		maxFiles: 1,
@@ -26,33 +34,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
 		onDrop: (acceptedFiles: File[], fileRejections: FileRejection[]) => {
 			setUploadedFile(acceptedFiles[0] || null);
 			setRejectedFiles(fileRejections);
+			if (acceptedFiles.length > 0) {
+				UploadFile(acceptedFiles[0], description);
+			}
 		},
 	});
-
-	const employee_id = sessionStorage.getItem('employee_id');
-	const FetchData = async () => {
-		try {
-			const response = await Default.GetFileEmployee(employee_id);
-			console.log(response.data.data);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
-	// const UploadFIle = async () => {
-	// 	const data = {
-	// 		employee_id: employee_id,
-	// 	};
-	// 	try {
-	// 		await Default.UploadFile(data);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
-
-	useEffect(() => {
-		FetchData();
-	}, []);
 
 	return (
 		<div className="mb-6">
@@ -83,14 +69,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
 			</div>
 			<p className="mt-2 text-xs text-gray-500">{instructions}</p>
 
-			{/* Display the uploaded file */}
 			{uploadedFile && (
 				<div className="mt-2 text-sm text-green-500">
 					Uploaded file: <strong>{uploadedFile.name}</strong>
 				</div>
 			)}
 
-			{/* Display rejected file message */}
 			{rejectedFiles.length > 0 && (
 				<div className="mt-2 text-sm text-red-500">
 					File rejected: {rejectedFiles.map((rejection) => rejection.file.name).join(', ')}
@@ -101,7 +85,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
 };
 
 const DefaultPage: React.FC = () => {
-	// State for each input
+	const employee_id = sessionStorage.getItem('employee_id');
+	const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+
+	// State untuk masing-masing file
 	const [uploadedFile1, setUploadedFile1] = useState<File | null>(null);
 	const [rejectedFiles1, setRejectedFiles1] = useState<FileRejection[]>([]);
 	const [uploadedFile2, setUploadedFile2] = useState<File | null>(null);
@@ -117,6 +104,41 @@ const DefaultPage: React.FC = () => {
 	const [uploadedFile7, setUploadedFile7] = useState<File | null>(null);
 	const [rejectedFiles7, setRejectedFiles7] = useState<FileRejection[]>([]);
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
+	const FetchData = async () => {
+		try {
+			const response = await Default.GetFileEmployee(employee_id);
+			const uploadedDescriptions = response.data.data.map((item: any) => item.description);
+			setUploadedFiles(uploadedDescriptions); // Baru: Menyimpan deskripsi yang sudah di-upload
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	useEffect(() => {
+		FetchData();
+	}, []);
+
+	// Fungsi untuk mengupload file
+	const UploadFile = async (file: File | null, description: string) => {
+		if (!file) return;
+		const formData = new FormData();
+		formData.append('employee_id', employee_id || '');
+		formData.append('file', file);
+		formData.append('description', description);
+
+		try {
+			await Default.UploadFile(formData, access_token);
+			console.log('File uploaded successfully');
+			setUploadedFiles((prev) => [...prev, description]);
+		} catch (error) {
+			console.error('Error uploading file', error);
+		}
+	};
+
 	return (
 		<div className="rounded-lg bg-blue-50 p-6">
 			<div className="mb-4 rounded-md bg-gray-100 p-4 text-center">
@@ -126,64 +148,85 @@ const DefaultPage: React.FC = () => {
 			<FileUpload
 				label="1. KK (Kartu Keluarga)"
 				instructions="*Silahkan upload file asli kartu keluarga dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="KK"
 				uploadedFile={uploadedFile1}
 				setUploadedFile={setUploadedFile1}
 				rejectedFiles={rejectedFiles1}
 				setRejectedFiles={setRejectedFiles1}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('KK')}
 			/>
 
 			<FileUpload
 				label="2. Ijazah"
 				instructions="*Silahkan upload file asli Ijazah dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="Ijazah"
 				uploadedFile={uploadedFile2}
 				setUploadedFile={setUploadedFile2}
 				rejectedFiles={rejectedFiles2}
 				setRejectedFiles={setRejectedFiles2}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('Ijazah')}
 			/>
 
 			<FileUpload
 				label="3. NPWP"
 				instructions="*Silahkan upload file asli NPWP dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="NPWP"
 				uploadedFile={uploadedFile3}
 				setUploadedFile={setUploadedFile3}
 				rejectedFiles={rejectedFiles3}
 				setRejectedFiles={setRejectedFiles3}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('NPWP')}
 			/>
 
 			<FileUpload
 				label="4. Akta Kelahiran"
 				instructions="*Silahkan upload file asli Akta Kelahiran dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="Akta Kelahiran"
 				uploadedFile={uploadedFile4}
 				setUploadedFile={setUploadedFile4}
 				rejectedFiles={rejectedFiles4}
 				setRejectedFiles={setRejectedFiles4}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('Akta Kelahiran')}
 			/>
 
 			<FileUpload
-				label="5. KTP"
-				instructions="*Silahkan upload file asli KTP dalam bentuk jpg/png, ukuran file max 2 mb."
+				label="5. Sertifikat Nikah"
+				instructions="*Silahkan upload file asli Sertifikat Nikah dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="Sertifikat Nikah"
 				uploadedFile={uploadedFile5}
 				setUploadedFile={setUploadedFile5}
 				rejectedFiles={rejectedFiles5}
 				setRejectedFiles={setRejectedFiles5}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('Sertifikat Nikah')}
 			/>
 
 			<FileUpload
-				label="6. BPJS/KISS"
-				instructions="*Silahkan upload file asli BPJS/KISS dalam bentuk jpg/png, ukuran file max 2 mb."
+				label="6. BPJS Kesehatan"
+				instructions="*Silahkan upload file asli BPJS Kesehatan dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="BPJS Kesehatan"
 				uploadedFile={uploadedFile6}
 				setUploadedFile={setUploadedFile6}
 				rejectedFiles={rejectedFiles6}
 				setRejectedFiles={setRejectedFiles6}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('BPJS Kesehatan')}
 			/>
 
 			<FileUpload
-				label="7. Sertifikat Pelatihan"
-				instructions="*Silahkan upload file asli Sertifikat Pelatihan dalam bentuk jpg/png, ukuran file max 2 mb."
+				label="7. BPJS Ketenagakerjaan"
+				instructions="*Silahkan upload file asli BPJS Ketenagakerjaan dalam bentuk jpg/png, ukuran file max 2 mb."
+				description="BPJS Ketenagakerjaan"
 				uploadedFile={uploadedFile7}
 				setUploadedFile={setUploadedFile7}
 				rejectedFiles={rejectedFiles7}
 				setRejectedFiles={setRejectedFiles7}
+				UploadFile={UploadFile}
+				isHidden={uploadedFiles.includes('BPJS Ketenagakerjaan')}
 			/>
 		</div>
 	);

@@ -17,11 +17,15 @@ const DaftarPenilaianPage = () => {
 	const [id, setId] = useState();
 	const [search, setSearch] = useState('');
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchData = async () => {
 		try {
-			const response = await Karyawan.DaftarPenilaian(0, 20, search);
+			const response = await Karyawan.DaftarPenilaian(0, 20, search, access_token);
 			setFetch(response.data.data.result);
-			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '');
+			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '', access_token);
 			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
 		} catch (error) {
 			console.error(error);

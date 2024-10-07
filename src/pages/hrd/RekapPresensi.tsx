@@ -86,6 +86,10 @@ const PresensiPage: React.FC = () => {
 		{ id: 5, category: 'Status', value: 'Diluar Jadwal' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 	const fetchAttendanceData = async () => {
 		try {
 			const result = await Attendance.getEmployeeAttendance(
@@ -95,7 +99,8 @@ const PresensiPage: React.FC = () => {
 				filterStatus,
 				searchQuery,
 				filterDivision,
-				filterDate
+				filterDate,
+				access_token
 			);
 			setAttendanceData(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
@@ -109,7 +114,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {
@@ -125,7 +130,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(1000000000000, '');
+			const response = await Employee.getAllEmployee(1000000000000, '', access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 

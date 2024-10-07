@@ -34,6 +34,8 @@ const DaftarAsessorPage = lazy(() => import('@/pages/hrd/DaftarAsessorPage'));
 const DaftarPenilaianPage = lazy(() => import('@/pages/hrd/DaftarPenilaianPage'));
 const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage'));
 const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
+const VerifEmailPage = lazy(() => import('../pages/VerifEmaillPage'));
+const PublicPenilaian = lazy(() => import('../pages/public/PublicPenilaian'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
@@ -45,6 +47,7 @@ const AppRoutes: React.FC = () => {
 				<Routes>
 					<Route element={<PublicLayout />}>
 						<Route path="/" element={<FormPage />} />
+						<Route path="/verif/:id" element={<VerifEmailPage />} />
 					</Route>
 
 					<Route
@@ -63,6 +66,12 @@ const AppRoutes: React.FC = () => {
 							</AuthLayout>
 						}
 					/>
+
+					{/* <Route path="/default/">
+						<Route element={<PublicLayout />}>
+							<Route path="daftar-penilaian" element={<PublicPenilaian />} />
+						</Route>
+					</Route> */}
 
 					<Route path="/hrd/" element={<ProtectedRoute roles={[5]} />}>
 						<Route element={<HrdLayout />}>
@@ -102,6 +111,7 @@ const AppRoutes: React.FC = () => {
 					<Route element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]} />}>
 						<Route element={<PublicLayout />}>
 							<Route path="default" element={<DefaultPage />} />
+							<Route path="default/daftar-penilaian" element={<PublicPenilaian />} />
 						</Route>
 					</Route>
 

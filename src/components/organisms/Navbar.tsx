@@ -1,5 +1,4 @@
 import { useAppDispatch } from '@/hooks';
-import { FaBell } from 'react-icons/fa';
 import { BsList } from 'react-icons/bs';
 import { clearUser } from '@/stores/user';
 import { useNavigate } from 'react-router-dom';
@@ -36,11 +35,6 @@ const Navbar = () => {
 						<BsList />
 					</label>
 				</div>
-				<div className="mr-3">
-					<button className="btn btn-circle btn-ghost text-xl">
-						<FaBell />
-					</button>
-				</div>
 				<div className="flex-none gap-5">
 					<button className={`btn btn-primary ${isLogin ? 'hidden' : ''}`} onClick={() => navigate('/login')}>
 						Login
@@ -58,11 +52,6 @@ const Navbar = () => {
 							tabIndex={0}
 							className="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
 						>
-							<li>
-								<a href="/profile" className="justify-between">
-									Profile
-								</a>
-							</li>
 							<li onClick={logout} className="text-red-500">
 								<a>Logout</a>
 							</li>

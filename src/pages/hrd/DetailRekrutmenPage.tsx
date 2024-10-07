@@ -13,9 +13,13 @@ const DetailRekrutmenPage = () => {
 	const [portal, setPortal] = useState('');
 	const [selectedId, setSelectedId] = useState<any>(null);
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id);
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, false, false);
 			setDataDetailRekrutmen(response.data.data);
 		} catch (error) {
 			console.error(error);
@@ -157,14 +161,9 @@ const DetailRekrutmenPage = () => {
 						<table className="table">
 							<thead>
 								<tr>
-									<th>
-										<label>
-											<input type="checkbox" className="checkbox" />
-										</label>
-									</th>
 									<th className="text-sm text-black">Nama</th>
 									<th className="text-sm text-black">Email</th>
-									<th className="text-sm text-black">Nomor Hp</th>
+									<th className="text-sm text-black">Tanggal</th>
 									<th className="text-sm text-black">Status</th>
 									<th className="text-sm text-black"></th>
 								</tr>
@@ -172,11 +171,6 @@ const DetailRekrutmenPage = () => {
 							<tbody>
 								{DataDetailRekrutmen.map((item, index) => (
 									<tr key={index}>
-										<th>
-											<label>
-												<input type="checkbox" className="checkbox" />
-											</label>
-										</th>
 										<td>
 											<div className="flex items-center gap-3">
 												<div className="avatar">
@@ -199,7 +193,7 @@ const DetailRekrutmenPage = () => {
 										<td>
 											<span className="badge badge-ghost badge-sm">{item.email}</span>
 										</td>
-										<td>{item.phone}</td>
+										<td>{item.createdAt.split('T')[0]}</td>
 										<td className="text-center">{item.status}</td>
 										<th>
 											<button
