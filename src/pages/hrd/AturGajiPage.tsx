@@ -1,12 +1,11 @@
 import { FaRegEdit } from 'react-icons/fa';
-import { Salary, Employee, Bill, Penggajian } from '@/middlewares/api/hrd';
+import { Salary, Employee, Bill } from '@/middlewares/api/hrd';
 import { useEffect, useState } from 'react';
 import { IoMdClose, IoIosTrash } from 'react-icons/io';
 import Swal from 'sweetalert2';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 
 const AturGajiPage = () => {
-	const token = getSessionStorageItem('access_token');
 	const [dataSalary, setDataSalary] = useState<any[]>([]);
 	const [modalSalary, setModalSalary] = useState<boolean>(false);
 	const [modalBill, setModalBill] = useState<boolean>(false);

@@ -45,9 +45,14 @@ const RekapPelatihan: React.FC<{}> = () => {
 			console.error(error);
 		}
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(1000000000000000, '');
+			const response = await Employee.getAllEmployee(1000000000000000, '', access_token);
 			setDataEmployee(response.data.data.result);
 		} catch (error) {
 			console.error(error);
