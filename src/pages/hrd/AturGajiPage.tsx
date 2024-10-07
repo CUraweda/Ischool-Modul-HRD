@@ -3,7 +3,6 @@ import { Salary, Employee, Bill } from '@/middlewares/api/hrd';
 import { useEffect, useState } from 'react';
 import { IoMdClose, IoIosTrash } from 'react-icons/io';
 import Swal from 'sweetalert2';
-import { getSessionStorageItem } from '@/utils/storageUtils';
 
 const AturGajiPage = () => {
 	const [dataSalary, setDataSalary] = useState<any[]>([]);
