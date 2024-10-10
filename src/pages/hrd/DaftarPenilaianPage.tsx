@@ -179,7 +179,13 @@ const DaftarPenilaianPage = () => {
 										</div>
 									</td>
 									<td>{item.grade}</td>
-									<td>{item.is_finish ? 'Aktif' : 'Tidak aktif'}</td>
+									<td>
+										{item.is_finish == false
+											? 'Belum Dikerjakan'
+											: item.is_graded == false
+												? 'Belum Dinilai'
+												: 'Selesai Dikerjakan'}
+									</td>
 									<td className="flex gap-2">
 										<div className="dropdown dropdown-end">
 											<label tabIndex={0} className="btn btn-primary btn-sm">
