@@ -64,6 +64,8 @@ const LoginPage: React.FC = () => {
 							break;
 					}
 
+					window.location.reload();
+
 					// if (role_id == '5') {
 					// 	navigate('/hrd/dashboard');
 					// } else if (role_id == '11') {

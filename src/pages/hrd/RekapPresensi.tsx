@@ -310,7 +310,7 @@ const PresensiPage: React.FC = () => {
 												checked={selectedItem.includes(employee?.full_name)}
 												onChange={() => handleCheckboxChange(employee?.full_name)}
 											/>
-											<span>{employee?.full_name || 'Unknown'}</span>
+											<span className="h-96">{employee?.full_name || 'Unknown'}</span>
 										</label>
 									))}
 								</div>
