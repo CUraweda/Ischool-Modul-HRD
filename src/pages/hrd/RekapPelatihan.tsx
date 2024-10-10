@@ -23,7 +23,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 		employee_id: Yup.number().required('Karyawan tidak boleh kosong'),
 		// proposer_id: Yup.number().required('Proposer ID is required'),
 		title: Yup.string().required('Judul pelatihan tidak boleh kosong'),
-		purpose: Yup.string().required('Keterangan pelatihan tidak boleh kosong'),
+		notes: Yup.string().required('Keterangan pelatihan tidak boleh kosong'),
 		// status: Yup.string().required('Status is required'),
 		location: Yup.string().required('Lokasi pelatihan tidak boleh kosong'),
 		start_date: Yup.date().required('Tanggal mulai pelatihan tidak boleh kosong'),
@@ -90,7 +90,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 		}
 	};
 	const handleupdate = (data: any, is_approved: boolean) => {
-		const id = getSessionStorageItem('id');
+		const id = sessionStorage.getItem('employee_id');
 		const payload = {
 			employee_id: data.employee_id,
 			approver_id: id,
@@ -254,7 +254,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 								employee_id: '',
 								proposer_id: id,
 								title: '',
-								purpose: '',
+								notes: '',
 								status: 'pending',
 								location: '',
 								start_date: '',
@@ -297,11 +297,11 @@ const RekapPelatihan: React.FC<{}> = () => {
 								</div>
 
 								<div className="form-control mb-4">
-									<label htmlFor="purpose" className="label">
+									<label htmlFor="notes" className="label">
 										Deskripsi
 									</label>
-									<Field name="purpose" as="textarea" className="textarea textarea-bordered" />
-									<ErrorMessage name="purpose" component="div" className="text-sm text-red-500" />
+									<Field name="notes" as="textarea" className="textarea textarea-bordered" />
+									<ErrorMessage name="notes" component="div" className="text-sm text-red-500" />
 								</div>
 
 								{/* <div className="form-control mb-4">

@@ -244,7 +244,7 @@ const DetailRekapPage: React.FC = () => {
 									<div key={index}>
 										<div className="flex items-center gap-1">
 											<p className="flex items-center gap-2 font-semibold">{item.name ?? '-'}</p>
-											{employee.is_finish ? (
+											{employee.is_finish == true ? (
 												<FaCheckCircle
 													className={`mx-auto w-fit text-xl text-green-500 ${item.is_finish ? 'visible' : 'hidden'}`}
 												/>

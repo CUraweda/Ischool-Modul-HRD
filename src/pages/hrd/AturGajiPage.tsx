@@ -35,6 +35,7 @@ const AturGajiPage = () => {
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
 	const [formDataBill, setFormDataBill] = useState({
+		employee_id: parseInt(dataUpdateBill?.employee_id) ?? 0,
 		account_id: dataUpdateBill?.account_id ?? 0,
 		type_id: dataUpdateBill?.type_id ?? 0,
 		description: dataUpdateBill?.description ?? '',
@@ -266,6 +267,7 @@ const AturGajiPage = () => {
 		}
 		if (dataUpdateBill) {
 			setFormDataBill({
+				employee_id: parseInt(dataUpdateBill?.employee_id) ?? 0,
 				account_id: dataUpdateBill?.account_id ?? 0,
 				type_id: dataUpdateBill?.type_id ?? 0,
 				description: dataUpdateBill?.description ?? '',
@@ -294,6 +296,7 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormDataBill({
+				employee_id: dataUpdateBill?.employee_id ?? 0,
 				account_id: dataUpdateBill?.id ?? 0,
 				type_id: dataUpdateBill?.type_id ?? 0,
 				description: dataUpdateBill?.description ?? '',
@@ -303,6 +306,7 @@ const AturGajiPage = () => {
 	}, [dataUpdateBill]);
 	const resetDataBill = () => {
 		setFormDataBill({
+			employee_id: 0,
 			account_id: 0,
 			type_id: 0,
 			description: '',
@@ -434,6 +438,26 @@ const AturGajiPage = () => {
 							</div> */}
 
 							{/* Type ID Select */}
+							<div>
+								<label className="label">
+									<span className="label-text">Employee</span>
+								</label>
+								<select
+									name="employee_id"
+									onChange={handleInputChangeBill}
+									className="select select-bordered w-full"
+									required
+								>
+									<option value={0} disabled>
+										Pilih Karyawan
+									</option>
+									{ListEmployee.map((employee) => (
+										<option key={employee.id} value={employee.id}>
+											{employee.full_name}
+										</option>
+									))}
+								</select>
+							</div>
 							<div className="mt-4">
 								<label className="label">
 									<span className="label-text">Jenis</span>
@@ -476,7 +500,7 @@ const AturGajiPage = () => {
 									<span className="label-text">Jumlah</span>
 								</label>
 								<input
-									type="number"
+									type="tel"
 									name="amount"
 									value={formDataBill.amount}
 									onChange={handleInputChangeBill}
