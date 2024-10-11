@@ -47,7 +47,7 @@ const AppRoutes: React.FC = () => {
 				<Routes>
 					<Route element={<PublicLayout />}>
 						<Route path="/" element={<FormPage />} />
-						<Route path="/verif/:id" element={<VerifEmailPage />} />
+						<Route path="/verifikasi/:id" element={<VerifEmailPage />} />
 					</Route>
 
 					<Route

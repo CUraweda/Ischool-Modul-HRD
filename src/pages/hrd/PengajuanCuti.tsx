@@ -466,7 +466,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 											checked={selectedItemEmployee.includes(employee.full_name)}
 											onChange={() => handleCheckboxChange(employee.full_name)}
 										/>
-										<span>{employee.full_name}</span>
+										<span className="h-96">{employee.full_name}</span>
 									</label>
 								))}
 							</div>
