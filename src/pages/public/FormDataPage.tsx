@@ -352,14 +352,13 @@ const FormDataPage = () => {
 				</div>
 				{/* New Fields */}
 				<div className="mb-4">
-					<label className="label text-gray-700">Gender</label>
+					<label className="label text-gray-700">Jenis Kelamin</label>
 					<select className="select select-bordered w-full" value={gender} onChange={(e) => setGender(e.target.value)}>
 						<option value="" disabled>
-							Pilih Gender
+							Pilih jenis kelamin
 						</option>
-						<option value="Male">Male</option>
-						<option value="Female">Female</option>
-						<option value="Other">Other</option>
+						<option value="Male">Laki laki</option>
+						<option value="Female">Perempuan</option>
 					</select>
 				</div>
 				<div className="mb-4">
@@ -401,9 +400,9 @@ const FormDataPage = () => {
 						<option value="" disabled>
 							Pilih Status
 						</option>
-						<option value="Single">Single</option>
-						<option value="Married">Married</option>
-						<option value="Divorced">Divorced</option>
+						<option value="Single">Belum Menikah</option>
+						<option value="Married">Menikah</option>
+						<option value="Divorced">Cerai</option>
 					</select>
 				</div>
 				{/* Hidden File Input */}

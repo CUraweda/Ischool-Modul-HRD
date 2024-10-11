@@ -65,6 +65,15 @@ const Dashboard = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+
+	DeletePengumuman: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `employee-announcement/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 };
 const TrainingSuggest = {
 	getAllTraining: (page: any, limit: any, search: string): AxiosPromise<any> =>

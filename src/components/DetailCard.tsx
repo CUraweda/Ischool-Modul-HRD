@@ -8,14 +8,36 @@ interface DetailDialogProps {
 const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 	const [date, setDate] = useState('');
 	const [hour, setHour] = useState('');
+	const [imageSrc, setImageSrc] = useState(''); // State to hold the Blob URL for the image
 
 	useEffect(() => {
 		if (dataProps.start_date) {
 			setDate(dataProps.start_date.split('T')[0]);
-			setHour(dataProps.start_date.split('T')[1].split('.')[0]);
+			setHour(dataProps.start_date.split('T')[1].split('.')[0].slice(0, -3)); // Remove seconds
 		} else if (dataProps.createdAt) {
 			setDate(dataProps.createdAt.split('T')[0]);
-			setHour(dataProps.createdAt.split('T')[1].split('.')[0]);
+			setHour(dataProps.createdAt.split('T')[1].split('.')[0].slice(0, -3)); // Remove seconds
+		}
+
+		// Fetch the image as a Blob and create a local URL
+		if (dataProps.file_path) {
+			const fetchImage = async () => {
+				try {
+					const response = await fetch(`https://api-hrd.curaweda.com/stg-server1/public/${dataProps.file_path}`);
+					const blob = await response.blob();
+					const blobUrl = URL.createObjectURL(blob);
+					setImageSrc(blobUrl); // Set the Blob URL as the image source
+				} catch (error) {
+					console.error('Error fetching image:', error);
+					// Set a fallback image in case of error
+					setImageSrc('https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png');
+				}
+			};
+
+			fetchImage();
+		} else {
+			// If no image path, use the fallback image
+			setImageSrc('https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png');
 		}
 	}, [dataProps]);
 
@@ -34,14 +56,7 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 					</form>
 					<div className="mt-5">
 						<figure className="rounded-xl">
-							<img
-								src={
-									dataProps?.file_path ||
-									`https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png`
-								}
-								alt="Detail Image"
-								className="h-[200px] w-full object-cover"
-							/>
+							<img src={imageSrc} alt="Detail Image" className="h-[200px] w-full object-cover" />
 						</figure>
 						<div className="text-md card-body">
 							<h2 className="card-title font-semibold">

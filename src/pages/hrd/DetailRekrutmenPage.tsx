@@ -315,12 +315,12 @@ const DetailRekrutmenPage = () => {
 				<div>
 					<div className="form-control mb-4">
 						<label htmlFor="judul" className="label">
-							<span className="label-text font-semibold">Judul</span>
+							<span className="label-text font-semibold">Link/Tempat Meeting </span>
 						</label>
 						<input
 							type="text"
 							id="judul"
-							placeholder="Masukkan judul pengumuman"
+							placeholder="Masukkan Link atau Tempat Meeting"
 							className="input input-bordered w-full"
 							onChange={(e) => setPortal(e.target.value)}
 						/>

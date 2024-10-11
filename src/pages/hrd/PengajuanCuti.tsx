@@ -457,7 +457,10 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						>
 							<MdPeopleAlt /> Karyawan
 						</div>
-						<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
+						<ul
+							tabIndex={0}
+							className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-auto rounded-box bg-base-100 p-2 shadow"
+						>
 							<div className="checkbox-group">
 								{dataEmployee.map((employee) => (
 									<label key={employee.id} className="flex items-center space-x-2">
@@ -466,7 +469,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 											checked={selectedItemEmployee.includes(employee.full_name)}
 											onChange={() => handleCheckboxChange(employee.full_name)}
 										/>
-										<span className="h-96">{employee.full_name}</span>
+										<span>{employee.full_name}</span>
 									</label>
 								))}
 							</div>
