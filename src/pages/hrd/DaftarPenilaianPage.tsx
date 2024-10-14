@@ -89,6 +89,7 @@ const DaftarPenilaianPage = () => {
 				title: 'Sukses',
 				text: 'Penilaian berhasil diubah',
 			});
+			closeModal('editGrade');
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
@@ -97,6 +98,8 @@ const DaftarPenilaianPage = () => {
 				title: 'Error',
 				text: message,
 			});
+
+			closeModal('editGrade');
 		}
 	};
 

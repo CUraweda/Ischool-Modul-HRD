@@ -382,10 +382,10 @@ const Karyawan = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	JobdeskList: (access_token: string | null, id: any): AxiosPromise<any> =>
+	JobdeskList: (access_token: string | null, id: any, is_graded: any): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `employee-jobdesk?page=0&limit=2000&employee_id=${id}`,
+			url: `employee-jobdesk?page=0&limit=2000&employee_id=${id}&is_graded=${is_graded}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
