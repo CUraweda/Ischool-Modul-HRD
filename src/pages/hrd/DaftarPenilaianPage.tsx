@@ -40,7 +40,6 @@ const DaftarPenilaianPage = () => {
 			due_date: tenggatWaktu,
 			priority: 1,
 			priority_label: prioritas,
-			grade: nilai,
 		};
 
 		try {
@@ -74,7 +73,6 @@ const DaftarPenilaianPage = () => {
 		setDeskripsiKegiatan(item.description);
 		setTenggatWaktu(item.due_date);
 		setPrioritas(item.priority_label);
-		setNilai(item.grade);
 		setEditMode(true);
 		setEditId(item.id);
 		openModal('addPenilaian');
@@ -108,7 +106,6 @@ const DaftarPenilaianPage = () => {
 		setDeskripsiKegiatan('');
 		setTenggatWaktu('');
 		setPrioritas('');
-		setNilai('');
 		setEditMode(false);
 		setEditId(null);
 	};
@@ -156,8 +153,8 @@ const DaftarPenilaianPage = () => {
 			</div>
 
 			<div className="card bg-white p-4 shadow-md">
-				<div>
-					<table className="table table-zebra w-full">
+				<div className="overflow-auto">
+					<table className="table table-zebra mb-20 w-full">
 						<thead>
 							<tr>
 								<th>Nama</th>
@@ -186,12 +183,12 @@ const DaftarPenilaianPage = () => {
 												? 'Belum Dinilai'
 												: 'Selesai Dikerjakan'}
 									</td>
-									<td className="flex gap-2">
+									<td>
 										<div className="dropdown dropdown-end">
 											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 shadow-xl">
 												<li>
 													<a onClick={() => handleEdit(item)}>Edit Data</a>
 												</li>
@@ -272,17 +269,6 @@ const DaftarPenilaianPage = () => {
 								<option value="Sedang">Sedang</option>
 								<option value="Rendah">Rendah</option>
 							</select>
-						</div>
-
-						<div>
-							<label className="mb-1 block text-sm font-medium text-gray-700">Nilai</label>
-							<input
-								type="text"
-								className="input input-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
-								placeholder="Masukkan nilai"
-								value={nilai}
-								onChange={(e) => setNilai(e.target.value)}
-							/>
 						</div>
 					</div>
 

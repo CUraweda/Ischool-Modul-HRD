@@ -1,4 +1,4 @@
-import { Rekrutmen } from '@/middlewares/api';
+import { DownloadFile, Rekrutmen } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Modal, { openModal, closeModal } from '@/components/ModalProps';
@@ -95,6 +95,14 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
+	const downloadFile = async (file_path: string) => {
+		try {
+			await DownloadFile.Download(access_token, file_path);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	useEffect(() => {
 		if (id) {
 			fetchData();
@@ -177,8 +185,8 @@ const DetailRekrutmenPage = () => {
 													<div className="mask mask-squircle h-12 w-12">
 														<img
 															src={
-																item?.user?.avatar != null
-																	? item?.user?.avatar
+																item?.file_path
+																	? `https://api-hrd.curaweda.com/stg-server1/${item.file_path}`
 																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
 															}
 															alt="Avatar Tailwind CSS Component"
@@ -225,13 +233,7 @@ const DetailRekrutmenPage = () => {
 
 					<div className="my-1 h-[1px] w-full bg-black"></div>
 
-					<p>
-						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
-						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
-						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
-						opportunities to keep up with the latest trends in web development. */}
-						{dataCv?.applicant_description}
-					</p>
+					<p>{dataCv?.applicant_description}</p>
 				</div>
 
 				<div className="mt-4">
@@ -239,13 +241,7 @@ const DetailRekrutmenPage = () => {
 
 					<div className="my-1 h-[1px] w-full bg-black"></div>
 
-					<p>
-						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
-						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
-						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
-						opportunities to keep up with the latest trends in web development. */}
-						{dataCv?.applicant_vision}
-					</p>
+					<p>{dataCv?.applicant_vision}</p>
 				</div>
 
 				<div className="mt-4">
@@ -253,13 +249,7 @@ const DetailRekrutmenPage = () => {
 
 					<div className="my-1 h-[1px] w-full bg-black"></div>
 
-					<p>
-						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
-						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
-						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
-						opportunities to keep up with the latest trends in web development. */}
-						{dataCv?.applicant_reason}
-					</p>
+					<p>{dataCv?.applicant_reason}</p>
 				</div>
 
 				<div className="mt-4">
@@ -267,12 +257,66 @@ const DetailRekrutmenPage = () => {
 
 					<div className="my-1 h-[1px] w-full bg-black"></div>
 
+					<p>{dataCv?.applicant_question}</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">ACADEMICS</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
 					<p>
-						{/* As an experienced full-stack engineer with expertise in developing front-end and back-end applications using
-						React.js, Node.js, and PostgreSQL, I am also an expert in integrating APIs, as well as designing efficient
-						UI/UX with Figma. I am committed to providing an intuitive user interface and always looking for
-						opportunities to keep up with the latest trends in web development. */}
-						{dataCv?.applicant_question}
+						{dataCv?.applicantacademics.map((item: any, index: any) => (
+							<div key={index}>
+								<div>Pendidikan Terakhir:</div>
+								<div>{item?.degree}</div>
+								<div>Asal Pendidikan:</div>
+								<div>{item?.city}</div>
+							</div>
+						))}
+					</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">NON FORMAL ACADEMICS</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>{dataCv?.applicantunformals.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">SKILLS</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>{dataCv?.applicantskills.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">EXPERIENCE</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>{dataCv?.applicantjobs.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-xl font-bold">APPRECIATIONS</h3>
+
+					<div className="my-1 h-[1px] w-full bg-black"></div>
+
+					<p>
+						{dataCv?.applicantappreciations.map((item: any, index: any) => (
+							<div key={index}>
+								<div>{item?.description}</div>
+								{item.appreciationattachments.map((item: any, index: any) => (
+									<button key={index} onClick={() => downloadFile(item.file_path)}>
+										Download
+									</button>
+								))}
+							</div>
+						))}
 					</p>
 				</div>
 
@@ -315,12 +359,12 @@ const DetailRekrutmenPage = () => {
 				<div>
 					<div className="form-control mb-4">
 						<label htmlFor="judul" className="label">
-							<span className="label-text font-semibold">Judul</span>
+							<span className="label-text font-semibold">Link/Tempat Meeting </span>
 						</label>
 						<input
 							type="text"
 							id="judul"
-							placeholder="Masukkan judul pengumuman"
+							placeholder="Masukkan Link atau Tempat Meeting"
 							className="input input-bordered w-full"
 							onChange={(e) => setPortal(e.target.value)}
 						/>

@@ -57,8 +57,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		month_id: 1,
 		year: currentYear,
 		uid: '',
-		status: '',
-		is_paid: true,
 		temp_total: 0,
 		fixed_salary: 0,
 		variable_salary: 0,
@@ -72,8 +70,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			month_id: 0,
 			year: 0,
 			uid: '',
-			status: '',
-			is_paid: true,
 			temp_total: 0,
 			fixed_salary: 0,
 			variable_salary: 0,
@@ -359,13 +355,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 								<label className="label">
 									<span className="label-text">Bulan</span>
 								</label>
-								<select
-									name="month_id"
-									value={formData.month_id}
-									onChange={handleInputChange}
-									className="select select-bordered w-full"
-									required
-								>
+								<select name="month_id" onChange={handleInputChange} className="select select-bordered w-full" required>
 									<option value="" disabled>
 										Pilih Bulan
 									</option>
@@ -381,13 +371,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 								<label className="label">
 									<span className="label-text">Tahun</span>
 								</label>
-								<select
-									name="year"
-									value={formData.year}
-									onChange={handleInputChange}
-									className="select select-bordered w-full"
-									required
-								>
+								<select name="year" onChange={handleInputChange} className="select select-bordered w-full" required>
 									<option value="" disabled>
 										Pilih Tahun
 									</option>
@@ -399,21 +383,24 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 								</select>
 							</div>
 
-							<div className="mt-4">
-								<label className="label">
-									<span className="label-text">Status</span>
-								</label>
-								<input
-									type="text"
+							{/* <div className="mt-4">
+								<label className="label text-gray-700">Status</label>
+								<select
+									className="select select-bordered w-full"
 									name="status"
 									value={formData.status}
 									onChange={handleInputChange}
-									className="input input-bordered w-full"
 									required
-								/>
-							</div>
+								>
+									<option value="" disabled>
+										Pilih status
+									</option>
+									<option value="Sudah Dibayar">Sudah Dibayar</option>
+									<option value="Belum Dibayar">Belum Dibayar</option>
+								</select>
+							</div> */}
 
-							<div className="mt-4">
+							{/* <div className="mt-4">
 								<label className="label">
 									<span className="label-text">Sudah Dibayar</span>
 								</label>
@@ -424,7 +411,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 									onChange={handleInputChange}
 									className="checkbox"
 								/>
-							</div>
+							</div> */}
 
 							<div className="modal-action">
 								<button type="submit" className="btn btn-primary">
@@ -502,7 +489,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							Export ke excel
 						</button>
 						<button onClick={() => setModalAdd(true)} className="btn btn-outline btn-primary">
-							tambah
+							Tambah
 						</button>
 					</div>
 				</div>
@@ -530,9 +517,11 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 									<td>{formatSalary(item.loan)}</td>
 									<td>{formatSalary(item.cooperative)}</td>
 									<td>
-										<span className={`badge ${item.status !== 'sudah' ? 'badge-warning' : 'badge-success'}`}>
+										<div
+											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
+										>
 											{item.status}
-										</span>
+										</div>
 									</td>
 									{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
 											<IoIosTrash />
