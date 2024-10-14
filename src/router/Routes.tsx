@@ -6,6 +6,7 @@ const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignUpPage'));
 const HrdLayout = lazy(() => import('@/components/layouts/HrdLayout'));
 const PublicLayout = lazy(() => import('@/pages/public/PublicLayout'));
+const DefaultLayout = lazy(() => import('../pages/DefaultLayout'));
 const AuthLayout = lazy(() => import('@/pages/auth/AuthLayout'));
 const ForbiddenPage = lazy(() => import('@/pages/ForbiddenPage'));
 const DashboardPage = lazy(() => import('../pages/hrd/DashboardPage'));
@@ -111,7 +112,7 @@ const AppRoutes: React.FC = () => {
 					</Route>
 
 					<Route element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]} />}>
-						<Route element={<PublicLayout />}>
+						<Route element={<DefaultLayout />}>
 							<Route path="default" element={<DefaultPage />} />
 							<Route path="default/daftar-penilaian" element={<PublicPenilaian />} />
 						</Route>
