@@ -201,8 +201,8 @@ const DataKaryawanPage = () => {
 			</div>
 
 			<div className="q-mt card mt-5 w-full bg-base-100 shadow-xl">
-				<div className="card-body">
-					<table className="table table-zebra">
+				<div className="card-body overflow-auto">
+					<table className="table table-zebra mb-14 h-full">
 						<thead>
 							<tr>
 								<th className="text-xs">No</th>

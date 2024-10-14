@@ -1,5 +1,5 @@
 import { FaRegEdit } from 'react-icons/fa';
-import { Salary, Employee, Bill } from '@/middlewares/api/hrd';
+import { Salary, Bill, Penggajian, Dashboard } from '@/middlewares/api/hrd';
 import { useEffect, useState } from 'react';
 import { IoMdClose, IoIosTrash } from 'react-icons/io';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ const AturGajiPage = () => {
 	const [modalSalary, setModalSalary] = useState<boolean>(false);
 	const [modalBill, setModalBill] = useState<boolean>(false);
 	const [ListEmployee, setListEmployee] = useState<any[]>([]);
+	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const [dataUpdateSalary, setUpdateDataSalary] = useState<any>(null);
 	const [dataUpdateBill, setUpdateDataBill] = useState<any>(null);
 	const [dataBill, setDataBill] = useState<any[]>([]);
@@ -30,12 +31,11 @@ const AturGajiPage = () => {
 		status: '',
 	});
 	const [formData, setFormData] = useState({
-		employee_id: dataUpdateSalary?.employee.id ?? 0,
+		account_id: dataUpdateSalary?.employee.id ?? 0,
 		fixed_salary: dataUpdateSalary?.fixed_salary ?? 0,
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
 	const [formDataBill, setFormDataBill] = useState({
-		employee_id: parseInt(dataUpdateBill?.employee_id) ?? 0,
 		account_id: dataUpdateBill?.account_id ?? 0,
 		type_id: dataUpdateBill?.type_id ?? 0,
 		description: dataUpdateBill?.description ?? '',
@@ -118,7 +118,7 @@ const AturGajiPage = () => {
 	};
 	const getTypes = async () => {
 		try {
-			const res = await Bill.getAllTypes(0, 0); // Replace with actual API call
+			const res = await Bill.getAllTypes(0, 0);
 			setTypes(res.data.data.result);
 		} catch (err) {
 			console.error(err);
@@ -126,7 +126,9 @@ const AturGajiPage = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			const res = await Employee.getAllEmployee(1000000000, '', access_token);
+			const response = await Dashboard.DataKaryawan(access_token);
+			setDataEmployee(response.data.data.result);
+			const res = await Penggajian.getAllAccount(access_token, '', '', 100000, 0);
 			console.log(res.data.data.result);
 			setListEmployee(res.data.data.result);
 		} catch (err) {
@@ -260,14 +262,13 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormData({
-				employee_id: dataUpdateSalary.employee.id,
+				account_id: dataUpdateSalary.account.id,
 				fixed_salary: dataUpdateSalary.fixed_salary,
 				is_active: dataUpdateSalary.is_active,
 			});
 		}
 		if (dataUpdateBill) {
 			setFormDataBill({
-				employee_id: parseInt(dataUpdateBill?.employee_id) ?? 0,
 				account_id: dataUpdateBill?.account_id ?? 0,
 				type_id: dataUpdateBill?.type_id ?? 0,
 				description: dataUpdateBill?.description ?? '',
@@ -296,7 +297,6 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormDataBill({
-				employee_id: dataUpdateBill?.employee_id ?? 0,
 				account_id: dataUpdateBill?.id ?? 0,
 				type_id: dataUpdateBill?.type_id ?? 0,
 				description: dataUpdateBill?.description ?? '',
@@ -306,7 +306,6 @@ const AturGajiPage = () => {
 	}, [dataUpdateBill]);
 	const resetDataBill = () => {
 		setFormDataBill({
-			employee_id: 0,
 			account_id: 0,
 			type_id: 0,
 			description: '',
@@ -316,7 +315,7 @@ const AturGajiPage = () => {
 
 	const resetDataSalary = () => {
 		setFormData({
-			employee_id: 0,
+			account_id: 0,
 			fixed_salary: 0,
 			is_active: true,
 		});
@@ -354,8 +353,8 @@ const AturGajiPage = () => {
 									<span className="label-text">Employee</span>
 								</label>
 								<select
-									name="employee_id"
-									value={formData.employee_id}
+									name="account_id"
+									value={formData.account_id}
 									onChange={handleInputChange}
 									className="select select-bordered w-full"
 									required
@@ -363,7 +362,7 @@ const AturGajiPage = () => {
 									<option value="" disabled>
 										Pilih Karyawan
 									</option>
-									{ListEmployee.map((employee) => (
+									{dataEmployee.map((employee) => (
 										<option key={employee.id} value={employee.id}>
 											{employee.full_name}
 										</option>
@@ -443,7 +442,7 @@ const AturGajiPage = () => {
 									<span className="label-text">Employee</span>
 								</label>
 								<select
-									name="employee_id"
+									name="account_id"
 									onChange={handleInputChangeBill}
 									className="select select-bordered w-full"
 									required
@@ -453,7 +452,7 @@ const AturGajiPage = () => {
 									</option>
 									{ListEmployee.map((employee) => (
 										<option key={employee.id} value={employee.id}>
-											{employee.full_name}
+											{employee.employee.full_name}
 										</option>
 									))}
 								</select>

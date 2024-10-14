@@ -30,6 +30,7 @@ interface Karyawan {
 }
 
 interface PengumumanItem {
+	id: any;
 	plan_date: string;
 	title: string;
 	notes: string;
@@ -194,6 +195,31 @@ const DashboardPage = () => {
 		}
 	};
 
+	const trigerDelete = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				HapusPengumuman(id);
+			}
+		});
+	};
+
+	const HapusPengumuman = async (id: any) => {
+		try {
+			await Dashboard.DeletePengumuman(id);
+			GetPengumuman();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	useEffect(() => {
 		dropdownKaryawan();
 		GetPengumuman();
@@ -273,12 +299,27 @@ const DashboardPage = () => {
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
 						<div className="h-52 overflow-auto">
 							{pengumuman.map((item, index) => (
-								<div className="mt-4 text-gray-700" key={index}>
-									<p>
-										{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} -{' '}
-										<span className="font-bold">{item.title}</span>
-									</p>
-									<p>{item.notes}</p>
+								<div className="flex items-center justify-between">
+									<div className="mt-4 text-gray-700" key={index}>
+										<p>
+											{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0].slice(0, -3)} -
+											<span className="font-bold"> {item.title}</span>
+										</p>
+										<p>{item.notes}</p>
+									</div>
+
+									<button className="btn btn-circle btn-error btn-xs" onClick={() => trigerDelete(item.id)}>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="white"
+											className="size-6"
+										>
+											<path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+										</svg>
+									</button>
 								</div>
 							))}
 						</div>
