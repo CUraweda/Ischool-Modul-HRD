@@ -14,6 +14,7 @@ const DetailRekapPage: React.FC = () => {
 	const [Performance, setPerformance] = useState<any>(null);
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [jobdeskList, setJobdeskList] = useState<any[]>([]);
+	const [doneJobdesk, setDoneJobdesk] = useState<any[]>([]);
 	// const [ListEmployee, setListEmployee] = useState<any>(null);
 	const getDifference = async () => {
 		try {
@@ -40,8 +41,10 @@ const DetailRekapPage: React.FC = () => {
 	const getEmployee = async () => {
 		try {
 			// const res = await Employee.getAllEmployee(1000000000, '', access_token);
-			const jobdesk = await Karyawan.JobdeskList(access_token, employee.employee_id);
+			const jobdesk = await Karyawan.JobdeskList(access_token, employee.employee_id, 0);
 			setJobdeskList(jobdesk.data.data.result);
+			const done = await Karyawan.JobdeskList(access_token, employee.employee_id, 1);
+			setDoneJobdesk(done.data.data.result);
 			// console.log(res.data.data.result);
 			// setListEmployee(res.data.data.result);
 		} catch (err) {
@@ -81,6 +84,7 @@ const DetailRekapPage: React.FC = () => {
 	};
 	const handleSubmit = (values: any) => {
 		createJobdesk(values);
+		setShowModal(false);
 	};
 	return (
 		<div className="p-5">
@@ -286,7 +290,30 @@ const DetailRekapPage: React.FC = () => {
 						</div>
 					</div>
 					<div className="my-2 w-full md:w-[70%]">
-						<div className="card h-[300px] w-full overflow-x-auto bg-base-100 p-4 shadow-xl"></div>
+						<div className="card h-[300px] w-full overflow-x-auto bg-base-100 p-4 shadow-xl">
+							<table className="w-full table-auto border-collapse">
+								<thead>
+									<tr>
+										<th className="border px-4 py-2 text-left">No</th>
+										<th className="border px-4 py-2 text-left">Tanggal</th>
+										<th className="border px-4 py-2 text-left">Posisi</th>
+										<th className="border px-4 py-2 text-left">Email</th>
+										<th className="border px-4 py-2 text-left">Hasil</th>
+									</tr>
+								</thead>
+								<tbody>
+									{doneJobdesk.map((item: any, index: any) => (
+										<tr key={index}>
+											<td className="border px-4 py-2">{index + 1}</td>
+											<td className="border px-4 py-2">{item?.employee?.work_start_date}</td>
+											<td className="border px-4 py-2">{item?.employee?.occupation}</td>
+											<td className="border px-4 py-2">{item?.employee?.email}</td>
+											<td className="border px-4 py-2">{item?.employee?.grade}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

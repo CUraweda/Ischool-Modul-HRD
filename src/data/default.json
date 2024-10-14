@@ -2,14 +2,14 @@
 	{
 		"submenu": false,
 		"title": "Kelengkapan Berkas",
-		"icon": "<BsFillHouseFill />",
+		"icon": "<FaFile />",
 		"url": "/default",
 		"subtitle": []
 	},
 	{
 		"submenu": false,
 		"title": "Daftar Penilaian",
-		"icon": "<BsFillHouseFill />",
+		"icon": "<FaListCheck />",
 		"url": "/default/daftar-penilaian",
 		"subtitle": []
 	}

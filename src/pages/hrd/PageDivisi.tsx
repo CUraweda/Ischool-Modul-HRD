@@ -5,40 +5,34 @@ import Swal from 'sweetalert2';
 import { IoMdClose } from 'react-icons/io';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+
 const PageDivisi: React.FC<{}> = () => {
 	const [modalPopup, setModalPopup] = useState<boolean>(false);
 	const [listDivisi, setListDivisi] = useState<any[]>([]);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const [dataUpdate, setDataUpdate] = useState<any>(null);
+	const [page, setPage] = useState<number>(0);
+	const [limit, setLimit] = useState<number>(10); // Set default limit
 	const [filterTable, setFilterTable] = useState({
 		search: '',
-		limit: 0,
-		page: 0,
 		totalPage: 0,
 		totalRows: 0,
 		status: '',
 	});
+
 	const validationSchema = Yup.object({
 		division_id: Yup.number().required('Divisi tidak boleh kosong'),
 	});
 
 	let access_token = sessionStorage.getItem('access_token');
-
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployeePage(
-				filterTable.limit,
-				filterTable.search,
-				filterTable.page,
-				access_token
-			);
+			const response = await Employee.getAllEmployeePage(limit, filterTable.search, page, access_token);
 			setDataEmployee(response.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
-				limit: response.data.data.limit,
-				page: response.data.data.page,
 				totalRows: response.data.data.totalRows,
 				totalPage: response.data.data.totalPage,
 			}));
@@ -46,21 +40,21 @@ const PageDivisi: React.FC<{}> = () => {
 			console.error(error);
 		}
 	};
+
 	const fetchDataDivision = async () => {
 		try {
 			const response = await EmployeeDivision.getAllDivision(access_token);
-
 			setListDivisi(response.data.data.result);
-			console.log(listDivisi.find((item) => item.id === 56)?.name ?? '-');
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
 	const updateDivision = async (data: any) => {
 		try {
 			const res = await Employee.updateDivisi(data.employee_id, data.division_id);
 			if (res.status === 200) {
-				setModalPopup(!modalPopup);
+				setModalPopup(false);
 				Swal.fire({
 					icon: 'success',
 					title: 'Berhasil',
@@ -73,30 +67,37 @@ const PageDivisi: React.FC<{}> = () => {
 			console.error(error);
 		}
 	};
+
 	const handleupdate = (data: any) => {
 		const payload = {
 			division_id: data.division_id,
 			employee_id: data.id,
 		};
 		if (payload) {
-			setModalPopup(!modalPopup);
+			setModalPopup(true);
 			setDataUpdate(payload);
 		}
 	};
+
 	const handleSubmit = (values: any) => {
 		updateDivision(values);
 	};
+
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setFilterTable((prev) => ({ ...prev, search: e.target.value, page: 0 }));
+		setFilterTable((prev) => ({ ...prev, search: e.target.value }));
 	};
+
 	useEffect(() => {
 		fetchDataDivision();
 	}, []);
+
 	useEffect(() => {
 		fetchAllEmployee();
-	}, [filterTable.limit, filterTable.search, filterTable.page]);
+	}, [limit, filterTable.search, page]);
+
 	return (
 		<div className="w-full flex-wrap md:flex">
+			{/* Header and Search */}
 			<div className="flex w-full justify-between">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
@@ -106,18 +107,6 @@ const PageDivisi: React.FC<{}> = () => {
 					</ul>
 				</div>
 				<label className="text-md input input-md input-bordered flex items-center gap-2 md:w-1/3">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 16 16"
-						fill="currentColor"
-						className="h-4 w-4 opacity-70"
-					>
-						<path
-							fillRule="evenodd"
-							d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-							clipRule="evenodd"
-						/>
-					</svg>
 					<input
 						type="text"
 						className="grow"
@@ -127,7 +116,7 @@ const PageDivisi: React.FC<{}> = () => {
 					/>
 				</label>
 			</div>
-			<div className="my-5 flex-grow border-t border-gray-400 drop-shadow-sm" />
+			{/* Table */}
 			<div className="card my-5 h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-md">
 				<table className="table-compact table table-zebra h-full w-full">
 					<thead>
@@ -141,7 +130,7 @@ const PageDivisi: React.FC<{}> = () => {
 					<tbody>
 						{dataEmployee.map((item, index) => (
 							<tr key={index}>
-								<td className="text-center">{index + 1 + filterTable.page * filterTable.limit}</td>
+								<td className="text-center">{index + 1 + page * limit}</td>
 								<td>{item.full_name}</td>
 								<td>{listDivisi?.find((div) => div.id === item.division_id)?.name ?? '-'}</td>
 								<td className="text-center">
@@ -153,53 +142,49 @@ const PageDivisi: React.FC<{}> = () => {
 						))}
 					</tbody>
 				</table>
-				<div className="join m-5">
+				{/* Pagination Controls */}
+				<div className="my-5 flex items-center justify-center">
 					<button
-						className="btn join-item btn-sm"
-						onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page - 1 }))}
-						disabled={filterTable.page === 0} // Disable jika halaman pertama
+						className="btn btn-sm mr-2"
+						onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+						disabled={page === 0}
 					>
 						Previous
 					</button>
-
+					<span>
+						Page {page + 1} of {filterTable.totalPage}
+					</span>
 					<button
-						className="btn join-item btn-sm"
-						onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page + 1 }))}
-						disabled={filterTable.page + 1 >= filterTable.totalPage} // Disable jika halaman terakhir
+						className="btn btn-sm ml-2"
+						onClick={() => setPage((prev) => Math.min(prev + 1, filterTable.totalPage - 1))}
+						disabled={page + 1 >= filterTable.totalPage}
 					>
 						Next
 					</button>
-
-					<button className="btn join-item btn-sm">
-						<div className="flex justify-between">
-							<span>
-								Page {filterTable.page + 1} of {filterTable.totalPage}
-							</span>
-						</div>
-					</button>
-					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10 }))}>
-						10
-					</button>
-					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 50 }))}>
-						50
-					</button>
-					<button className="btn join-item btn-sm" onClick={() => setFilterTable((prev) => ({ ...prev, limit: 100 }))}>
-						100
-					</button>
-					<button
-						className="btn join-item btn-sm"
-						onClick={() => setFilterTable((prev) => ({ ...prev, limit: 10000000000000000000 }))}
-					>
-						All
-					</button>
+					{/* Limit Buttons */}
+					<div className="ml-5">
+						<button onClick={() => setLimit(10)} className="btn btn-sm">
+							10
+						</button>
+						<button onClick={() => setLimit(50)} className="btn btn-sm">
+							50
+						</button>
+						<button onClick={() => setLimit(100)} className="btn btn-sm">
+							100
+						</button>
+						<button onClick={() => setLimit(10000)} className="btn btn-sm">
+							All
+						</button>
+					</div>
 				</div>
 			</div>
+			{/* Modal for Updating Division */}
 			{modalPopup && (
-				<dialog className="modal modal-open" onClick={() => setModalPopup(!modalPopup)}>
+				<dialog className="modal modal-open" onClick={() => setModalPopup(false)}>
 					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
 						<div className="flex items-center justify-between">
 							<h3 className="text-lg font-bold">Ubah Divisi</h3>
-							<div className="cursor-pointer text-xl" onClick={() => setModalPopup(!modalPopup)}>
+							<div className="cursor-pointer text-xl" onClick={() => setModalPopup(false)}>
 								<IoMdClose />
 							</div>
 						</div>
@@ -213,18 +198,15 @@ const PageDivisi: React.FC<{}> = () => {
 						>
 							<Form className="py-4">
 								<div className="form-control mb-4">
-									{/* <label htmlFor="employee_id" className="label">
-										Divisi
-									</label> */}
 									<Field as="select" name="division_id" className="select select-bordered">
 										<option value="">Pilih divisi</option>
 										{listDivisi?.map((div) => (
-											<option key={div.id} value={div.id} className={div.color ? 'color-[' + div.color + ']' : ''}>
+											<option key={div.id} value={div.id}>
 												{div.name}
 											</option>
 										))}
 									</Field>
-									<ErrorMessage name="employee_id" component="div" className="text-sm text-red-500" />
+									<ErrorMessage name="division_id" component="div" className="text-sm text-red-500" />
 								</div>
 								<div className="modal-action">
 									<button type="submit" className="btn btn-primary">
@@ -239,4 +221,5 @@ const PageDivisi: React.FC<{}> = () => {
 		</div>
 	);
 };
+
 export default PageDivisi;

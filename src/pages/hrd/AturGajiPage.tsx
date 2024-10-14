@@ -31,7 +31,7 @@ const AturGajiPage = () => {
 		status: '',
 	});
 	const [formData, setFormData] = useState({
-		account_id: dataUpdateSalary?.employee.id ?? 0,
+		employee_id: dataUpdateSalary?.employee.id ?? 0,
 		fixed_salary: dataUpdateSalary?.fixed_salary ?? 0,
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
@@ -262,7 +262,7 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormData({
-				account_id: dataUpdateSalary.account.id,
+				employee_id: dataUpdateSalary.employee_sid,
 				fixed_salary: dataUpdateSalary.fixed_salary,
 				is_active: dataUpdateSalary.is_active,
 			});
@@ -315,7 +315,7 @@ const AturGajiPage = () => {
 
 	const resetDataSalary = () => {
 		setFormData({
-			account_id: 0,
+			employee_id: 0,
 			fixed_salary: 0,
 			is_active: true,
 		});
@@ -353,13 +353,13 @@ const AturGajiPage = () => {
 									<span className="label-text">Employee</span>
 								</label>
 								<select
-									name="account_id"
-									value={formData.account_id}
+									name="employee_id"
+									value={formData.employee_id}
 									onChange={handleInputChange}
 									className="select select-bordered w-full"
 									required
 								>
-									<option value="" disabled>
+									<option value={0} disabled>
 										Pilih Karyawan
 									</option>
 									{dataEmployee.map((employee) => (
@@ -444,6 +444,7 @@ const AturGajiPage = () => {
 								<select
 									name="account_id"
 									onChange={handleInputChangeBill}
+									value={formDataBill.account_id}
 									className="select select-bordered w-full"
 									required
 								>
@@ -564,7 +565,7 @@ const AturGajiPage = () => {
 													onClick={() => {
 														handleSalary();
 														setTypeSalaryModal('edit');
-														setUpdateDataSalary(s); // Set the data for editing
+														setUpdateDataSalary(s);
 													}}
 												>
 													<FaRegEdit />

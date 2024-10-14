@@ -17,7 +17,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [dataVacation, setDataVacation] = useState<any[]>([]);
-	const [employeeId, setEmployeeId] = useState<Number>(0);
+	const [employeeId, setEmployeeId] = useState('0');
 	const [currentPage, setCurrentPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalRows, setTotalRows] = useState(1);
@@ -214,20 +214,20 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const requestCuti = async (formData: any) => {
 		try {
-			const response = await Attendance.requestVacation(formData);
+			await Attendance.requestVacation(formData);
 			Swal.fire({
 				icon: 'success',
 				title: 'Berhasil',
 				text: 'Data berhasil ditambahkan',
 			});
 
-			if (response.data.code !== 200) {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Something went wrong!',
-				});
-			}
+			// if (response.data.code !== 200) {
+			// 	Swal.fire({
+			// 		icon: 'error',
+			// 		title: 'Oops...',
+			// 		text: 'Something went wrong!',
+			// 	});
+			// }
 		} catch (err) {
 			console.error(err);
 		}
@@ -261,7 +261,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		formData.append('end_date', values.end_date);
 		formData.append('proposer_id', '1');
 		formData.append('type', 'CUTI');
-		formData.append('employee_id', values.employee_id);
+		formData.append('employee_id', employeeId);
 		if (file) {
 			formData.append('file', file);
 		}
@@ -310,11 +310,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 											name="account_id"
 											className="select select-bordered w-full"
 											required
-											onChange={(e) => setEmployeeId(parseInt(e.target.value))}
+											onChange={(e) => setEmployeeId(e.target.value)}
 										>
-											<option value="" disabled>
-												Pilih Karyawan
-											</option>
+											<option value={0}>Pilih Karyawan</option>
 											{dataEmployee.map((employee) => (
 												<option key={employee.id} value={employee.id}>
 													{employee.full_name}
