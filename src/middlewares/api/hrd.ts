@@ -634,7 +634,7 @@ const Salary = {
 			},
 		}),
 	createSalary: (data: any): AxiosPromise<any> =>
-		instance.post('employee-salary/create', data, {
+		instance.post('employee-salary/create-safe', data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

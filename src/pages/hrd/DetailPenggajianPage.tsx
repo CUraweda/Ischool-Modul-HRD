@@ -56,7 +56,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		employee_id: 0,
 		month_id: 1,
 		year: currentYear,
-		uid: '',
 		temp_total: 0,
 		fixed_salary: 0,
 		variable_salary: 0,
@@ -69,7 +68,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			employee_id: 0,
 			month_id: 0,
 			year: 0,
-			uid: '',
 			temp_total: 0,
 			fixed_salary: 0,
 			variable_salary: 0,
@@ -177,11 +175,11 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 					newFormData.fixed_salary = selectedSalary.fixed_salary;
 					newFormData.employee_id = selectedSalary.employee.id;
 					newFormData.temp_total = selectedSalary.fixed_salary;
-					const year = prevFormData.year;
-					const month = prevFormData.month_id;
-					const firstName = selectedSalary.employee.full_name.split(' ')[0];
-					const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
-					newFormData.uid = uid;
+					// const year = prevFormData.year;
+					// const month = prevFormData.month_id;
+					// const firstName = selectedSalary.employee.full_name.split(' ')[0];
+					// const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
+					// newFormData.uid = uid;
 				}
 			}
 			// Recalculate temp_total when relevant fields change

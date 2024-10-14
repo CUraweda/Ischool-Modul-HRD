@@ -81,6 +81,7 @@ const DetailRekapPage: React.FC = () => {
 	};
 	const handleSubmit = (values: any) => {
 		createJobdesk(values);
+		setShowModal(false);
 	};
 	return (
 		<div className="p-5">

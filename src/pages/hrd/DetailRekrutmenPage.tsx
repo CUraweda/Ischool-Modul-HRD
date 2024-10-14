@@ -95,9 +95,19 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
-	const downloadFile = async (file_path: string) => {
+	const downloadFile = async (file_path: string, file_type: string) => {
 		try {
-			await DownloadFile.Download(access_token, file_path);
+			const url = file_path.replace(/\//g, '\\');
+			const response = await DownloadFile.Download(access_token, url);
+			const blob = new Blob([response.data], { type: `${file_type}` });
+			const fileUrl = URL.createObjectURL(blob);
+
+			const link: any = document.createElement('a');
+			link.href = fileUrl;
+			link.download = file_path.split('/').pop();
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
 		} catch (error) {
 			console.error(error);
 		}
@@ -222,96 +232,88 @@ const DetailRekrutmenPage = () => {
 
 			<Modal id="cvApplicant">
 				<div className="text-center">
-					<h2 className="text-2xl font-bold">{dataCv?.full_name}</h2>
-					<p className="text-sm">
+					<h2 className="text-3xl font-bold text-gray-800">{dataCv?.full_name}</h2>
+					<p className="text-sm text-gray-500">
 						{dataCv?.address} • {dataCv?.email} • {dataCv?.phone}
 					</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">SUMMARY</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicant_description}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Kesimpulan</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">{dataCv?.applicant_description}</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">VISION</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicant_vision}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Visi</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">{dataCv?.applicant_vision}</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">REASON</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicant_reason}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Alasan</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">{dataCv?.applicant_reason}</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">QUESTION</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicant_question}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Pertanyaan</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">{dataCv?.applicant_question}</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">ACADEMICS</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>
+					<h3 className="text-2xl font-semibold text-gray-800">Pendidikan</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<div className="text-gray-700">
 						{dataCv?.applicantacademics.map((item: any, index: any) => (
-							<div key={index}>
-								<div>Pendidikan Terakhir:</div>
+							<div key={index} className="mb-2">
+								<div className="font-semibold">Pendidikan Terakhir:</div>
 								<div>{item?.degree}</div>
-								<div>Asal Pendidikan:</div>
+								<div className="font-semibold">Asal Pendidikan:</div>
 								<div>{item?.city}</div>
 							</div>
 						))}
+					</div>
+				</div>
+
+				<div className="mt-4">
+					<h3 className="text-2xl font-semibold text-gray-800">Pendidikan Non Formal</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">
+						{dataCv?.applicantunformals.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}
 					</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">NON FORMAL ACADEMICS</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicantunformals.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Keahlian</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">
+						{dataCv?.applicantskills.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}
+					</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">SKILLS</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicantskills.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
+					<h3 className="text-2xl font-semibold text-gray-800">Pengalaman</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">
+						{dataCv?.applicantjobs.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}
+					</p>
 				</div>
 
 				<div className="mt-4">
-					<h3 className="text-xl font-bold">EXPERIENCE</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>{dataCv?.applicantjobs.map((item: any, index: any) => <div key={index}>{item?.description}</div>)}</p>
-				</div>
-
-				<div className="mt-4">
-					<h3 className="text-xl font-bold">APPRECIATIONS</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>
+					<h3 className="text-2xl font-semibold text-gray-800">Prestasi</h3>
+					<div className="my-1 h-[2px] w-full bg-gray-300"></div>
+					<p className="text-gray-700">
 						{dataCv?.applicantappreciations.map((item: any, index: any) => (
-							<div key={index}>
+							<div key={index} className="mb-2">
 								<div>{item?.description}</div>
-								{item.appreciationattachments.map((item: any, index: any) => (
-									<button key={index} onClick={() => downloadFile(item.file_path)}>
+								{item.appreciationattachments.map((attachment: any, idx: any) => (
+									<button
+										key={idx}
+										className="mt-1 text-blue-600 underline"
+										onClick={() => downloadFile(attachment.file_path, attachment.file_type)}
+									>
 										Download
 									</button>
 								))}
@@ -320,22 +322,9 @@ const DetailRekrutmenPage = () => {
 					</p>
 				</div>
 
-				{/* <div className="mt-4">
-					<h3 className="text-xl font-bold">TECHNICAL SKILLS</h3>
-
-					<div className="my-1 h-[1px] w-full bg-black"></div>
-
-					<p>
-						<strong>Languages:</strong> JavaScript, TypeScript, HTML, CSS, SASS <br />
-						<strong>Technologies:</strong> React JS, Figma, Firebase, Tailwind, Bootstrap, Zustand, Node.js, Express JS,
-						AWS EC2, S3 <br />
-						<strong>Other:</strong> Algorithms, Data Structures, Advance Problem Solving
-					</p>
-				</div> */}
-
 				<div className="mt-6 flex items-center justify-center gap-4">
 					<button
-						className="btn btn-error text-white"
+						className="btn btn-error text-white transition hover:bg-red-700"
 						onClick={() => {
 							closeModal('cvApplicant');
 							handleRejected();
@@ -344,7 +333,7 @@ const DetailRekrutmenPage = () => {
 						Tolak
 					</button>
 					<button
-						className="btn btn-success text-white"
+						className="btn btn-success text-white transition hover:bg-green-700"
 						onClick={() => {
 							closeModal('cvApplicant');
 							handleOpenAcceptedDialog();
