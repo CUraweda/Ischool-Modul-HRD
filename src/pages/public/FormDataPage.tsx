@@ -587,7 +587,7 @@ const FormDataPage = () => {
 								<input
 									type="date"
 									className="w-full rounded border border-gray-300 p-2"
-									onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
+									onChange={(e) => handleWorkExperienceChange(index, 'endDate', e.target.value)}
 									required
 								/>
 							</div>

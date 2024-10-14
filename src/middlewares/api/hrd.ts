@@ -483,6 +483,26 @@ const Attendance = {
 			},
 		}),
 
+	acceptVacation: (id: number, data: null): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-vacation/change-status/accept/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	rejectVacation: (id: number, data: null): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-vacation/change-status/reject/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
 	deleteVacation: (id: number): AxiosPromise<any> =>
 		instance.delete(`employee-vacation/delete/${id}`, {
 			headers: {
@@ -490,7 +510,7 @@ const Attendance = {
 			},
 		}),
 	requestVacation: (data: any): AxiosPromise<any> =>
-		instance.post(`employee-vacation/request`, data, {
+		instance.post(`employee-vacation/create`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -867,6 +887,44 @@ const Penggajian = {
 		}),
 };
 
+const DinasLuar = {
+	DataDinasLuar: (access_token: string | null, page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-outstation?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+
+	CreateDinasLuar: (data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-outstation/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	UpdateDinasLuar: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-outstation/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DeleteDinasLuar: (id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `employee-outstation/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+};
+
 const Default = {
 	GetFileEmployee: (id: any): AxiosPromise<any> =>
 		instance({
@@ -881,6 +939,17 @@ const Default = {
 			method: `POST`,
 			url: `employee-attachment/create`,
 			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+};
+
+const DownloadFile = {
+	Download: (access_token: string | null, file_path: string): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `download?filepath=${file_path}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -907,4 +976,6 @@ export {
 	Default,
 	Jobdesk,
 	Verif,
+	DinasLuar,
+	DownloadFile,
 };

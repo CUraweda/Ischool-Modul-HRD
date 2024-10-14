@@ -8,7 +8,7 @@ interface DetailDialogProps {
 const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 	const [date, setDate] = useState('');
 	const [hour, setHour] = useState('');
-	const [imageSrc, setImageSrc] = useState(''); // State to hold the Blob URL for the image
+	const [imageSrc, setImageSrc] = useState('');
 
 	useEffect(() => {
 		if (dataProps.start_date) {
@@ -23,7 +23,7 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 		if (dataProps.file_path) {
 			const fetchImage = async () => {
 				try {
-					const response = await fetch(`https://api-hrd.curaweda.com/stg-server1/public/${dataProps.file_path}`);
+					const response = await fetch(`https://api-hrd.curaweda.com/stg-server1/${dataProps.file_path}`);
 					const blob = await response.blob();
 					const blobUrl = URL.createObjectURL(blob);
 					setImageSrc(blobUrl); // Set the Blob URL as the image source
@@ -36,7 +36,6 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 
 			fetchImage();
 		} else {
-			// If no image path, use the fallback image
 			setImageSrc('https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png');
 		}
 	}, [dataProps]);

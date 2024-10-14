@@ -17,6 +17,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [dataVacation, setDataVacation] = useState<any[]>([]);
+	const [employeeId, setEmployeeId] = useState<Number>(0);
 	const [currentPage, setCurrentPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalRows, setTotalRows] = useState(1);
@@ -31,7 +32,6 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		{ id: 5, category: 'Status', value: 'Tidak Disetujui' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
-	const [search_query, setSearch_query] = useState<string>('');
 	const getAllVacation = async () => {
 		// const combinedFilter = [...filterType, filterStatus]
 		// 	.filter(Boolean) // This removes any empty strings or null values
@@ -64,7 +64,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	const getAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(100000, search_query, access_token);
+			const response = await Employee.getAllEmployee(100000, '', access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -116,7 +116,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	useEffect(() => {
 		getAllEmployee();
-	}, [search_query]);
+	}, []);
 	const handleDetailClose = () => {
 		setSelectedItem(null);
 	};
@@ -134,14 +134,25 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			setFilterDivision(id);
 		}
 	};
-	const updateStatus = async (id: number, status: string) => {
+
+	const accept = async (id: number) => {
 		try {
-			await Attendance.updateVacation(id, { status });
+			await Attendance.acceptVacation(id, null);
 			getAllVacation();
 		} catch (error) {
-			console.error('Error updating status:', error);
+			console.error(error);
 		}
 	};
+
+	const reject = async (id: number) => {
+		try {
+			await Attendance.rejectVacation(id, null);
+			getAllVacation();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const capitalizeFirstLetter = (str: string) => {
 		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 	};
@@ -160,9 +171,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		} as any).then((result) => {
 			if (result.isConfirmed) {
 				if (type === 'disetujui') {
-					updateStatus(item.id, 'Disetujui');
+					accept(item.id);
 				} else {
-					updateStatus(item.id, 'Tidak Disetujui');
+					reject(item.id);
 				}
 			}
 		});
@@ -250,7 +261,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		formData.append('end_date', values.end_date);
 		formData.append('proposer_id', '1');
 		formData.append('type', 'CUTI');
-		formData.append('employee_id', JSON.stringify(values.employee_id));
+		formData.append('employee_id', values.employee_id);
 		if (file) {
 			formData.append('file', file);
 		}
@@ -281,7 +292,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						<h3 className="text-lg font-bold">Buat Pengajuan</h3>
 						<Formik
 							initialValues={{
-								employee_id: [] as number[],
+								employee_id: employeeId,
 								description: '',
 								start_date: '',
 								file: '',
@@ -289,49 +300,27 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 							}}
 							onSubmit={handleSubmit}
 						>
-							{({ values, setFieldValue, handleSubmit }) => (
+							{({ handleSubmit }) => (
 								<form onSubmit={handleSubmit}>
-									<div className="my-2 w-full">
+									<div className="mt-4">
 										<label className="label">
-											<span className="label-text">Pilih Karyawan</span>
+											<span className="label-text">Employee</span>
 										</label>
-									</div>
-									<div className="my-2 w-full">
-										<input
-											type="text"
-											placeholder="Cari karyawan..."
-											value={search_query}
-											onChange={(e) => setSearch_query(e.target.value)}
-											className="input input-bordered w-full"
-										/>
-										{search_query && (
-											<div className="m-2 h-52 w-full overflow-y-scroll">
-												<div className="checkbox-group">
-													{dataEmployee.map((employee: any) => (
-														<label key={employee.id} className="flex items-center space-x-2">
-															<input
-																type="checkbox"
-																name="employee_id"
-																id="employee_id"
-																value={employee.id}
-																checked={values.employee_id.includes(employee.id)}
-																onChange={(e) => {
-																	if (e.target.checked) {
-																		setFieldValue('employee_id', [...values.employee_id, employee.id]);
-																	} else {
-																		setFieldValue(
-																			'employee_id',
-																			values.employee_id.filter((id: number) => id !== employee.id)
-																		);
-																	}
-																}}
-															/>
-															<span>{employee.full_name}</span>
-														</label>
-													))}
-												</div>
-											</div>
-										)}
+										<select
+											name="account_id"
+											className="select select-bordered w-full"
+											required
+											onChange={(e) => setEmployeeId(parseInt(e.target.value))}
+										>
+											<option value="" disabled>
+												Pilih Karyawan
+											</option>
+											{dataEmployee.map((employee) => (
+												<option key={employee.id} value={employee.id}>
+													{employee.full_name}
+												</option>
+											))}
+										</select>
 									</div>
 									{/* <div className="my-2 w-full">
 										<select
