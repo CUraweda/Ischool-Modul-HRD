@@ -153,9 +153,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		}
 	};
 
-	const capitalizeFirstLetter = (str: string) => {
-		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-	};
+	// const capitalizeFirstLetter = (str: string) => {
+	// 	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+	// };
 
 	const handleChangeStatus = (type: string, item: any) => {
 		setIsDialogOpen(() => !isDialogOpen);
