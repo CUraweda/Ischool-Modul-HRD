@@ -31,7 +31,7 @@ const AturGajiPage = () => {
 		status: '',
 	});
 	const [formData, setFormData] = useState({
-		employee_id: dataUpdateSalary?.employee.id ?? 0,
+		employee_id: dataUpdateSalary?.employee_id ?? 0,
 		fixed_salary: dataUpdateSalary?.fixed_salary ?? 0,
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
@@ -262,7 +262,7 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormData({
-				employee_id: dataUpdateSalary.employee_sid,
+				employee_id: dataUpdateSalary.employee_id,
 				fixed_salary: dataUpdateSalary.fixed_salary,
 				is_active: dataUpdateSalary.is_active,
 			});
@@ -346,7 +346,9 @@ const AturGajiPage = () => {
 						>
 							<IoMdClose size={20} />
 						</button>
-						<h3 className="text-lg font-bold">Tambah Gaji Karyawan</h3>
+						<h3 className="text-lg font-bold">
+							{typeSalaryModal == 'edit' ? 'Edit Data Penggajian' : 'Tambah Data Penggajian'}
+						</h3>
 						<form onSubmit={handleSubmit}>
 							<div className="mt-4">
 								<label className="label">
@@ -362,8 +364,8 @@ const AturGajiPage = () => {
 									<option value={0} disabled>
 										Pilih Karyawan
 									</option>
-									{dataEmployee.map((employee) => (
-										<option key={employee.id} value={employee.id}>
+									{dataEmployee.map((employee, index) => (
+										<option key={index} value={employee.id}>
 											{employee.full_name}
 										</option>
 									))}
@@ -414,7 +416,9 @@ const AturGajiPage = () => {
 						>
 							<IoMdClose size={20} />
 						</button>
-						<h3 className="text-lg font-bold">Tambah Gaji Karyawan</h3>
+						<h3 className="text-lg font-bold">
+							{typeBillModal == 'edit' ? 'Edit Data Penggajian' : 'Tambah Data Penggajian'}
+						</h3>
 						<form onSubmit={handleSubmitBill}>
 							{/* Employee (account_id) Select */}
 							{/* <div className="mt-4">
