@@ -546,22 +546,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 							<tr className="hover truncate" key={item.id}>
 								<td>{index + 1 + currentPage * limit}</td>
 								<td>{item.employee.full_name}</td>
-
+								<td>{item?.type}</td>
 								<td>{item.start_date.split('T')[0]}</td>
 								<td>{item.description}</td>
-								<td>
-									{/* <div
-										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											// item.data.tipe === 'Izin'
-											'bg-[#8ef96ac2] text-[#3d6b2e]'
-											// : item.data.tipe === 'Cuti'
-											// ? 'bg-[#f96a6a] text-[#6b2e2e]'
-											// : ''
-										}`}
-									> */}
-									{capitalizeFirstLetter(item.type)}
-									{/* </div> */}
-								</td>
 								<td>
 									{/* <div
 										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
