@@ -200,8 +200,11 @@ const DetailRekapPage: React.FC = () => {
 										<div className="avatar mx-auto">
 											<div className="m-auto h-40 w-40 rounded-full">
 												<img
-													alt="Tailwind CSS Navbar component"
-													src="https://korpri.padang.go.id/assets/img/dewan_pengurus/no-pict.jpg"
+													src={
+														employee?.employee?.user?.avatar
+															? `https://api-hrd.curaweda.com/stg-server1/${employee?.employee?.user?.avatar}`
+															: 'https://korpri.padang.go.id/assets/img/dewan_pengurus/no-pict.jpg'
+													}
 												/>
 											</div>
 										</div>

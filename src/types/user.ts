@@ -5,6 +5,7 @@ export type TuserSession = {
 	role_id?: number | null;
 	access_token?: string | null;
 	employee_id: any | null;
+	is_asessor: any | null;
 };
 
 export type Tuser = TbaseEntity & {
@@ -19,5 +20,6 @@ export type Tuser = TbaseEntity & {
 	avatar?: string | null;
 	employee: {
 		id: any;
+		is_asessor: any;
 	};
 };

@@ -199,7 +199,9 @@ const DetailProfilKaryawanPage = () => {
 								<div className="flex flex-col gap-1">
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Jenis Kelamin</div>
-										<div className="text-sm font-bold">{fetch?.gender === 'L' ? 'Laki-Laki' : 'Perempuan'}</div>
+										<div className="text-sm font-bold">
+											{fetch?.gender != null ? (fetch?.gender == 'L' ? 'Laki-laki' : 'Perempuan') : 'Tidak Tersedia'}
+										</div>
 									</div>
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Agama</div>

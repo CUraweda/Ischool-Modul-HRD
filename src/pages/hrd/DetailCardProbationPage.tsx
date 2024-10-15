@@ -91,6 +91,7 @@ const DetailCardProbationPage = () => {
 				title: 'Sukses',
 				text: 'Applicant berhasil diakhiri',
 			});
+			FetchData();
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
@@ -110,6 +111,7 @@ const DetailCardProbationPage = () => {
 				title: 'Sukses',
 				text: 'Applicant berhasil dikontrak',
 			});
+			FetchData();
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
