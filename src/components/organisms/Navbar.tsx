@@ -9,23 +9,27 @@ const Navbar = () => {
 	const dispatch = useAppDispatch();
 	const [isLogin, setLogin] = useState<boolean>(false);
 
-	useEffect(() => {
-		const accessToken = sessionStorage.getItem('access_token');
-		const role = sessionStorage.getItem('role_id');
-
-		if (accessToken || role) {
-			setLogin(true);
-		}
-	}, []);
-
 	const logout = () => {
 		console.log('Logging out...');
 		sessionStorage.clear();
 		localStorage.clear();
 		dispatch(clearUser());
-		window.location.reload();
 		navigate('/', { replace: true });
 	};
+
+	useEffect(() => {
+		// Mengecek access_token hanya sekali ketika komponen pertama kali di-mount
+		const accessToken = sessionStorage.getItem('access_token');
+		const role = sessionStorage.getItem('role_id');
+
+		// Jika tidak ada token atau role, logout hanya sekali
+		if (!accessToken || !role) {
+			logout(); // Logout hanya sekali
+		} else {
+			setLogin(true); // Jika ada token, maka login
+		}
+		// Kosongkan dependency array agar useEffect hanya dijalankan sekali
+	}, []);
 
 	return (
 		<div>
@@ -42,10 +46,7 @@ const Navbar = () => {
 					<div className={`dropdown dropdown-end ${isLogin ? '' : 'hidden'}`}>
 						<div tabIndex={0} role="button" className="avatar btn btn-circle btn-ghost">
 							<div className="w-10 rounded-full">
-								<img
-									alt="Tailwind CSS Navbar component"
-									src="https://korpri.padang.go.id/assets/img/dewan_pengurus/no-pict.jpg"
-								/>
+								<img alt="Avatar" src="https://korpri.padang.go.id/assets/img/dewan_pengurus/no-pict.jpg" />
 							</div>
 						</div>
 						<ul

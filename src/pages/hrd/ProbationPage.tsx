@@ -9,7 +9,7 @@ function formatStartDate(startDate: any, endDate: any) {
 	const endDateObj = new Date(endDate);
 
 	if (startDateObj.getMonth() === endDateObj.getMonth() && startDateObj.getFullYear() === endDateObj.getFullYear()) {
-		return `${startDateObj.getDate()}`;
+		return `${startDateObj.getDate()} ${startDateObj.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
 	}
 
 	return startDateObj.toLocaleDateString('id-ID', options);

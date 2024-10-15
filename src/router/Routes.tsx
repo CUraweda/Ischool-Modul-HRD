@@ -45,7 +45,17 @@ import PageDivisi from '@/pages/hrd/PageDivisi';
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
-			<Suspense fallback={<div>Loading...</div>}>
+			<Suspense
+				fallback={
+					<div className="flex min-h-screen items-center justify-center bg-gray-100">
+						<div className="flex items-center space-x-2">
+							<div className="h-8 w-8 animate-bounce rounded-full bg-blue-500"></div>
+							<div className="h-8 w-8 animate-bounce rounded-full bg-green-500 delay-200"></div>
+							<div className="delay-400 h-8 w-8 animate-bounce rounded-full bg-red-500"></div>
+						</div>
+					</div>
+				}
+			>
 				<Routes>
 					<Route element={<PublicLayout />}>
 						<Route path="/" element={<FormPage />} />
