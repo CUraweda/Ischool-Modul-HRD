@@ -71,7 +71,7 @@ const DaftarPenilaianPage = () => {
 		setSelectedKaryawan(item.employee.id);
 		setJudulKegiatan(item.name);
 		setDeskripsiKegiatan(item.description);
-		setTenggatWaktu(item.due_date);
+		setTenggatWaktu(item.due_date.split('T')[0]);
 		setPrioritas(item.priority_label);
 		setEditMode(true);
 		setEditId(item.id);
