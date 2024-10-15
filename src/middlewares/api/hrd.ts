@@ -868,7 +868,7 @@ const Penggajian = {
 			},
 		}),
 	createAccount: (token: string | null, data: any): AxiosPromise<any> =>
-		instance.post(`/employee-account/create`, data, {
+		instance.post(`/employee-account/create-monthly`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
