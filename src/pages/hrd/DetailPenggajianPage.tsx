@@ -110,22 +110,19 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		try {
 			const res = await Penggajian.createAccount(access_token, data);
 			setSalary(res.data.data.result);
-			if (res.status === 201) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Success',
-					text: 'Data berhasil ditambahkan',
-				});
-				fetchData();
-				resetForm();
-			} else {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Terjadi kesalahan saat ditambahkan.',
-				});
-			}
+			Swal.fire({
+				icon: 'success',
+				title: 'Success',
+				text: 'Data berhasil ditambahkan',
+			});
+			fetchData();
+			resetForm();
 		} catch (err) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Terjadi kesalahan saat ditambahkan.',
+			});
 			console.error(err);
 		}
 	};
@@ -518,7 +515,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 										<div
 											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
 										>
-											{item.status}
+											{item.status ? item.status : 'Menunggu'}
 										</div>
 									</td>
 									{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
