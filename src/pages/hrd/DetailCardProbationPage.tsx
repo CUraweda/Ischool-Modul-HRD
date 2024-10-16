@@ -49,17 +49,29 @@ const DetailCardProbationPage = () => {
 		const end = new Date(endDate);
 		const now = new Date();
 
-		const durationMonths = Math.ceil(
-			(end.getFullYear() - start.getFullYear()) * 12 + end.getMonth() - start.getMonth() + 1
-		);
+		const probationNotStarted = start > now;
+
+		let totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+		let remainingDays = end.getDate() - start.getDate();
+
+		if (remainingDays < 0) {
+			totalMonths -= 1;
+			const previousMonth = new Date(end.getFullYear(), end.getMonth(), 0).getDate(); // Jumlah hari di bulan sebelumnya
+			remainingDays += previousMonth;
+		}
+
 		const remainingTimeInMillis = end.getTime() - now.getTime();
-		const remainingDays = Math.ceil(remainingTimeInMillis / (1000 * 60 * 60 * 24));
+		const remainingDaysUntilEnd = Math.ceil(remainingTimeInMillis / (1000 * 60 * 60 * 24));
 
 		setInternshipDetails({
 			startDate: start.toLocaleDateString(),
 			endDate: end.toLocaleDateString(),
-			duration: `${durationMonths} Bulan`,
-			remainingTime: `${Math.floor(remainingDays / 30)} Bulan ${remainingDays % 30} Hari`,
+			duration: totalMonths > 0 ? `${totalMonths} Bulan ${remainingDays} Hari` : `${remainingDays} Hari`,
+			remainingTime: probationNotStarted
+				? 'Probation belum dimulai'
+				: remainingDaysUntilEnd > 0
+					? `${remainingDaysUntilEnd} Hari`
+					: 'Magang telah selesai',
 		});
 	};
 
@@ -79,6 +91,7 @@ const DetailCardProbationPage = () => {
 				title: 'Sukses',
 				text: 'Applicant berhasil diakhiri',
 			});
+			FetchData();
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
@@ -98,6 +111,7 @@ const DetailCardProbationPage = () => {
 				title: 'Sukses',
 				text: 'Applicant berhasil dikontrak',
 			});
+			FetchData();
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;

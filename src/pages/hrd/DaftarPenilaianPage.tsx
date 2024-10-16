@@ -71,7 +71,7 @@ const DaftarPenilaianPage = () => {
 		setSelectedKaryawan(item.employee.id);
 		setJudulKegiatan(item.name);
 		setDeskripsiKegiatan(item.description);
-		setTenggatWaktu(item.due_date);
+		setTenggatWaktu(item.due_date.split('T')[0]);
 		setPrioritas(item.priority_label);
 		setEditMode(true);
 		setEditId(item.id);
@@ -89,6 +89,7 @@ const DaftarPenilaianPage = () => {
 				title: 'Sukses',
 				text: 'Penilaian berhasil diubah',
 			});
+			closeModal('editGrade');
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
@@ -97,6 +98,8 @@ const DaftarPenilaianPage = () => {
 				title: 'Error',
 				text: message,
 			});
+
+			closeModal('editGrade');
 		}
 	};
 

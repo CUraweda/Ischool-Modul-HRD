@@ -10,6 +10,8 @@ import { GoTasklist, GoPeople } from 'react-icons/go';
 import { MdOutlineDateRange } from 'react-icons/md';
 import { BsDiagram3Fill } from 'react-icons/bs';
 import { MdOutlineGrade } from 'react-icons/md';
+import { FaFile } from 'react-icons/fa';
+import { FaListCheck } from 'react-icons/fa6';
 import {
 	AiOutlineBook,
 	AiOutlineTeam,
@@ -49,5 +51,6 @@ export const iconMapping: { [key: string]: JSX.Element } = {
 	'<IoChatbubbleEllipsesOutline />': <IoChatbubbleEllipsesOutline />,
 	'<BsDiagram3Fill />': <BsDiagram3Fill />,
 	'<MdOutlineGrade />': <MdOutlineGrade />,
-	// tambahkan pemetaan untuk ikon lainnya di sini
+	'<FaFile />': <FaFile />,
+	'<FaListCheck />': <FaListCheck />,
 };

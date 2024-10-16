@@ -56,7 +56,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		employee_id: 0,
 		month_id: 1,
 		year: currentYear,
-		uid: '',
 		temp_total: 0,
 		fixed_salary: 0,
 		variable_salary: 0,
@@ -69,7 +68,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			employee_id: 0,
 			month_id: 0,
 			year: 0,
-			uid: '',
 			temp_total: 0,
 			fixed_salary: 0,
 			variable_salary: 0,
@@ -112,22 +110,19 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		try {
 			const res = await Penggajian.createAccount(access_token, data);
 			setSalary(res.data.data.result);
-			if (res.status === 201) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Success',
-					text: 'Data berhasil ditambahkan',
-				});
-				fetchData();
-				resetForm();
-			} else {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Terjadi kesalahan saat ditambahkan.',
-				});
-			}
+			Swal.fire({
+				icon: 'success',
+				title: 'Success',
+				text: 'Data berhasil ditambahkan',
+			});
+			fetchData();
+			resetForm();
 		} catch (err) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Terjadi kesalahan saat ditambahkan.',
+			});
 			console.error(err);
 		}
 	};
@@ -177,11 +172,11 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 					newFormData.fixed_salary = selectedSalary.fixed_salary;
 					newFormData.employee_id = selectedSalary.employee.id;
 					newFormData.temp_total = selectedSalary.fixed_salary;
-					const year = prevFormData.year;
-					const month = prevFormData.month_id;
-					const firstName = selectedSalary.employee.full_name.split(' ')[0];
-					const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
-					newFormData.uid = uid;
+					// const year = prevFormData.year;
+					// const month = prevFormData.month_id;
+					// const firstName = selectedSalary.employee.full_name.split(' ')[0];
+					// const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
+					// newFormData.uid = uid;
 				}
 			}
 			// Recalculate temp_total when relevant fields change
@@ -520,7 +515,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 										<div
 											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
 										>
-											{item.status}
+											{item.status ? item.status : 'Menunggu'}
 										</div>
 									</td>
 									{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>

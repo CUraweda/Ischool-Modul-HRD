@@ -6,6 +6,7 @@ const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignUpPage'));
 const HrdLayout = lazy(() => import('@/components/layouts/HrdLayout'));
 const PublicLayout = lazy(() => import('@/pages/public/PublicLayout'));
+const DefaultLayout = lazy(() => import('../pages/DefaultLayout'));
 const AuthLayout = lazy(() => import('@/pages/auth/AuthLayout'));
 const ForbiddenPage = lazy(() => import('@/pages/ForbiddenPage'));
 const DashboardPage = lazy(() => import('../pages/hrd/DashboardPage'));
@@ -44,7 +45,17 @@ import PageDivisi from '@/pages/hrd/PageDivisi';
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
-			<Suspense fallback={<div>Loading...</div>}>
+			<Suspense
+				fallback={
+					<div className="flex min-h-screen items-center justify-center bg-gray-100">
+						<div className="flex items-center space-x-2">
+							<div className="h-8 w-8 animate-bounce rounded-full bg-blue-500"></div>
+							<div className="h-8 w-8 animate-bounce rounded-full bg-green-500 delay-200"></div>
+							<div className="delay-400 h-8 w-8 animate-bounce rounded-full bg-red-500"></div>
+						</div>
+					</div>
+				}
+			>
 				<Routes>
 					<Route element={<PublicLayout />}>
 						<Route path="/" element={<FormPage />} />
@@ -111,7 +122,7 @@ const AppRoutes: React.FC = () => {
 					</Route>
 
 					<Route element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]} />}>
-						<Route element={<PublicLayout />}>
+						<Route element={<DefaultLayout />}>
 							<Route path="default" element={<DefaultPage />} />
 							<Route path="default/daftar-penilaian" element={<PublicPenilaian />} />
 						</Route>

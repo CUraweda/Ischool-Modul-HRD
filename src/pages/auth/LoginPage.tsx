@@ -34,6 +34,7 @@ const LoginPage: React.FC = () => {
 					const userData = res.data.data;
 					const accessToken = res.data.tokens.access.token;
 					const employee_id = res.data.data.employee?.id;
+					const is_asessor = res.data.data.employee?.is_asessor;
 
 					dispatch(setUser(userData));
 					dispatch(
@@ -42,6 +43,7 @@ const LoginPage: React.FC = () => {
 							role_id: userData.role_id,
 							full_name: userData.full_name,
 							employee_id: userData.employee?.id,
+							is_asessor: is_asessor,
 						})
 					);
 
@@ -49,6 +51,7 @@ const LoginPage: React.FC = () => {
 					setSessionStorageItem('role_id', userData.role_id);
 					setSessionStorageItem('id', userData.id);
 					setSessionStorageItem('employee_id', employee_id);
+					setSessionStorageItem('is_asessor', is_asessor);
 
 					const role_id = sessionStorage.getItem('role_id');
 
@@ -64,7 +67,7 @@ const LoginPage: React.FC = () => {
 							break;
 					}
 
-					window.location.reload();
+					// window.location.reload();
 
 					// if (role_id == '5') {
 					// 	navigate('/hrd/dashboard');

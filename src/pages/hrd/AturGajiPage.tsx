@@ -31,7 +31,7 @@ const AturGajiPage = () => {
 		status: '',
 	});
 	const [formData, setFormData] = useState({
-		account_id: dataUpdateSalary?.employee.id ?? 0,
+		employee_id: dataUpdateSalary?.employee_id ?? 0,
 		fixed_salary: dataUpdateSalary?.fixed_salary ?? 0,
 		is_active: dataUpdateSalary?.is_active ?? true,
 	});
@@ -262,7 +262,7 @@ const AturGajiPage = () => {
 	useEffect(() => {
 		if (dataUpdateSalary) {
 			setFormData({
-				account_id: dataUpdateSalary.account.id,
+				employee_id: dataUpdateSalary.employee_id,
 				fixed_salary: dataUpdateSalary.fixed_salary,
 				is_active: dataUpdateSalary.is_active,
 			});
@@ -315,7 +315,7 @@ const AturGajiPage = () => {
 
 	const resetDataSalary = () => {
 		setFormData({
-			account_id: 0,
+			employee_id: 0,
 			fixed_salary: 0,
 			is_active: true,
 		});
@@ -346,24 +346,26 @@ const AturGajiPage = () => {
 						>
 							<IoMdClose size={20} />
 						</button>
-						<h3 className="text-lg font-bold">Tambah Gaji Karyawan</h3>
+						<h3 className="text-lg font-bold">
+							{typeSalaryModal == 'edit' ? 'Edit Data Penggajian' : 'Tambah Data Penggajian'}
+						</h3>
 						<form onSubmit={handleSubmit}>
 							<div className="mt-4">
 								<label className="label">
 									<span className="label-text">Employee</span>
 								</label>
 								<select
-									name="account_id"
-									value={formData.account_id}
+									name="employee_id"
+									value={formData.employee_id}
 									onChange={handleInputChange}
 									className="select select-bordered w-full"
 									required
 								>
-									<option value="" disabled>
+									<option value={0} disabled>
 										Pilih Karyawan
 									</option>
-									{dataEmployee.map((employee) => (
-										<option key={employee.id} value={employee.id}>
+									{dataEmployee.map((employee, index) => (
+										<option key={index} value={employee.id}>
 											{employee.full_name}
 										</option>
 									))}
@@ -414,7 +416,9 @@ const AturGajiPage = () => {
 						>
 							<IoMdClose size={20} />
 						</button>
-						<h3 className="text-lg font-bold">Tambah Gaji Karyawan</h3>
+						<h3 className="text-lg font-bold">
+							{typeBillModal == 'edit' ? 'Edit Data Penggajian' : 'Tambah Data Penggajian'}
+						</h3>
 						<form onSubmit={handleSubmitBill}>
 							{/* Employee (account_id) Select */}
 							{/* <div className="mt-4">
@@ -444,6 +448,7 @@ const AturGajiPage = () => {
 								<select
 									name="account_id"
 									onChange={handleInputChangeBill}
+									value={formDataBill.account_id}
 									className="select select-bordered w-full"
 									required
 								>
@@ -564,7 +569,7 @@ const AturGajiPage = () => {
 													onClick={() => {
 														handleSalary();
 														setTypeSalaryModal('edit');
-														setUpdateDataSalary(s); // Set the data for editing
+														setUpdateDataSalary(s);
 													}}
 												>
 													<FaRegEdit />

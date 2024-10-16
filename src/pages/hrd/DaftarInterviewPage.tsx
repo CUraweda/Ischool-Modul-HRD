@@ -157,7 +157,11 @@ const DaftarInterviewPage = () => {
 												<div className="avatar">
 													<div className="mask mask-squircle h-12 w-12">
 														<img
-															src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+															src={
+																item?.file_path
+																	? `https://api-hrd.curaweda.com/stg-server1/${item.file_path}`
+																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
+															}
 															alt="Avatar Tailwind CSS Component"
 														/>
 													</div>
