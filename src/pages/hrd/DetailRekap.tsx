@@ -4,7 +4,7 @@ import ApexCharts from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import { FaCircleMinus } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
-import { EmployeeJobdesk, Karyawan } from '@/middlewares/api';
+import { EmployeeJobdesk, Karyawan, DownloadFile } from '@/middlewares/api';
 import { useEffect, useState } from 'react';
 import { Formik, Field } from 'formik';
 
@@ -15,6 +15,8 @@ const DetailRekapPage: React.FC = () => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [jobdeskList, setJobdeskList] = useState<any[]>([]);
 	const [doneJobdesk, setDoneJobdesk] = useState<any[]>([]);
+	const [avatar, setAvatar] = useState('');
+	const [profile, setProfile] = useState('');
 	// const [ListEmployee, setListEmployee] = useState<any>(null);
 	const getDifference = async () => {
 		try {
@@ -30,6 +32,18 @@ const DetailRekapPage: React.FC = () => {
 
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
+	const DownloadAvatar = async () => {
+		try {
+			const res = await DownloadFile.DownloadSade(access_token, avatar);
+			const blob = new Blob([res.data], { type: 'image/jpeg' });
+
+			const blobUrl = window.URL.createObjectURL(blob);
+			setProfile(blobUrl);
+		} catch (error) {
+			console.error;
+		}
+	};
+
 	const createJobdesk = async (values: any) => {
 		try {
 			const res = await EmployeeJobdesk.createJobdesk(values);
@@ -40,21 +54,22 @@ const DetailRekapPage: React.FC = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			// const res = await Employee.getAllEmployee(1000000000, '', access_token);
 			const jobdesk = await Karyawan.JobdeskList(access_token, employee.employee_id, 0);
 			setJobdeskList(jobdesk.data.data.result);
+			setAvatar(jobdesk.data.data.result[0].employee.user.avatar);
+			console.log(jobdesk.data.data.result[0].employee.user.avatar);
 			const done = await Karyawan.JobdeskList(access_token, employee.employee_id, 1);
 			setDoneJobdesk(done.data.data.result);
-			// console.log(res.data.data.result);
-			// setListEmployee(res.data.data.result);
 		} catch (err) {
 			console.error(err);
 		}
 	};
+
 	useEffect(() => {
 		getDifference();
 		getEmployee();
-	}, []);
+		DownloadAvatar();
+	}, [avatar]);
 	const performanceData = {
 		series: [Performance?.todayPerformance ?? 0, Performance?.yesterdayPerformance ?? 0],
 		options: {
@@ -199,13 +214,7 @@ const DetailRekapPage: React.FC = () => {
 									<div className="flex w-full items-center justify-center md:w-1/3 xl:w-1/4">
 										<div className="avatar mx-auto">
 											<div className="m-auto h-40 w-40 rounded-full">
-												<img
-													src={
-														employee?.employee?.user?.avatar
-															? `https://api-hrd.curaweda.com/stg-server1/${employee?.employee?.user?.avatar}`
-															: 'https://korpri.padang.go.id/assets/img/dewan_pengurus/no-pict.jpg'
-													}
-												/>
+												<img src={profile} />
 											</div>
 										</div>
 									</div>

@@ -954,6 +954,14 @@ const DownloadFile = {
 				Authorization: `Bearer ${access_token}`,
 			},
 		}),
+	DownloadSade: (access_token: string | null, file_path: string): AxiosPromise =>
+		apics({
+			method: `GET`,
+			url: `student-task/download?filepath=${file_path}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
 };
 
 export {
