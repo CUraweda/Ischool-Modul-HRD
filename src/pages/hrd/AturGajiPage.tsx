@@ -118,7 +118,7 @@ const AturGajiPage = () => {
 	};
 	const getTypes = async () => {
 		try {
-			const res = await Bill.getAllTypes(0, 0);
+			const res = await Bill.getAllTypes(0, 10000);
 			setTypes(res.data.data.result);
 		} catch (err) {
 			console.error(err);

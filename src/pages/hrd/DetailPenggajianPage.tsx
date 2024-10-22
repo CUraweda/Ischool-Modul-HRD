@@ -546,9 +546,8 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							<tr>
 								<th colSpan={6}>Total Jumlah</th>
 								<th>
-									{' '}
 									{dataPenggajian
-										.reduce((total, item) => total + (item.fixed_salary || 0), 0)
+										.reduce((total, item) => total + (item.temp_total || 0), 0)
 										.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
 								</th>
 							</tr>
