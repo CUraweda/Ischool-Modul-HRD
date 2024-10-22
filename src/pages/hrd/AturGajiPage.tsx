@@ -151,7 +151,6 @@ const AturGajiPage = () => {
 		const { name, type, value } = e.target as HTMLInputElement | HTMLSelectElement;
 
 		if (type === 'checkbox') {
-			// Type assertion to HTMLInputElement
 			const target = e.target as HTMLInputElement;
 			setFormData((prev) => ({
 				...prev,
@@ -300,10 +299,11 @@ const AturGajiPage = () => {
 				account_id: dataUpdateBill?.id ?? 0,
 				type_id: dataUpdateBill?.type_id ?? 0,
 				description: dataUpdateBill?.description ?? '',
-				amount: dataUpdateBill?.description ?? 0,
+				amount: dataUpdateBill?.amount ?? 0,
 			});
 		}
 	}, [dataUpdateBill]);
+
 	const resetDataBill = () => {
 		setFormDataBill({
 			account_id: 0,
@@ -321,11 +321,6 @@ const AturGajiPage = () => {
 		});
 	};
 
-	// const getAccountNameById = (id: number) => {
-	// 	const account = dataAccount.find((acc) => acc.id == id);
-	// 	return account ? account.employee.full_name : 'Unknown';
-	// };
-
 	const getTypeNameById = (id: number) => {
 		const type = DataTypes.find((t) => t.id === id);
 		return type ? type.name : 'Unknown';
@@ -341,7 +336,7 @@ const AturGajiPage = () => {
 						<button
 							className="absolute right-2 top-2"
 							onClick={() => {
-								setModalSalary(false), resetDataSalary();
+								setModalSalary(false);
 							}}
 						>
 							<IoMdClose size={20} />
@@ -411,7 +406,7 @@ const AturGajiPage = () => {
 						<button
 							className="absolute right-2 top-2"
 							onClick={() => {
-								setModalBill(false), resetDataBill();
+								setModalBill(false);
 							}}
 						>
 							<IoMdClose size={20} />
@@ -533,7 +528,7 @@ const AturGajiPage = () => {
 								<button
 									className="btn btn-primary btn-xs"
 									onClick={() => {
-										handleSalary(), setTypeSalaryModal('create');
+										handleSalary(), setTypeSalaryModal('create'), resetDataSalary();
 									}}
 								>
 									Tambah
@@ -656,7 +651,7 @@ const AturGajiPage = () => {
 								<button
 									className="btn btn-primary btn-xs"
 									onClick={() => {
-										setModalBill(true), setTypeBillModal('create');
+										setModalBill(true), setTypeBillModal('create'), resetDataBill();
 									}}
 								>
 									Tambah
@@ -720,7 +715,7 @@ const AturGajiPage = () => {
 								<button
 									className="btn join-item btn-sm"
 									onClick={() => setFilterBill((prev) => ({ ...prev, page: prev.page + 1 }))}
-									disabled={filterBill.page + 1 >= filterBill.totalPage} // Disable jika halaman terakhir
+									disabled={filterBill.page + 1 >= filterBill.totalPage}
 								>
 									Next
 								</button>

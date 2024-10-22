@@ -106,24 +106,27 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			console.error(err);
 		}
 	};
-	const createAccount = async (data: any) => {
+	const createAccount = async () => {
 		try {
-			const res = await Penggajian.createAccount(access_token, data);
+			const res = await Penggajian.createAccount(access_token, {});
+			console.log(res.statusText);
 			setSalary(res.data.data.result);
+
+			fetchData();
+			resetForm();
 			Swal.fire({
 				icon: 'success',
 				title: 'Success',
 				text: 'Data berhasil ditambahkan',
 			});
-			fetchData();
-			resetForm();
-		} catch (err) {
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
 			Swal.fire({
 				icon: 'error',
-				title: 'Oops...',
-				text: 'Terjadi kesalahan saat ditambahkan.',
+				title: 'Error',
+				text: message,
 			});
-			console.error(err);
 		}
 	};
 	const getOne = async (id: any) => {
@@ -289,7 +292,8 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 	};
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		createAccount(formData);
+		createAccount();
+		fetchData();
 		console.log('Submitted Data: ', formData);
 		// Logic untuk mengirim data
 		setModalAdd(false); // Tutup modal setelah submit
@@ -483,8 +487,8 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 						<button className="btn btn-outline btn-primary" onClick={() => exportToXLSX()}>
 							Export ke excel
 						</button>
-						<button onClick={() => setModalAdd(true)} className="btn btn-outline btn-primary">
-							Tambah
+						<button onClick={createAccount} className="btn btn-outline btn-primary">
+							Generate Bulan Ini
 						</button>
 					</div>
 				</div>
