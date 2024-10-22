@@ -34,7 +34,7 @@ const RekrutmenPage = () => {
 	const [division, setDivision] = useState<number>(0);
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
-	const [maxApplicant, setMaxApplicant] = useState<number>();
+	// const [maxApplicant, setMaxApplicant] = useState<number>();
 	const [academic, setAcademic] = useState('');
 	const [note, setNote] = useState('');
 	const [fulltime, setFulltime] = useState<boolean>(false);
@@ -85,7 +85,7 @@ const RekrutmenPage = () => {
 			division_id: division,
 			start_date: startDate,
 			end_date: endDate,
-			max_applicant: maxApplicant,
+			// max_applicant: maxApplicant,
 			min_academic: academic,
 			notes: note,
 			details: statusData,
@@ -304,7 +304,7 @@ const RekrutmenPage = () => {
 								</div>
 							</div> */}
 
-							<div className="flex items-center gap-2">
+							{/* <div className="flex items-center gap-2">
 								<div
 									className="radial-progress text-xs text-primary"
 									style={
@@ -320,7 +320,7 @@ const RekrutmenPage = () => {
 								<div className="text-xs">
 									<span className="font-bold">{item.applicant_count}</span>/{item.max_applicant} Pendaftar
 								</div>
-							</div>
+							</div> */}
 
 							<div>
 								<div className="text-xs">Status Penerimaan</div>
@@ -476,7 +476,7 @@ const RekrutmenPage = () => {
 							/>
 						</div>
 
-						<div>
+						{/* <div>
 							<label className="mb-1 block text-sm font-medium text-gray-700">Pendaftar yang Dibutuhkan</label>
 							<input
 								type="number"
@@ -484,7 +484,7 @@ const RekrutmenPage = () => {
 								placeholder="Masukkan jumlah pendaftar"
 								onChange={(e) => setMaxApplicant(parseInt(e.target.value))}
 							/>
-						</div>
+						</div> */}
 
 						<div className="col-span-2">
 							<label className="mb-1 block text-sm font-medium text-gray-700">Jenjang Pendidikan</label>
