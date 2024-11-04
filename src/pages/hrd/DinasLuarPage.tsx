@@ -31,6 +31,10 @@ const DinasLuarPage: React.FC<{}> = () => {
 	];
 	const [selectedItemEmployee, setSelectedItemEmployee] = useState<string[]>([]);
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const handleCheckType = (value: string, category: 'Type' | 'Status') => {
 		if (category === 'Type') {
 			setFilterType((prev) => {
@@ -52,7 +56,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 	};
 	const getAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(100000, search_query);
+			const response = await Employee.getAllEmployee(100000, search_query, access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -78,7 +82,8 @@ const DinasLuarPage: React.FC<{}> = () => {
 				filterStatus,
 				searchQuery,
 				filterDivision,
-				filterDate
+				filterDate,
+				access_token
 			);
 			setDataAttendance(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
@@ -89,7 +94,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {
@@ -321,7 +326,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
-								<td>{item.employee.division || '-'}</td>
+								<td>{item?.employee?.division?.name}</td>
 								<td>{item.employee.full_name}</td>
 								<td>{item.createdAt.split('T')[0]}</td>
 								<td>{item.createdAt.split('T')[1].split('.')[0]}</td>

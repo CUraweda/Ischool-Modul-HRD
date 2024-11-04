@@ -44,7 +44,11 @@ interface Employee {
 	division_id: number | null;
 	createdAt: string;
 	updatedAt: string;
-	division: string | null;
+	division: {
+		id: number;
+		name: string;
+		color: string;
+	};
 }
 
 interface Attendance {
@@ -62,8 +66,8 @@ interface Attendance {
 }
 
 const PresensiPage: React.FC = () => {
-	const [filterType, setFilterType] = useState<string[]>([]);
-	const [filterStatus, setFilterStatus] = useState<string[]>([]);
+	const [filterType, setFilterType] = useState<any[]>([]);
+	const [filterStatus, setFilterStatus] = useState<any[]>([]);
 	const [filterDivision, setFilterDivision] = useState<string>('');
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [searchQuery, setSearchQuery] = useState<string>('');
@@ -73,7 +77,7 @@ const PresensiPage: React.FC = () => {
 	const [totalRows, setTotalRows] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
-	const [selectedItem, setSelectedItem] = useState<string[]>([]);
+	const [selectedItem, setSelectedItem] = useState<any[]>([]);
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Masuk' },
 		{ id: 2, category: 'Type', value: 'Keluar' },
@@ -82,6 +86,10 @@ const PresensiPage: React.FC = () => {
 		{ id: 5, category: 'Status', value: 'Diluar Jadwal' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 	const fetchAttendanceData = async () => {
 		try {
 			const result = await Attendance.getEmployeeAttendance(
@@ -91,7 +99,8 @@ const PresensiPage: React.FC = () => {
 				filterStatus,
 				searchQuery,
 				filterDivision,
-				filterDate
+				filterDate,
+				access_token
 			);
 			setAttendanceData(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
@@ -105,7 +114,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {
@@ -121,7 +130,7 @@ const PresensiPage: React.FC = () => {
 	};
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(0, '');
+			const response = await Employee.getAllEmployee(1000000000000, '', access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -137,6 +146,22 @@ const PresensiPage: React.FC = () => {
 			console.error(err);
 		}
 	};
+	const DeleteAttendance = async (id: number) => {
+		try {
+			const response = await Attendance.deleteAttendance(id);
+			fetchAttendanceData();
+			if (response.status === 200) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil',
+					text: 'Berhasil dihapus!',
+				});
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	// const filterData = attendanceData.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true));
 	const handleCheckType = (value: string, category: 'Type' | 'Status') => {
 		if (category === 'Type') {
@@ -277,16 +302,19 @@ const PresensiPage: React.FC = () => {
 							>
 								<MdPeopleAlt /> Karyawan
 							</div>
-							<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
+							<ul
+								tabIndex={0}
+								className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-auto rounded-box bg-base-100 p-2 shadow"
+							>
 								<div className="checkbox-group">
 									{dataEmployee.map((employee) => (
 										<label key={employee.id} className="flex items-center space-x-2">
 											<input
 												type="checkbox"
-												checked={selectedItem.includes(employee.full_name)}
-												onChange={() => handleCheckboxChange(employee.full_name)}
+												checked={selectedItem.includes(employee?.full_name)}
+												onChange={() => handleCheckboxChange(employee?.full_name)}
 											/>
-											<span>{employee.full_name}</span>
+											<span>{employee?.full_name || 'Unknown'}</span>
 										</label>
 									))}
 								</div>
@@ -377,11 +405,11 @@ const PresensiPage: React.FC = () => {
 						{filterData.map((item, index) => (
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
-								<td>{item.employee.division}</td>
-								<td>{item.employee.full_name}</td>
-								<td>{item.createdAt.split('T')[0]}</td>
-								<td>{item.createdAt.split('T')[1].split('.')[0]}</td>
-								<td className="w-5 truncate text-ellipsis">{item.description}</td>
+								<td>{item?.employee?.division?.name}</td>
+								<td>{item?.employee?.full_name}</td>
+								<td>{item?.createdAt.split('T')[0]}</td>
+								<td>{item?.createdAt.split('T')[1].split('.')[0]}</td>
+								<td className="w-5 truncate text-ellipsis">{item?.description}</td>
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
@@ -394,21 +422,24 @@ const PresensiPage: React.FC = () => {
 														: ''
 										}`}
 									>
-										{item.status}
+										{item?.status}
 									</div>
 								</td>
 								<td>
 									<div
 										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											item.worktime.type === 'MASUK' || 'MASUK'
+											item?.worktime?.type === 'MASUK' || 'MASUK'
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
 												: item.worktime.type === 'Keluar' || 'KELUAR'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
 													: ''
 										}`}
 									>
-										{item.worktime.type.charAt(0).toUpperCase() + item.worktime.type.slice(1).toLowerCase()}
+										{item?.worktime?.type.charAt(0).toUpperCase() + item?.worktime?.type.slice(1).toLowerCase()}
 									</div>
+								</td>
+								<td>
+									<button onClick={() => DeleteAttendance(item.id)}>Delete</button>
 								</td>
 							</tr>
 						))}

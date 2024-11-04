@@ -33,6 +33,8 @@ const LoginPage: React.FC = () => {
 				if (res.status === 200 && res.data.data) {
 					const userData = res.data.data;
 					const accessToken = res.data.tokens.access.token;
+					const employee_id = res.data.data.employee?.id;
+					const is_asessor = res.data.data.employee?.is_asessor;
 
 					dispatch(setUser(userData));
 					dispatch(
@@ -40,20 +42,42 @@ const LoginPage: React.FC = () => {
 							access_token: accessToken,
 							role_id: userData.role_id,
 							full_name: userData.full_name,
+							employee_id: userData.employee?.id,
+							is_asessor: is_asessor,
 						})
 					);
 
 					setSessionStorageItem('access_token', accessToken);
 					setSessionStorageItem('role_id', userData.role_id);
 					setSessionStorageItem('id', userData.id);
+					setSessionStorageItem('employee_id', employee_id);
+					setSessionStorageItem('is_asessor', is_asessor);
 
 					const role_id = sessionStorage.getItem('role_id');
 
-					role_id == '5'
-						? navigate('/hrd/dashboard')
-						: role_id == '12'
-							? navigate('/public/career')
-							: toast.warn('anda tidak memiliki akses');
+					switch (role_id) {
+						case '5':
+							navigate('/hrd/dashboard');
+							break;
+						case '11':
+							navigate('/');
+							break;
+						default:
+							userData.employee ? navigate('/default') : toast.warn('anda tidak memiliki akses');
+							break;
+					}
+
+					// window.location.reload();
+
+					// if (role_id == '5') {
+					// 	navigate('/hrd/dashboard');
+					// } else if (role_id == '11') {
+					// 	navigate('/');
+					// } else if (id_employee != null) {
+					// 	navigate('/default');
+					// } else {
+					// 	toast.warn('anda tidak memiliki akses');
+					// }
 				}
 			} catch (error) {
 				console.error('Login error:', error);

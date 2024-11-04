@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useNavigate } from 'react-router-dom';
 import { Rekrutmen } from '@/middlewares/api';
+import Swal from 'sweetalert2';
 
 function formatDateRange(startDate: any, endDate: any) {
 	const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -9,7 +10,6 @@ function formatDateRange(startDate: any, endDate: any) {
 	const start = new Date(startDate).toLocaleDateString('id-ID', options);
 	const end = new Date(endDate).toLocaleDateString('id-ID', options);
 
-	// Jika bulan dan tahun sama, hanya tampilkan tanggal akhir berbeda
 	const startDateObj = new Date(startDate);
 	const endDateObj = new Date(endDate);
 
@@ -24,6 +24,7 @@ const RekrutmenPage = () => {
 	const [dataRekrutmen, setDataRekrutmen] = useState<any[]>([]);
 	const [dropdownDivision, setDropdownDivision] = useState<any[]>([]);
 	const [search, setSearch] = useState('');
+	const [divisionId, setDivisionId] = useState('');
 	const navigate = useNavigate();
 	const handleDialog = () => {
 		openModal('addRekrutmen');
@@ -33,10 +34,15 @@ const RekrutmenPage = () => {
 	const [division, setDivision] = useState<number>(0);
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
-	const [maxApplicant, setMaxApplicant] = useState<number>();
+	// const [maxApplicant, setMaxApplicant] = useState<number>();
 	const [academic, setAcademic] = useState('');
 	const [note, setNote] = useState('');
+	const [fulltime, setFulltime] = useState<boolean>(false);
 	const [statusCards, setStatusCards] = useState([{ title: '', description: '' }]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [itemsPerPage] = useState(20);
+	const [isActive, setIsActive] = useState('1');
 
 	const addStatusCards = () => {
 		setStatusCards([...statusCards, { title: '', description: '' }]);
@@ -49,9 +55,18 @@ const RekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataRekrutmen(0, 20, search);
+			const response = await Rekrutmen.DataRekrutmen(
+				currentPage - 1,
+				itemsPerPage,
+				search,
+				divisionId,
+				access_token,
+				'',
+				isActive
+			);
 			setDataRekrutmen(response.data.data.result);
-			const responseDropdownDivison = await Rekrutmen.DropdownDivision();
+			setTotalPages(response.data.data.totalPage);
+			const responseDropdownDivison = await Rekrutmen.DropdownDivision(access_token);
 			setDropdownDivision(responseDropdownDivison.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -66,29 +81,70 @@ const RekrutmenPage = () => {
 
 		const data = {
 			title: titleRekrutmen,
+			role: role,
 			division_id: division,
 			start_date: startDate,
 			end_date: endDate,
-			max_applicant: maxApplicant,
+			// max_applicant: maxApplicant,
 			min_academic: academic,
 			notes: note,
 			details: statusData,
+			is_fulltime: fulltime,
 		};
 		try {
-			await Rekrutmen.AddRekrutmen(data);
+			await Rekrutmen.AddRekrutmen(data, access_token);
 			fetchData();
 			closeModal('addRekrutmen');
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Rekrutmen',
+			});
+		} catch (error: any) {
 			console.error(error);
+			closeModal('addRekrutmen');
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
+	};
+
+	const trigerClose = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				CloseRekrutmen(id);
+			}
+		});
 	};
 
 	const CloseRekrutmen = async (id: any) => {
 		try {
 			await Rekrutmen.CloseRekrutment(id);
 			fetchData();
-		} catch (error) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Penerimaan berhasil ditutup',
+			});
+		} catch (error: any) {
 			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: message,
+			});
 		}
 	};
 
@@ -102,11 +158,21 @@ const RekrutmenPage = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, [search]);
+	}, [search, divisionId, isActive, currentPage]);
 
-	const handleCardClick = (id: number) => {
+	const handleCardClick = (id: number, title: string, subtitle: string) => {
 		navigate(`/hrd/rekrutmen/${id}`);
+		localStorage.setItem('title', title);
+		localStorage.setItem('subtitle', subtitle);
 	};
+
+	const handlePageChange = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
+	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
 
 	return (
 		<div className="h-screen">
@@ -133,7 +199,7 @@ const RekrutmenPage = () => {
 
 			<div className="mt-6 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex items-center gap-2">
-					<button className="btn btn-outline btn-info btn-xs">
+					{/* <button className="btn btn-outline btn-info btn-xs">
 						Semua <span>25</span>
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
@@ -141,20 +207,33 @@ const RekrutmenPage = () => {
 					</button>
 					<button className="btn btn-outline btn-info btn-xs">
 						Ditutup <span>25</span>
-					</button>
+					</button> */}
 				</div>
 
 				<div className="flex items-center gap-2">
+					<label className="label cursor-pointer">
+						<input
+							type="checkbox"
+							defaultChecked
+							className="checkbox"
+							onChange={(e) => setIsActive(e.target.checked == true ? '1' : '')}
+						/>
+					</label>
 					<button className="btn btn-xs" onClick={handleDialog}>
 						<span>+</span> Tambah
 					</button>
-					<select className="select select-bordered select-xs w-full max-w-xs">
+					<select
+						className="select select-bordered select-xs w-full max-w-xs"
+						onChange={(e) => setDivisionId(e.target.value)}
+					>
 						<option disabled selected>
 							Filter
 						</option>
-						<option>Tiny Apple</option>
-						<option>Tiny Orange</option>
-						<option>Tiny Tomato</option>
+						{dropdownDivision.map((item, index) => (
+							<option value={item.id} key={index}>
+								{item.name}
+							</option>
+						))}
 					</select>
 				</div>
 			</div>
@@ -162,7 +241,10 @@ const RekrutmenPage = () => {
 				<div className="card mt-5 w-full bg-base-100 shadow-xl" key={index}>
 					<div className="card-body">
 						<div className="flex flex-wrap items-center justify-between gap-2">
-							<div onClick={() => handleCardClick(item.id)} className="cursor-pointer">
+							<div
+								onClick={() => handleCardClick(item.id, item.title, divisionMap[item.division_id])}
+								className="cursor-pointer"
+							>
 								<div className="text-sm font-bold">{item.title}</div>
 								<p className="text-xs">Dibuat {item.createdAt.split('T')[0]}</p>
 							</div>
@@ -222,7 +304,7 @@ const RekrutmenPage = () => {
 								</div>
 							</div> */}
 
-							<div className="flex items-center gap-2">
+							{/* <div className="flex items-center gap-2">
 								<div
 									className="radial-progress text-xs text-primary"
 									style={
@@ -238,7 +320,7 @@ const RekrutmenPage = () => {
 								<div className="text-xs">
 									<span className="font-bold">{item.applicant_count}</span>/{item.max_applicant} Pendaftar
 								</div>
-							</div>
+							</div> */}
 
 							<div>
 								<div className="text-xs">Status Penerimaan</div>
@@ -296,7 +378,7 @@ const RekrutmenPage = () => {
 													<circle cx="12" cy="12" r="10" />
 												</svg>
 											</div>
-											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
+											<span className="ml-2 font-semibold" onClick={() => trigerClose(item.id)}>
 												Tutup Penerimaan
 											</span>
 										</div>
@@ -308,38 +390,56 @@ const RekrutmenPage = () => {
 				</div>
 			))}
 
+			{/* Pagination */}
+			<div className="mt-5 flex items-center justify-center">
+				<div className="join">
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === 1}
+						onClick={() => handlePageChange(currentPage - 1)}
+					>
+						«
+					</button>
+					<button className="btn join-item btn-sm">Page {currentPage}</button>
+					<button
+						className="btn join-item btn-sm"
+						disabled={currentPage === totalPages}
+						onClick={() => handlePageChange(currentPage + 1)}
+					>
+						»
+					</button>
+				</div>
+			</div>
+
 			<Modal id="addRekrutmen">
-				<div>
-					<h2 className="mb-4 text-xl font-bold">Tambah Penerimaan Baru</h2>
-					<div className="mb-4 grid grid-cols-2 gap-4">
+				<div className="p-6">
+					<h2 className="mb-4 text-center text-2xl font-bold text-gray-800">Tambah Penerimaan Baru</h2>
+					<div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
 						<div>
-							<label className="mb-1 block text-sm font-medium">Judul Rekrutmen</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Judul Rekrutmen</label>
 							<input
 								type="text"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								placeholder="Masukkan judul rekrutmen"
 								onChange={(e) => setTitleRekrutmen(e.target.value)}
 							/>
 						</div>
 						<div>
-							<label className="mb-1 block text-sm font-medium">Role</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Role</label>
 							<select
-								className="w-full rounded border border-gray-300 p-2"
-								value={role}
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								onChange={(e) => setRole(e.target.value)}
 							>
-								<option value="" disabled>
-									-Pilih-
-								</option>
-								<option value="Karyawan">Karyawan</option>
-								<option value="Guru">Guru</option>
+								<option value="">-Pilih-</option>
+								<option value="KARYAWAN">Karyawan</option>
+								<option value="GURU">Guru</option>
 							</select>
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Divisi</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Divisi</label>
 							<select
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={division}
 								onChange={(e) => setDivision(parseInt(e.target.value))}
 							>
@@ -355,10 +455,10 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Tanggal Mulai</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Tanggal Mulai</label>
 							<input
 								type="date"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={startDate}
 								onChange={(e) => setStartDate(e.target.value)}
 								required
@@ -366,30 +466,30 @@ const RekrutmenPage = () => {
 						</div>
 
 						<div>
-							<label className="mb-1 block text-sm font-medium">Tanggal Akhir</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Tanggal Akhir</label>
 							<input
 								type="date"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={endDate}
 								onChange={(e) => setEndDate(e.target.value)}
 								required
 							/>
 						</div>
 
-						<div>
-							<label className="mb-1 block text-sm font-medium">Pendaftar yang Dibutuhkan</label>
+						{/* <div>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Pendaftar yang Dibutuhkan</label>
 							<input
 								type="number"
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								placeholder="Masukkan jumlah pendaftar"
 								onChange={(e) => setMaxApplicant(parseInt(e.target.value))}
 							/>
-						</div>
+						</div> */}
 
 						<div className="col-span-2">
-							<label className="mb-1 block text-sm font-medium">Jenjang Pendidikan</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Jenjang Pendidikan</label>
 							<select
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								value={academic}
 								onChange={(e) => setAcademic(e.target.value)}
 							>
@@ -403,10 +503,20 @@ const RekrutmenPage = () => {
 							</select>
 						</div>
 
+						<div className="col-span-2 my-2 flex items-center gap-2">
+							<div className="text-sm text-gray-700">Apakah Full Time?</div>
+							<input
+								type="checkbox"
+								defaultChecked
+								className="checkbox"
+								onChange={(e) => setFulltime(e.target.checked)}
+							/>
+						</div>
+
 						<div className="col-span-2">
-							<label className="mb-1 block text-sm font-medium">Note</label>
+							<label className="mb-1 block text-sm font-medium text-gray-700">Note</label>
 							<textarea
-								className="w-full rounded border border-gray-300 p-2"
+								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 								rows={4}
 								placeholder="Masukkan catatan tambahan"
 								onChange={(e) => setNote(e.target.value)}
@@ -416,18 +526,18 @@ const RekrutmenPage = () => {
 						{statusCards.map((card, index) => (
 							<div key={index} className="col-span-2">
 								<div className="mb-4">
-									<label className="mb-1 block text-sm font-medium">Judul</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Judul</label>
 									<input
 										type="text"
-										className="w-full rounded border border-gray-300 p-2"
+										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={card.title}
 										onChange={(e) => handleStatusChange(index, 'title', e.target.value)}
 									/>
 								</div>
 								<div>
-									<label className="mb-1 block text-sm font-medium">Deskripsi</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Deskripsi</label>
 									<textarea
-										className="w-full rounded border border-gray-300 p-2"
+										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										rows={4}
 										value={card.description}
 										onChange={(e) => handleStatusChange(index, 'description', e.target.value)}

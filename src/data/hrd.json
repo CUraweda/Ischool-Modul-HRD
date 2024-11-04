@@ -36,10 +36,13 @@
 				"name": "Pengajuan Cuti",
 				"url": "/hrd/pengajuan-cuti"
 			},
-
 			{
 				"name": "Dinas Luar",
 				"url": "/hrd/dinas-luar"
+			},
+			{
+				"name": "Daftar Dinas Luar",
+				"url": "/hrd/daftar-dinas"
 			}
 		]
 	},
@@ -65,17 +68,21 @@
 	},
 	{
 		"submenu": false,
-		"title": "Rekap Penilaian",
-		"icon": "<GoPeople />",
-		"url": "/hrd/penilaian",
-		"subtitle": []
+		"title": "Divisi",
+		"icon": "<BsDiagram3Fill />",
+		"url": "/hrd/division"
 	},
 	{
 		"submenu": false,
-		"title": "Pelatihan",
+		"title": "Rekap Pelatihan",
 		"icon": "<MdOutlineDateRange />",
-		"url": "/hrd/pelatihan",
-		"subtitle": []
+		"url": "/hrd/rekap-pelatihan"
+	},
+	{
+		"submenu": false,
+		"title": "Rekap Penilaian",
+		"icon": "<MdOutlineGrade />",
+		"url": "/hrd/rekap-penilaian"
 	},
 	{
 		"submenu": true,

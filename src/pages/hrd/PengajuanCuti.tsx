@@ -17,6 +17,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const [filterDate, setFilterDate] = useState<string>('');
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [dataVacation, setDataVacation] = useState<any[]>([]);
+	const [employeeId, setEmployeeId] = useState('0');
 	const [currentPage, setCurrentPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalRows, setTotalRows] = useState(1);
@@ -31,7 +32,6 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		{ id: 5, category: 'Status', value: 'Tidak Disetujui' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
-	const [search_query, setSearch_query] = useState<string>('');
 	const getAllVacation = async () => {
 		// const combinedFilter = [...filterType, filterStatus]
 		// 	.filter(Boolean) // This removes any empty strings or null values
@@ -43,13 +43,19 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			filterType,
 			filterStatus,
 			filterDate,
-			filterDivision
+			filterDivision,
+			access_token
 		);
 		setDataVacation(response.data.data.result);
 		setTotalPages(response.data.data.totalPage);
 		setTotalRows(response.data.data.totalRows);
 		console.log(response.data.data);
 	};
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const filterData = dataVacation
 		.filter((item) => (filterDate ? item.createdAt.split('T')[0] === filterDate : true))
 		.filter((item: any) =>
@@ -58,7 +64,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	const getAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployee(100000, search_query);
+			const response = await Employee.getAllEmployee(100000, '', access_token);
 			const { result } = response.data.data || {};
 			// setDataEmployee(result);
 
@@ -76,7 +82,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const fetchAllDivision = async () => {
 		try {
-			const response = await Attendance.getAllDivision();
+			const response = await Attendance.getAllDivision(access_token);
 			const { result } = response.data.data || {};
 			setListDivision(Array.isArray(result) ? result : []);
 			if (response.data.code !== 200) {
@@ -110,7 +116,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 
 	useEffect(() => {
 		getAllEmployee();
-	}, [search_query]);
+	}, []);
 	const handleDetailClose = () => {
 		setSelectedItem(null);
 	};
@@ -128,17 +134,28 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			setFilterDivision(id);
 		}
 	};
-	const updateStatus = async (id: number, status: string) => {
+
+	const accept = async (id: number) => {
 		try {
-			await Attendance.updateVacation(id, { status });
+			await Attendance.acceptVacation(id, null);
 			getAllVacation();
 		} catch (error) {
-			console.error('Error updating status:', error);
+			console.error(error);
 		}
 	};
-	const capitalizeFirstLetter = (str: string) => {
-		return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+	const reject = async (id: number) => {
+		try {
+			await Attendance.rejectVacation(id, null);
+			getAllVacation();
+		} catch (error) {
+			console.error(error);
+		}
 	};
+
+	// const capitalizeFirstLetter = (str: string) => {
+	// 	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+	// };
 
 	const handleChangeStatus = (type: string, item: any) => {
 		setIsDialogOpen(() => !isDialogOpen);
@@ -154,9 +171,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		} as any).then((result) => {
 			if (result.isConfirmed) {
 				if (type === 'disetujui') {
-					updateStatus(item.id, 'Disetujui');
+					accept(item.id);
 				} else {
-					updateStatus(item.id, 'Tidak Disetujui');
+					reject(item.id);
 				}
 			}
 		});
@@ -197,20 +214,20 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	};
 	const requestCuti = async (formData: any) => {
 		try {
-			const response = await Attendance.requestVacation(formData);
+			await Attendance.requestVacation(formData);
 			Swal.fire({
 				icon: 'success',
 				title: 'Berhasil',
 				text: 'Data berhasil ditambahkan',
 			});
 
-			if (response.data.code !== 200) {
-				Swal.fire({
-					icon: 'error',
-					title: 'Oops...',
-					text: 'Something went wrong!',
-				});
-			}
+			// if (response.data.code !== 200) {
+			// 	Swal.fire({
+			// 		icon: 'error',
+			// 		title: 'Oops...',
+			// 		text: 'Something went wrong!',
+			// 	});
+			// }
 		} catch (err) {
 			console.error(err);
 		}
@@ -244,7 +261,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		formData.append('end_date', values.end_date);
 		formData.append('proposer_id', '1');
 		formData.append('type', 'CUTI');
-		formData.append('employee_id', JSON.stringify(values.employee_id));
+		formData.append('employee_id', employeeId);
 		if (file) {
 			formData.append('file', file);
 		}
@@ -262,7 +279,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		}
 	};
 	return (
-		<div className="h-screen w-full p-2">
+		<div>
 			{showModal && (
 				<dialog className="modal modal-open" onClick={() => setShowModal(false)}>
 					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -275,7 +292,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						<h3 className="text-lg font-bold">Buat Pengajuan</h3>
 						<Formik
 							initialValues={{
-								employee_id: [] as number[],
+								employee_id: employeeId,
 								description: '',
 								start_date: '',
 								file: '',
@@ -283,49 +300,25 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 							}}
 							onSubmit={handleSubmit}
 						>
-							{({ values, setFieldValue, handleSubmit }) => (
+							{({ handleSubmit }) => (
 								<form onSubmit={handleSubmit}>
-									<div className="my-2 w-full">
+									<div className="mt-4">
 										<label className="label">
-											<span className="label-text">Pilih Karyawan</span>
+											<span className="label-text">Employee</span>
 										</label>
-									</div>
-									<div className="my-2 w-full">
-										<input
-											type="text"
-											placeholder="Cari karyawan..."
-											value={search_query}
-											onChange={(e) => setSearch_query(e.target.value)}
-											className="input input-bordered w-full"
-										/>
-										{search_query && (
-											<div className="m-2 h-52 w-full overflow-y-scroll">
-												<div className="checkbox-group">
-													{dataEmployee.map((employee: any) => (
-														<label key={employee.id} className="flex items-center space-x-2">
-															<input
-																type="checkbox"
-																name="employee_id"
-																id="employee_id"
-																value={employee.id}
-																checked={values.employee_id.includes(employee.id)}
-																onChange={(e) => {
-																	if (e.target.checked) {
-																		setFieldValue('employee_id', [...values.employee_id, employee.id]);
-																	} else {
-																		setFieldValue(
-																			'employee_id',
-																			values.employee_id.filter((id: number) => id !== employee.id)
-																		);
-																	}
-																}}
-															/>
-															<span>{employee.full_name}</span>
-														</label>
-													))}
-												</div>
-											</div>
-										)}
+										<select
+											name="account_id"
+											className="select select-bordered w-full"
+											required
+											onChange={(e) => setEmployeeId(e.target.value)}
+										>
+											<option value={0}>Pilih Karyawan</option>
+											{dataEmployee.map((employee) => (
+												<option key={employee.id} value={employee.id}>
+													{employee.full_name}
+												</option>
+											))}
+										</select>
 									</div>
 									{/* <div className="my-2 w-full">
 										<select
@@ -386,7 +379,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 					</div>
 				</dialog>
 			)}
-			<div className="w-full flex-wrap md:flex">
+			<div className="flex-wrap md:flex">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
 						<li className="font-bold">
@@ -420,7 +413,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			</div>
 
 			<div className="my-5 flex-grow border-t border-gray-400 drop-shadow-sm"></div>
-			<div className="flex w-full justify-between">
+			<div className="flex justify-between">
 				<div className="m-2 flex flex-wrap-reverse gap-4">
 					<button className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
 						Semua
@@ -451,7 +444,10 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						>
 							<MdPeopleAlt /> Karyawan
 						</div>
-						<ul tabIndex={0} className="menu dropdown-content z-[1] mt-2 w-52 rounded-box bg-base-100 p-2 shadow">
+						<ul
+							tabIndex={0}
+							className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-auto rounded-box bg-base-100 p-2 shadow"
+						>
 							<div className="checkbox-group">
 								{dataEmployee.map((employee) => (
 									<label key={employee.id} className="flex items-center space-x-2">
@@ -529,116 +525,93 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						value={filterDate}
 						onChange={(e) => setFilterDate(e.target.value)}
 					/>
-				</div>{' '}
+				</div>
 			</div>
-			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 pb-28 shadow-xl">
-				<table className="text-md table">
-					<thead>
-						<tr className="text-center font-bold">
-							<th>No</th>
-							<th>Nama</th>
-							<th>Tipe</th>
-							<th>Tanggal</th>
-							<th>Deskripsi</th>
-							<th>Status</th>
-							<th>Catatan</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						{filterData.map((item, index) => (
-							<tr className="hover truncate" key={item.id}>
-								<td>{index + 1 + currentPage * limit}</td>
-								<td>{item.employee.full_name}</td>
-
-								<td>{item.start_date.split('T')[0]}</td>
-								<td>{item.description}</td>
-								<td>
-									{/* <div
-										className={`text-md badge badge-md h-fit rounded-md px-3 drop-shadow-sm ${
-											// item.data.tipe === 'Izin'
-											'bg-[#8ef96ac2] text-[#3d6b2e]'
-											// : item.data.tipe === 'Cuti'
-											// ? 'bg-[#f96a6a] text-[#6b2e2e]'
-											// : ''
-										}`}
-									> */}
-									{capitalizeFirstLetter(item.type)}
-									{/* </div> */}
-								</td>
-								<td>
-									{/* <div
-										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
-											item.status.toLowerCase() === 'disetujui'
-												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.status.toLowerCase() === 'tidak disetujui'
-													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: item.status.toLowerCase() === 'menunggu'
-														? 'bg-[#f9f46a] text-[#6b2e2e]'
-														: ''
-										}`}
-									>
-										{item.status}
-									</div> */}
-									{item.status}
-								</td>
-								<td className="text-center">
-									<button
-										className="btn btn-square btn-ghost hover:bg-transparent"
-										onClick={() => handleOpenDetailModal(item)}
-									>
-										<MdOutlineEventNote className="text-lg" />
-									</button>
-								</td>
-								<td className="text-center">
-									<div className="dropdown dropdown-end flex-none">
-										<div className="dropdown dropdown-left">
-											<button
-												tabIndex={0}
-												role="button"
-												className="btn btn-square btn-ghost shadow-none outline-none hover:bg-transparent"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-													className="inline-block h-4 w-4 stroke-current"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth="2"
-														d="M12 5h.01M12 12h.01M12 19h.01M12 6a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2z"
-													></path>
-												</svg>
-											</button>
-											<ul
-												tabIndex={0}
-												className="menu dropdown-content z-[1] w-52 items-start rounded-box bg-base-100 p-2 shadow"
-											>
-												<h3 className="mb-2 w-full border-b-2 border-slate-300 p-2 text-center">Edit Status</h3>
-												<button
-													className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
-													onClick={() => handleChangeStatus('disetujui', item)}
-												>
-													<div className="h-4 w-4 rounded-full border-2 border-green-400 bg-transparent"></div>
-													<div>Setujui Permintaan</div>
-												</button>
-												<button
-													className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
-													onClick={() => handleChangeStatus('tidak disetujui', item)}
-												>
-													<div className="h-4 w-4 rounded-full border-2 border-red-400 bg-transparent"></div>
-													<div>Tidak Disetujui</div>
-												</button>
-											</ul>
-										</div>
-									</div>
-								</td>
+			<div className="q-mt card mt-5 w-fit bg-base-100 shadow-xl">
+				<div className="card-body overflow-auto">
+					<table className="table table-zebra mb-14 h-full">
+						<thead>
+							<tr className="text-center font-bold">
+								<th>No</th>
+								<th>Nama</th>
+								<th>Tipe</th>
+								<th>Tanggal</th>
+								<th>Deskripsi</th>
+								<th>Status</th>
+								<th>Catatan</th>
+								<th>Action</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{filterData.map((item, index) => (
+								<tr className="hover truncate" key={item.id}>
+									<td>{index + 1 + currentPage * limit}</td>
+									<td>{item.employee.full_name}</td>
+									<td>{item?.type}</td>
+									<td>{item.start_date.split('T')[0]}</td>
+									<td>
+										<div className="w-[5rem] overflow-hidden text-ellipsis whitespace-nowrap">{item.description}</div>
+									</td>
+
+									<td>{item.status}</td>
+									<td className="text-center">
+										<button
+											className="btn btn-square btn-ghost hover:bg-transparent"
+											onClick={() => handleOpenDetailModal(item)}
+										>
+											<MdOutlineEventNote className="text-lg" />
+										</button>
+									</td>
+									<td className="text-center">
+										<div className="dropdown dropdown-end flex-none">
+											<div className="dropdown dropdown-left">
+												<button
+													tabIndex={0}
+													role="button"
+													className="btn btn-square btn-ghost shadow-none outline-none hover:bg-transparent"
+												>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 24 24"
+														className="inline-block h-4 w-4 stroke-current"
+													>
+														<path
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="2"
+															d="M12 5h.01M12 12h.01M12 19h.01M12 6a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2z"
+														></path>
+													</svg>
+												</button>
+												<ul
+													tabIndex={0}
+													className="menu dropdown-content z-[1] w-52 items-start rounded-box bg-base-100 p-2 shadow"
+												>
+													<h3 className="mb-2 w-full border-b-2 border-slate-300 p-2 text-center">Edit Status</h3>
+													<button
+														className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
+														onClick={() => handleChangeStatus('disetujui', item)}
+													>
+														<div className="h-4 w-4 rounded-full border-2 border-green-400 bg-transparent"></div>
+														<div>Setujui Permintaan</div>
+													</button>
+													<button
+														className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
+														onClick={() => handleChangeStatus('tidak disetujui', item)}
+													>
+														<div className="h-4 w-4 rounded-full border-2 border-red-400 bg-transparent"></div>
+														<div>Tidak Disetujui</div>
+													</button>
+												</ul>
+											</div>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<div className="join m-5">
 				<button

@@ -6,6 +6,7 @@ const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignUpPage'));
 const HrdLayout = lazy(() => import('@/components/layouts/HrdLayout'));
 const PublicLayout = lazy(() => import('@/pages/public/PublicLayout'));
+const DefaultLayout = lazy(() => import('../pages/DefaultLayout'));
 const AuthLayout = lazy(() => import('@/pages/auth/AuthLayout'));
 const ForbiddenPage = lazy(() => import('@/pages/ForbiddenPage'));
 const DashboardPage = lazy(() => import('../pages/hrd/DashboardPage'));
@@ -14,8 +15,8 @@ const PengajuanCutiPage = lazy(() => import('../pages/hrd/PengajuanCuti'));
 const DinasLuarPage = lazy(() => import('@/pages/hrd/DinasLuarPage'));
 const RekapPenilaianPage = lazy(() => import('@/pages/hrd/RekapPenilaian'));
 const DetailRekapPage = lazy(() => import('@/pages/hrd/DetailRekap'));
-const PenilaianPage = lazy(() => import('@/pages/hrd/PenilaianPage'));
 const PelatihanPage = lazy(() => import('@/pages/hrd/PelatihanPage'));
+const RekapPelatihan = lazy(() => import('@/pages/hrd/RekapPelatihan'));
 const RekrutmenPage = lazy(() => import('@/pages/hrd/RekrutmenPage'));
 const DetailRekrutmenPage = lazy(() => import('@/pages/hrd/DetailRekrutmenPage'));
 const ProbationPage = lazy(() => import('@/pages/hrd/ProbationPage'));
@@ -32,16 +33,37 @@ const CustomerCarePage = lazy(() => import('@/pages/hrd/CustomerPage'));
 const DetailPenggajianUserPage = lazy(() => import('@/pages/hrd/DetailPenggajianUserPage'));
 const DaftarAsessorPage = lazy(() => import('@/pages/hrd/DaftarAsessorPage'));
 const DaftarPenilaianPage = lazy(() => import('@/pages/hrd/DaftarPenilaianPage'));
+const DaftarInterviewPage = lazy(() => import('@/pages/hrd/DaftarInterviewPage'));
+const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
+const VerifEmailPage = lazy(() => import('../pages/VerifEmaillPage'));
+const PublicPenilaian = lazy(() => import('../pages/public/PublicPenilaian'));
+const DaftarDinasLuar = lazy(() => import('@/pages/hrd/DaftarDinasLuarPage'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
+import PageDivisi from '@/pages/hrd/PageDivisi';
 
 const AppRoutes: React.FC = () => {
 	return (
 		<Router>
-			<Suspense fallback={<div>Loading...</div>}>
+			<Suspense
+				fallback={
+					<div className="flex min-h-screen items-center justify-center bg-gray-100">
+						<div className="flex items-center space-x-2">
+							<div className="h-8 w-8 animate-bounce rounded-full bg-blue-500"></div>
+							<div className="h-8 w-8 animate-bounce rounded-full bg-green-500 delay-200"></div>
+							<div className="delay-400 h-8 w-8 animate-bounce rounded-full bg-red-500"></div>
+						</div>
+					</div>
+				}
+			>
 				<Routes>
+					<Route element={<PublicLayout />}>
+						<Route path="/" element={<FormPage />} />
+						<Route path="/verifikasi/:id" element={<VerifEmailPage />} />
+					</Route>
+
 					<Route
-						path="/"
+						path="/login"
 						element={
 							<AuthLayout>
 								<LoginPage />
@@ -56,6 +78,13 @@ const AppRoutes: React.FC = () => {
 							</AuthLayout>
 						}
 					/>
+
+					{/* <Route path="/default/">
+						<Route element={<PublicLayout />}>
+							<Route path="daftar-penilaian" element={<PublicPenilaian />} />
+						</Route>
+					</Route> */}
+
 					<Route path="/hrd/" element={<ProtectedRoute roles={[5]} />}>
 						<Route element={<HrdLayout />}>
 							<Route path="dashboard" element={<DashboardPage />} />
@@ -64,33 +93,39 @@ const AppRoutes: React.FC = () => {
 							<Route path="dinas-luar" element={<DinasLuarPage />} />
 							<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 							<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
-							<Route path="penilaian" element={<PenilaianPage />} />
-							<Route path="pelatihan" element={<PelatihanPage />} />
+							<Route path="daftar-pelatihan" element={<PelatihanPage />} />
+							<Route path="rekap-pelatihan" element={<RekapPelatihan />} />
 							<Route path="rekrutmen" element={<RekrutmenPage />} />
 							<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
 							<Route path="employee" element={<ProbationPage />} />
 							<Route path="employee/:id" element={<DetailProbationPage />} />
 							<Route path="employee/:id/:id2" element={<DetailCardProbationPage />} />
+							<Route path="employee/interview/:id" element={<DaftarInterviewPage />} />
 							<Route path="data-karyawan" element={<DataKaryawanPage />} />
 							<Route path="data-karyawan/:id" element={<DetailProfilKaryawanPage />} />
 							<Route path="daftar-asessor" element={<DaftarAsessorPage />} />
 							<Route path="daftar-penilaian" element={<DaftarPenilaianPage />} />
 							<Route path="dashboard-penggajian" element={<PenggajianPage />} />
 							<Route path="rekap-gaji" element={<DetailPenggajianPage />} />
-							<Route path="rekap-gaji/1" element={<DetailPenggajianUserPage />} />
+							<Route path="rekap-gaji/:id" element={<DetailPenggajianUserPage />} />
 							<Route path="atur-gaji" element={<AturGajiPage />} />
 							<Route path="customer-care" element={<CustomerCarePage />} />
+							<Route path="division" element={<PageDivisi />} />
+							<Route path="daftar-dinas" element={<DaftarDinasLuar />} />
 						</Route>
 					</Route>
 
-					<Route path="/public/" element={<ProtectedRoute roles={[5, 11]} />}>
+					<Route element={<ProtectedRoute roles={[11]} />}>
 						<Route element={<PublicLayout />}>
 							<Route path="form-data" element={<FormDataPage />} />
 						</Route>
 					</Route>
-					
-					<Route path="/public/" element={<PublicLayout />}>
-						<Route path="career" element={<FormPage />} />
+
+					<Route element={<ProtectedRoute roles={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]} />}>
+						<Route element={<DefaultLayout />}>
+							<Route path="default" element={<DefaultPage />} />
+							<Route path="default/daftar-penilaian" element={<PublicPenilaian />} />
+						</Route>
 					</Route>
 
 					<Route path="*" element={<ForbiddenPage />} />

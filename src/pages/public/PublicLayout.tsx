@@ -1,15 +1,27 @@
+import React from 'react';
 import { Navbar } from '@/components/organisms';
 import { Outlet } from 'react-router-dom';
-
-function PublicLayout() {
+// interface Props {
+// 	children?: React.ReactNode;
+// }
+const PublicLayout: React.FC<{}> = () => {
+	// const drawerId = 'hrd-drawer';
 	return (
-		<div className="bg-sky min-h-screen w-screen overflow-x-hidden">
-			<Navbar />
-			<div className="mx-auto w-full max-w-screen-lg p-6">
-				<Outlet />
+		<>
+			<div className="flex h-screen w-full flex-col overflow-hidden" data-theme="light">
+				<div className="flex flex-grow">
+					<div className="h-screen w-full" style={{ backgroundColor: '#BFDCFE' }}>
+						<div className="">
+							<Navbar />
+						</div>
+						<div className="max-w-5/4 max-h-[90%] overflow-auto p-5">
+							<Outlet />
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
+		</>
 	);
-}
+};
 
 export default PublicLayout;

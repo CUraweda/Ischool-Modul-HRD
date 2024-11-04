@@ -1,13 +1,17 @@
 import { BsFillHouseFill, BsTable } from 'react-icons/bs';
 import { FaMoneyBillWave, FaRegStar } from 'react-icons/fa';
-import { IoCard, IoPersonOutline, IoPersonSharp,IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import { IoCard, IoPersonOutline, IoPersonSharp, IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { FaChartSimple, FaGear, FaMoneyBillTransfer, FaPersonCircleCheck } from 'react-icons/fa6';
 import { VscServerProcess } from 'react-icons/vsc';
 import { MdOutlineMessage, MdOutlineTableChart } from 'react-icons/md';
 import { GrGroup } from 'react-icons/gr';
 import { CiMoneyCheck1 } from 'react-icons/ci';
 import { GoTasklist, GoPeople } from 'react-icons/go';
-import { MdOutlineDateRange } from "react-icons/md";
+import { MdOutlineDateRange } from 'react-icons/md';
+import { BsDiagram3Fill } from 'react-icons/bs';
+import { MdOutlineGrade } from 'react-icons/md';
+import { FaFile } from 'react-icons/fa';
+import { FaListCheck } from 'react-icons/fa6';
 import {
 	AiOutlineBook,
 	AiOutlineTeam,
@@ -43,7 +47,10 @@ export const iconMapping: { [key: string]: JSX.Element } = {
 	'<AiOutlineCalendar />': <AiOutlineCalendar />,
 	'<AiOutlineIdcard />': <AiOutlineIdcard />,
 	'<GoPeople />': <GoPeople />,
-	'<MdOutlineDateRange />' : <MdOutlineDateRange />,
-	'<IoChatbubbleEllipsesOutline />': <IoChatbubbleEllipsesOutline />
-	// tambahkan pemetaan untuk ikon lainnya di sini
+	'<MdOutlineDateRange />': <MdOutlineDateRange />,
+	'<IoChatbubbleEllipsesOutline />': <IoChatbubbleEllipsesOutline />,
+	'<BsDiagram3Fill />': <BsDiagram3Fill />,
+	'<MdOutlineGrade />': <MdOutlineGrade />,
+	'<FaFile />': <FaFile />,
+	'<FaListCheck />': <FaListCheck />,
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BsListNested } from 'react-icons/bs';
-import { iconMapping } from '../components/icon/icon';
+import { iconMapping } from './icon/icon';
 import logo from '../assets/images/sadeLogo.png';
 import { Link } from 'react-router-dom';
-import menuHRD from '../data/hrd.json';
+import menuHRD from '../data/default.json';
 import { getSessionStorageItem } from '@/utils/storageUtils';
 
 interface Menu {
@@ -21,7 +21,7 @@ type subtitle = {
 	url: string;
 };
 
-const Sidebar = () => {
+const SidebarDefault = () => {
 	const Side = sessionStorage.getItem('side') || '/';
 	const [data, setData] = useState<Menu[]>([]);
 	const [activeMenuItem, setActiveMenuItem] = useState<string>(Side);
@@ -109,4 +109,4 @@ const Sidebar = () => {
 	);
 };
 
-export default Sidebar;
+export default SidebarDefault;

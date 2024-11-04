@@ -12,11 +12,11 @@ import {
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { Dashboard } from '@/middlewares/api';
-import CheckboxSelect from '../../components/SelectComponent'; // Import your new component
+import CheckboxSelect from '../../components/SelectComponent';
+import Swal from 'sweetalert2';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Legend, Tooltip);
 
-// Define TypeScript interfaces for the data
 interface ChartDataItem {
 	name: string;
 	hadir: number;
@@ -30,6 +30,7 @@ interface Karyawan {
 }
 
 interface PengumumanItem {
+	id: any;
 	plan_date: string;
 	title: string;
 	notes: string;
@@ -97,13 +98,17 @@ const DashboardPage = () => {
 	});
 	const [daftarTraining, setDaftarTraining] = useState<any[]>([]);
 
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
 	const handleDialog = () => {
 		openModal('addPengumuman');
 	};
 
 	const GetTraining = async () => {
 		try {
-			const response = await Dashboard.DataTraining();
+			const response = await Dashboard.DataTraining(access_token);
 			setDataTraining(response.data.data);
 			setDaftarTraining(response.data.data.data);
 		} catch (error) {
@@ -113,7 +118,7 @@ const DashboardPage = () => {
 
 	const GetApplicant = async () => {
 		try {
-			const response = await Dashboard.DataApplicant();
+			const response = await Dashboard.DataApplicant(access_token);
 			setDataApplicant(response.data.data);
 			setDaftarApplicant(response.data.data.data);
 		} catch (error) {
@@ -123,7 +128,7 @@ const DashboardPage = () => {
 
 	const GetPengumuman = async () => {
 		try {
-			const response = await Dashboard.DataPengumuman();
+			const response = await Dashboard.DataPengumuman(access_token);
 			setPengumuman(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -132,7 +137,7 @@ const DashboardPage = () => {
 
 	const DataChart = async () => {
 		try {
-			const response = await Dashboard.DataChart();
+			const response = await Dashboard.DataChart(access_token);
 			setChart(response.data.data);
 		} catch (error) {
 			console.error(error);
@@ -141,7 +146,7 @@ const DashboardPage = () => {
 
 	const dropdownKaryawan = async () => {
 		try {
-			const response = await Dashboard.DataKaryawan();
+			const response = await Dashboard.DataKaryawan(access_token);
 			setDaftarKaryawan(response.data.data.result);
 		} catch (error) {
 			console.error(error);
@@ -149,17 +154,70 @@ const DashboardPage = () => {
 	};
 
 	const CreatePengumuman = async () => {
+		const localDate = new Date(planDate);
+		const timezoneOffset = localDate.getTimezoneOffset() * 60000; // Offset dalam milidetik
+		const adjustedDate = new Date(localDate.getTime() - timezoneOffset);
 		const data = {
 			title: title,
-			plan_date: planDate,
+			plan_date: adjustedDate.toISOString(),
 			is_specific: kirimKepada === 'Semua' ? false : true,
 			employee_ids: selectedPenerima,
 			notes: notes,
 		};
 
-		await Dashboard.PostPengumuman(data);
-		GetPengumuman();
-		closeModal('addPengumuman');
+		try {
+			await Dashboard.PostPengumuman(data);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Sukses Menambahkan data Pengumuman',
+			});
+			GetPengumuman();
+			closeModal('addPengumuman');
+		} catch (error: any) {
+			const apiErrorMessage = error.response?.data?.message;
+
+			if (apiErrorMessage) {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: apiErrorMessage,
+				});
+			} else {
+				closeModal('addPengumuman');
+				Swal.fire({
+					icon: 'error',
+					title: 'Gagal',
+					text: 'Terjadi kesalahan, silakan coba lagi.',
+				});
+			}
+		}
+	};
+
+	const trigerDelete = (id: number) => {
+		Swal.fire({
+			title: 'Apakah kamu yakin?',
+			text: 'kamu tidak dapat mengembalikan data ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Ya, tutup!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				HapusPengumuman(id);
+			}
+		});
+	};
+
+	const HapusPengumuman = async (id: any) => {
+		try {
+			await Dashboard.DeletePengumuman(id);
+			GetPengumuman();
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	useEffect(() => {
@@ -168,7 +226,7 @@ const DashboardPage = () => {
 		DataChart();
 		GetApplicant();
 		GetTraining();
-	}, []);
+	}, [access_token]);
 
 	const handleKirimKepadaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		console.log('Kirim Kepada Changed:', e.target.value);
@@ -183,7 +241,8 @@ const DashboardPage = () => {
 
 			<div className="mb-8 flex w-full flex-wrap gap-6 lg:flex-nowrap">
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
-					<div className="mb-4 flex justify-between">
+					<h2 className="text-xl font-semibold">Kehadiran</h2>
+					{/* <div className="mb-4 flex justify-between">
 						<div className="text-lg">
 							<span className="font-bold text-blue-500">
 								Hadir: {chart.reduce((total, item) => total + item.hadir, 0)}
@@ -197,7 +256,7 @@ const DashboardPage = () => {
 								Hadir: {chart.reduce((total, item) => total + item.cuti, 0)}
 							</span>
 						</div>
-					</div>
+					</div> */}
 					<Line
 						data={{
 							labels: chart.map((item) => item.name),
@@ -238,14 +297,32 @@ const DashboardPage = () => {
 				<div className="w-full rounded-lg bg-white p-6 shadow-md">
 					<div className="mb-4">
 						<h2 className="text-xl font-semibold">Pengumuman</h2>
-						{pengumuman.map((item, index) => (
-							<div className="mt-4 text-gray-700" key={index}>
-								<p>
-									{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0]} - {item.title}
-								</p>
-								<p>{item.notes}</p>
-							</div>
-						))}
+						<div className="h-52 overflow-auto">
+							{pengumuman.map((item, index) => (
+								<div className="flex items-center justify-between">
+									<div className="mt-4 text-gray-700" key={index}>
+										<p>
+											{item.plan_date.split('T')[0]} - {item.plan_date.split('T')[1].split('.')[0].slice(0, -3)} -
+											<span className="font-bold"> {item.title}</span>
+										</p>
+										<p>{item.notes}</p>
+									</div>
+
+									<button className="btn btn-circle btn-error btn-xs" onClick={() => trigerDelete(item.id)}>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="white"
+											className="size-6"
+										>
+											<path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+										</svg>
+									</button>
+								</div>
+							))}
+						</div>
 					</div>
 					<button className="h-10 w-10 rounded-full bg-blue-500 text-white" onClick={handleDialog}>
 						+
@@ -268,14 +345,11 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarApplicant.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.full_name}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>
@@ -300,14 +374,11 @@ const DashboardPage = () => {
 						</div>
 					</div>
 
-					<div className="mt-4 overflow-hidden rounded-lg bg-gray-100">
+					<div className="mt-4 h-[10rem] overflow-auto rounded-lg bg-gray-100">
 						<table className="min-w-full table-auto">
 							<tbody>
 								{daftarTraining.map((applicant, index) => (
 									<tr key={index} className="border-b bg-white hover:bg-gray-50">
-										<td className="px-4 py-2">
-											<input type="checkbox" className="checkbox checkbox-sm" />
-										</td>
 										<td className="px-4 py-2">{applicant.title}</td>
 										<td className="px-4 py-2">{applicant.createdAt.split('T')[0]}</td>
 										<td className="px-4 py-2">{applicant.status}</td>

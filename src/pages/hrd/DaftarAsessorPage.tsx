@@ -1,10 +1,84 @@
+import Modal, { closeModal, openModal } from '@/components/ModalProps';
+import { Karyawan } from '@/middlewares/api';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+
 const DaftarAsessorPage = () => {
+	const [fetch, setFetch] = useState<any[]>([]);
+	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
+	const [employeeId, setEmployeeId] = useState<number>();
+	const [search, setSearch] = useState('');
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
+	const FetchData = async () => {
+		try {
+			const response = await Karyawan.DaftarAsessor(0, 20, search, access_token);
+			setFetch(response.data.data.result);
+			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '', access_token);
+			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const Aktif = async (id: any) => {
+		try {
+			await Karyawan.AktifAsessor(null, id);
+			FetchData();
+			closeModal('addAsessor');
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Asessor berhasil diaktifkan',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const Nonaktif = async (id: any) => {
+		try {
+			await Karyawan.NonaktifAsessor(null, id);
+			FetchData();
+			closeModal('addAsessor');
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Asessor berhasil dinonaktifkan',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const handleDialog = () => {
+		openModal('addAsessor');
+	};
+
+	useEffect(() => {
+		FetchData();
+	}, [search]);
 	return (
-		<div className="p-4">
-			<div className="mb-3 flex items-center justify-between">
+		<div className="min-h-screen">
+			<div className="mb-8 flex items-center justify-between">
 				<h3 className="text-lg font-bold">Daftar Asessor</h3>
 				<label className="input input-sm input-bordered flex items-center gap-2">
-					<input type="text" className="grow" placeholder="Cari" />
+					<input type="text" className="grow" placeholder="Cari" onChange={(e) => setSearch(e.target.value)} />
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -20,83 +94,75 @@ const DaftarAsessorPage = () => {
 				</label>
 			</div>
 
+			<div className="mb-4 flex items-end justify-end">
+				<button className="btn btn-xs" onClick={handleDialog}>
+					Atur Asessor <span>!</span>
+				</button>
+			</div>
+
 			<div className="card bg-white p-4 shadow-md">
-				<div className="overflow-x-auto">
+				<div className="overflow-auto">
 					<table className="table table-zebra w-full">
 						<thead>
 							<tr>
-								<th>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</th>
 								<th>Nama</th>
 								<th>Posisi</th>
-								<th>Posisi</th>
+								<th>Bidang</th>
 								<th>Status</th>
-								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							{/* Example rows */}
-							<tr>
-								<td>
-									<input type="checkbox" className="checkbox checkbox-sm" />
-								</td>
-								<td>Alya Putri Azzahra</td>
-								<td>Terapis Anak</td>
-								<td>Staff</td>
-								<td>Aktif</td>
-								<td className="flex gap-2">
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path strokeLinecap="round" strokeLinejoin="round" d="M19 13H5v-2h14v2Z" />
-										</svg>
-									</button>
-									<button className="btn btn-ghost btn-sm">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 24 24"
-											fill="none"
-											className="h-4 w-4"
-											stroke="currentColor"
-											strokeWidth="2"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M15.232 7.232a3 3 0 0 1 4.243 4.243l-8.485 8.485-4.242 1.414 1.414-4.243 8.485-8.485ZM16.5 8.5l-4.243 4.243"
-											/>
-										</svg>
-									</button>
-								</td>
-							</tr>
-							{/* Repeat above tr for each row */}
+							{fetch.map((item, index) => (
+								<tr key={index}>
+									<td>{item.full_name}</td>
+									<td className="px-4 py-2">
+										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
+											{item.occupation}
+										</div>
+									</td>
+									<td>{item.major}</td>
+									<td>{item.is_asessor == true ? 'Aktif' : 'Tidak Aktif'}</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>
 			</div>
+			<Modal id="addAsessor">
+				<div className="mb-4">
+					<h2 className="text-2xl font-semibold text-gray-800">Tambah Asessor</h2>
+				</div>
+				<div className="mb-6">
+					<label className="mb-2 block text-sm font-medium text-gray-700">Pilih Karyawan</label>
+					<select
+						className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+						onChange={(e) => setEmployeeId(parseInt(e.target.value))}
+					>
+						<option value="" disabled selected>
+							- Pilih -
+						</option>
+						{dropdownKaryawan.map((item) => (
+							<option value={item.id} key={item.id}>
+								{item.full_name}
+							</option>
+						))}
+					</select>
+				</div>
+				<div className="mt-4 flex justify-center gap-4">
+					<button
+						className="rounded-lg bg-blue-500 px-4 py-2 text-white shadow transition duration-150 hover:bg-blue-600"
+						onClick={() => Aktif(employeeId)}
+					>
+						Aktif
+					</button>
+					<button
+						className="rounded-lg bg-red-500 px-4 py-2 text-white shadow transition duration-150 hover:bg-red-600"
+						onClick={() => Nonaktif(employeeId)}
+					>
+						Non Aktif
+					</button>
+				</div>
+			</Modal>
 		</div>
 	);
 };

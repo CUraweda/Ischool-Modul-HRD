@@ -1,22 +1,143 @@
 import image from '../../assets/images/blueAbstractPattern.png';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Probation } from '@/middlewares/api';
+import Swal from 'sweetalert2';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const DetailCardProbationPage = () => {
-	// const { id } = useParams<{ id: string }>();
-	// const { id2 } = useParams<{ id2: string }>();
+interface ChartDataItem {
+	name: string;
+	raw_grade: number;
+	graded: number;
+}
 
-	// Data for the chart
+const DetailCardProbationPage = () => {
+	const { id2 } = useParams<{ id2: string }>();
+	const [fetch, setFetch] = useState<any | null>(null);
+	const [table, setTable] = useState<any[]>([]);
+	const [chart, setChart] = useState<ChartDataItem[]>([]);
+	const [internshipDetails, setInternshipDetails] = useState({
+		startDate: '',
+		endDate: '',
+		duration: '',
+		remainingTime: '',
+	});
+
+	let access_token = sessionStorage.getItem('access_token');
+
+	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
+	const FetchData = async () => {
+		try {
+			const response = await Probation.DetailByUser(id2, access_token);
+			setFetch(response.data.data);
+			handleInternshipDetails(response.data.data.probation_start_date, response.data.data.probation_end_date);
+			const responseTable = await Probation.DetailPresensi(id2, access_token);
+			setTable(responseTable.data.data.result);
+			const responseChart = await Probation.DetailChart(id2, access_token);
+			setChart(responseChart.data.data);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleInternshipDetails = (startDate: string, endDate: string) => {
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		const now = new Date();
+
+		const probationNotStarted = start > now;
+
+		let totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+		let remainingDays = end.getDate() - start.getDate();
+
+		if (remainingDays < 0) {
+			totalMonths -= 1;
+			const previousMonth = new Date(end.getFullYear(), end.getMonth(), 0).getDate(); // Jumlah hari di bulan sebelumnya
+			remainingDays += previousMonth;
+		}
+
+		const remainingTimeInMillis = end.getTime() - now.getTime();
+		const remainingDaysUntilEnd = Math.ceil(remainingTimeInMillis / (1000 * 60 * 60 * 24));
+
+		setInternshipDetails({
+			startDate: start.toLocaleDateString(),
+			endDate: end.toLocaleDateString(),
+			duration: totalMonths > 0 ? `${totalMonths} Bulan ${remainingDays} Hari` : `${remainingDays} Hari`,
+			remainingTime: probationNotStarted
+				? 'Probation belum dimulai'
+				: remainingDaysUntilEnd > 0
+					? `${remainingDaysUntilEnd} Hari`
+					: 'Magang telah selesai',
+		});
+	};
+
+	const handleProbation = (type: string, id: any) => {
+		if (type === 'finish') {
+			Finish(id);
+		} else {
+			Contract(id);
+		}
+	};
+
+	const Finish = async (id: any) => {
+		try {
+			await Probation.FinishProbation(null, id);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diakhiri',
+			});
+			FetchData();
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const Contract = async (id: any) => {
+		try {
+			await Probation.ContracthProbation(null, id);
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil dikontrak',
+			});
+			FetchData();
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	useEffect(() => {
+		FetchData();
+	}, []);
+
+	const labels = chart.map((item) => item.name);
+	const dataValues = chart.map((item) => item.graded);
+
 	const data = {
-		labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
+		labels,
 		datasets: [
 			{
 				label: 'Performance',
-				data: [80, 70, 75, 90, 60], // Performance data for each day
-				backgroundColor: 'rgba(54, 162, 235, 0.6)', // Bar color
+				data: dataValues,
+				backgroundColor: '#6366f1',
+				borderRadius: 10,
 			},
 		],
 	};
@@ -31,15 +152,30 @@ const DetailCardProbationPage = () => {
 
 	return (
 		<div className="min-h-screen">
+			<div className="flex items-end justify-end">
+				<div className="dropdown dropdown-end">
+					<button className="btn btn-primary mb-4" disabled={fetch?.still_in_probation == false}>
+						Akhir Masa Percobaan
+					</button>
+					<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+						<li>
+							<a onClick={() => handleProbation('finish', fetch?.id)}>Akhiri</a>
+						</li>
+						<li>
+							<a onClick={() => handleProbation('contractsss', fetch?.id)}>Kontrak</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 			<div className="container mx-auto grid grid-cols-1 gap-6 md:grid-cols-2">
 				{/* Top Section: Two Cards */}
 				<div className="rounded-lg bg-white p-6 shadow-lg">
 					{/* Profile Card */}
 					<div className="flex flex-col items-center">
 						<img src={image} alt="Profile" className="mb-4 h-36 w-36 rounded-lg object-cover" />
-						<h2 className="text-lg font-bold">Alya Putri Azzahra</h2>
-						<p className="text-sm text-gray-500">No. Telp: 094587346724</p>
-						<p className="text-sm text-gray-500">Email: alyaputriazzahra52@gmail.com</p>
+						<h2 className="text-lg font-bold">{fetch?.full_name}</h2>
+						<p className="text-sm text-gray-500">No. Telp: {fetch?.phone}</p>
+						<p className="text-sm text-gray-500">Email: {fetch?.email}</p>
 					</div>
 				</div>
 
@@ -48,16 +184,16 @@ const DetailCardProbationPage = () => {
 					<h3 className="text-lg font-semibold">Internship Details</h3>
 					<div className="mt-4">
 						<p className="text-gray-700">
-							Tgl Mulai: <span className="font-bold">23 Mei 2024</span>
+							Tgl Mulai: <span className="font-bold">{internshipDetails.startDate}</span>
 						</p>
 						<p className="text-gray-700">
-							Tgl Berakhir: <span className="font-bold">23 Juli 2024</span>
+							Tgl Berakhir: <span className="font-bold">{internshipDetails.endDate}</span>
 						</p>
 						<p className="text-gray-700">
-							Durasi Magang: <span className="font-bold">3 Bulan</span>
+							Durasi Magang: <span className="font-bold">{internshipDetails.duration}</span>
 						</p>
 						<p className="text-gray-700">
-							Sisa Waktu Magang: <span className="font-bold">1 Bulan 15 Hari</span>
+							Sisa Waktu Magang: <span className="font-bold">{internshipDetails.remainingTime}</span>
 						</p>
 					</div>
 				</div>
@@ -74,38 +210,17 @@ const DetailCardProbationPage = () => {
 									<th>Keterangan</th>
 									<th>Jam Datang</th>
 									<th>Jam Pulang</th>
-									<th>Status</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>04/06/2024</td>
-									<td>Hadir</td>
-									<td>09.30</td>
-									<td>16.30</td>
-									<td className="text-green-500">Tepat Waktu</td>
-								</tr>
-								<tr>
-									<td>05/06/2024</td>
-									<td>Hadir</td>
-									<td>08.54</td>
-									<td>17.00</td>
-									<td className="text-green-500">Tepat Waktu</td>
-								</tr>
-								<tr>
-									<td>06/06/2024</td>
-									<td>Izin</td>
-									<td>-</td>
-									<td>-</td>
-									<td className="text-yellow-500">Izin</td>
-								</tr>
-								<tr>
-									<td>07/06/2024</td>
-									<td>Hadir</td>
-									<td>11.00</td>
-									<td>17.00</td>
-									<td className="text-red-500">Terlambat</td>
-								</tr>
+								{table.map((item, index) => (
+									<tr key={index}>
+										<td>{item.worktime.createdAt.split('T')[0]}</td>
+										<td>{item.worktime.type}</td>
+										<td>{item.worktime.start_time}</td>
+										<td>{item.worktime.end_time}</td>
+									</tr>
+								))}
 							</tbody>
 						</table>
 					</div>

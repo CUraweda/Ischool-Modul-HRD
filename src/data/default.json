@@ -1,0 +1,16 @@
+[
+	{
+		"submenu": false,
+		"title": "Kelengkapan Berkas",
+		"icon": "<FaFile />",
+		"url": "/default",
+		"subtitle": []
+	},
+	{
+		"submenu": false,
+		"title": "Daftar Penilaian",
+		"icon": "<FaListCheck />",
+		"url": "/default/daftar-penilaian",
+		"subtitle": []
+	}
+]
