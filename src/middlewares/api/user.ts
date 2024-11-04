@@ -2,7 +2,7 @@
 import { api } from '@/lib';
 import { TapiResponse, Tuser } from '@/types';
 
-const baseURL = `https://prod.curaweda.com/stg-server1/api/`;
+const baseURL = import.meta.env.VITE_REACT_API_URL;
 
 export const loginUser = (email: string, password: string) =>
 	api.post<TapiResponse<Tuser>>('/auth/login', { email, password }, { baseURL });
