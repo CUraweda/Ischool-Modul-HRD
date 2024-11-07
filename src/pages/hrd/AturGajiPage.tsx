@@ -118,7 +118,7 @@ const AturGajiPage = () => {
 	};
 	const getTypes = async () => {
 		try {
-			const res = await Bill.getAllTypes(0, 10000);
+			const res = await Bill.getAllTypes(10000, 0);
 			setTypes(res.data.data.result);
 		} catch (err) {
 			console.error(err);
@@ -554,7 +554,7 @@ const AturGajiPage = () => {
 											<td>{s.employee.full_name}</td>
 											<td>{formatCurrency(s?.fixed_salary)}</td>
 											<td className="text-center">
-												<button className={`${s.is_active ? 'btn btn-success' : 'btn btn-warning'}`}>
+												<button className={`${s.is_active ? 'btn btn-primary' : 'btn btn-warning'} text-white`}>
 													{s.is_active ? 'Aktif' : 'Tidak Aktif'}
 												</button>
 											</td>

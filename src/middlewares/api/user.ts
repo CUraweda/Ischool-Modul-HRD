@@ -2,7 +2,7 @@
 import { api } from '@/lib';
 import { TapiResponse, Tuser } from '@/types';
 
-const baseURL = `https://prod.curaweda.com/stg-server1/api/`;
+const baseURL = `https://prod.curaweda.com/api/`;
 // const baseURL = `http://localhost:5000/stg-server1/api/`;
 
 export const loginUser = (email: string, password: string) =>

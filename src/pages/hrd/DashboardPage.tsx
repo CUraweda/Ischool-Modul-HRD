@@ -155,7 +155,7 @@ const DashboardPage = () => {
 
 	const CreatePengumuman = async () => {
 		const localDate = new Date(planDate);
-		const timezoneOffset = localDate.getTimezoneOffset() * 60000; // Offset dalam milidetik
+		const timezoneOffset = localDate.getTimezoneOffset() * 60000;
 		const adjustedDate = new Date(localDate.getTime() - timezoneOffset);
 		const data = {
 			title: title,

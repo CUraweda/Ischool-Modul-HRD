@@ -1,7 +1,7 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
-const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/stg-server1/api/` });
-const apics = axios.create({ baseURL: `https://prod.curaweda.com/stg-server1/api/` });
+const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/api/` });
+const apics = axios.create({ baseURL: `https://prod.curaweda.com/api/` });
 // const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
 // const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
 const token = getSessionStorageItem('access_token');
@@ -332,7 +332,7 @@ const Karyawan = {
 	AddPenilaian: (data: any): AxiosPromise<any> =>
 		instance({
 			method: `POST`,
-			url: `employee-jobdesk/create`,
+			url: `employee-jobdesk/create-bulk`,
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -597,7 +597,13 @@ const Employee = {
 				search: search_query,
 			},
 		}),
-	getAllEmployeePage: (limit: number, search_query: any, page: any, access_token: string | null): AxiosPromise<any> =>
+	getAllEmployeePage: (
+		limit: number,
+		search_query: any,
+		page: any,
+		access_token: string | null,
+		divisi: any
+	): AxiosPromise<any> =>
 		instance.get('employee', {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
@@ -606,8 +612,28 @@ const Employee = {
 				limit: limit,
 				search: search_query,
 				page: page,
+				...(divisi && { division_id: divisi }),
 			},
 		}),
+	getAllEmployeePageExcel: (
+		limit: number,
+		search_query: any,
+		page: any,
+		access_token: string | null,
+		divisi: any
+	): AxiosPromise<any> =>
+		instance.get('employee', {
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+			params: {
+				limit: limit,
+				search: search_query,
+				page: page,
+				...(divisi && { division_id: divisi }),
+			},
+		}),
+
 	updateDivisi: (id: number, data: any): AxiosPromise<any> =>
 		instance.put(
 			`employee/update/${id}`,
@@ -856,7 +882,7 @@ const Penggajian = {
 			},
 		}),
 	getOneAccount: (id: number, access_token: string | null): AxiosPromise<any> =>
-		instance.get(`/employee-account/${id}`, {
+		instance.get(`/employee-account/detail/${id}`, {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -883,6 +909,15 @@ const Penggajian = {
 		instance.get('/employee-account/total-month?month=5&year=2024', {
 			headers: {
 				Authorization: `Bearer ${token}`,
+			},
+		}),
+	KirimEmail: (id: any, data: any, access_token: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-account/paid/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
 			},
 		}),
 };
@@ -948,12 +983,14 @@ const Default = {
 const DownloadFile = {
 	Download: (access_token: string | null, file_path: string): AxiosPromise =>
 		instance({
-			method: `GET`,
+			method: 'GET',
 			url: `download?filepath=${file_path}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
+			responseType: 'blob',
 		}),
+
 	DownloadSade: (access_token: string | null, file_path: string): AxiosPromise =>
 		apics({
 			method: `GET`,
@@ -961,6 +998,7 @@ const DownloadFile = {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
+			responseType: 'blob',
 		}),
 };
 

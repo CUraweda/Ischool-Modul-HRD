@@ -13,23 +13,21 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 	useEffect(() => {
 		if (dataProps.start_date) {
 			setDate(dataProps.start_date.split('T')[0]);
-			setHour(dataProps.start_date.split('T')[1].split('.')[0].slice(0, -3)); // Remove seconds
+			setHour(dataProps.start_date.split('T')[1].split('.')[0].slice(0, -3));
 		} else if (dataProps.createdAt) {
 			setDate(dataProps.createdAt.split('T')[0]);
-			setHour(dataProps.createdAt.split('T')[1].split('.')[0].slice(0, -3)); // Remove seconds
+			setHour(dataProps.createdAt.split('T')[1].split('.')[0].slice(0, -3));
 		}
 
-		// Fetch the image as a Blob and create a local URL
 		if (dataProps.file_path) {
 			const fetchImage = async () => {
 				try {
 					const response = await fetch(`https://api-hrd.curaweda.com/stg-server1/${dataProps.file_path}`);
 					const blob = await response.blob();
 					const blobUrl = URL.createObjectURL(blob);
-					setImageSrc(blobUrl); // Set the Blob URL as the image source
+					setImageSrc(blobUrl);
 				} catch (error) {
 					console.error('Error fetching image:', error);
-					// Set a fallback image in case of error
 					setImageSrc('https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png');
 				}
 			};

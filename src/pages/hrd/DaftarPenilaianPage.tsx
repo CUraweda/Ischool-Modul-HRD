@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react';
 import { Karyawan } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '@/components/ModalProps';
 import Swal from 'sweetalert2';
+import CheckboxSelect from '@/components/SelectComponent';
 
 const DaftarPenilaianPage = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
 	const [dropdownKaryawan, setDropdownKaryawan] = useState<any[]>([]);
-	const [selectedKaryawan, setSelectedKaryawan] = useState('');
+	const [selectedKaryawan, setSelectedKaryawan] = useState<string[]>([]);
+	const [dropdownAsessor, setDropdownAsessor] = useState<any[]>([]);
+	const [selectedAsessor, setSelectedAsessor] = useState<string[]>([]);
+	const [typeAsessor, setTypeAsessor] = useState('');
+	const [typeEmployee, setTypeEmployee] = useState('');
 	const [judulKegiatan, setJudulKegiatan] = useState('');
 	const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('');
 	const [tenggatWaktu, setTenggatWaktu] = useState('');
-	const [prioritas, setPrioritas] = useState('');
 	const [nilai, setNilai] = useState('');
 	const [editMode, setEditMode] = useState(false);
 	const [editId, setEditId] = useState<number | null>(null);
@@ -27,6 +31,8 @@ const DaftarPenilaianPage = () => {
 			setFetch(response.data.data.result);
 			const responseDropdownKaryawan = await Karyawan.DataKaryawan(0, 1000000, '', '', access_token);
 			setDropdownKaryawan(responseDropdownKaryawan.data.data.result);
+			const responseAsessor = await Karyawan.DaftarAsessor(0, 10000, '', access_token);
+			setDropdownAsessor(responseAsessor.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
@@ -34,12 +40,14 @@ const DaftarPenilaianPage = () => {
 
 	const AddPenilaian = async () => {
 		const data = {
-			employee_id: selectedKaryawan,
+			asessor_ids: selectedAsessor,
+			employee_ids: selectedKaryawan,
 			name: judulKegiatan,
 			description: deskripsiKegiatan,
 			due_date: tenggatWaktu,
 			priority: 1,
-			priority_label: prioritas,
+			all_employee: typeEmployee == 'Semua' ? true : false,
+			all_asessor: typeEmployee == 'Semua' ? true : false,
 		};
 
 		try {
@@ -72,7 +80,6 @@ const DaftarPenilaianPage = () => {
 		setJudulKegiatan(item.name);
 		setDeskripsiKegiatan(item.description);
 		setTenggatWaktu(item.due_date.split('T')[0]);
-		setPrioritas(item.priority_label);
 		setEditMode(true);
 		setEditId(item.id);
 		openModal('addPenilaian');
@@ -104,11 +111,10 @@ const DaftarPenilaianPage = () => {
 	};
 
 	const resetForm = () => {
-		setSelectedKaryawan('');
+		setSelectedKaryawan([]);
 		setJudulKegiatan('');
 		setDeskripsiKegiatan('');
 		setTenggatWaktu('');
-		setPrioritas('');
 		setEditMode(false);
 		setEditId(null);
 	};
@@ -213,20 +219,66 @@ const DaftarPenilaianPage = () => {
 					<h2 className="mb-4 text-xl font-bold text-gray-800">{editMode ? 'Edit Penilaian' : 'Tambah Penilaian'}</h2>
 					<div className="flex flex-col gap-4">
 						<div>
-							<label className="mb-1 block text-sm font-medium text-gray-700">Pilih Karyawan</label>
+							<label htmlFor="kirimKepada" className="label">
+								<span className="label-text font-semibold">Kirim Kepada (Asessor)</span>
+							</label>
 							<select
-								className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
-								value={selectedKaryawan}
-								onChange={(e) => setSelectedKaryawan(e.target.value)}
+								id="kirimKepada"
+								className="select select-bordered w-full"
+								onChange={(e) => setTypeAsessor(e.target.value)}
 							>
-								<option value="">-Pilih-</option>
-								{dropdownKaryawan.map((item, index) => (
-									<option value={item.id} key={index}>
-										{item.full_name}
-									</option>
-								))}
+								<option value="" disabled>
+									Pilih penerima
+								</option>
+								<option value="Semua">Semua</option>
+								<option value="Custom">Custom</option>
 							</select>
 						</div>
+						{typeAsessor === 'Custom' && (
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-700">Pilih Asessor</label>
+
+								<CheckboxSelect
+									options={dropdownAsessor.map((karyawan) => ({
+										id: karyawan.id,
+										full_name: karyawan.full_name,
+									}))}
+									selectedOptions={selectedAsessor}
+									onChange={setSelectedAsessor}
+								/>
+							</div>
+						)}
+
+						<div>
+							<label htmlFor="kirimKepada" className="label">
+								<span className="label-text font-semibold">Kirim Kepada (Karyawan)</span>
+							</label>
+							<select
+								id="kirimKepada"
+								className="select select-bordered w-full"
+								onChange={(e) => setTypeEmployee(e.target.value)}
+							>
+								<option value="" disabled>
+									Pilih penerima
+								</option>
+								<option value="Semua">Semua</option>
+								<option value="Custom">Custom</option>
+							</select>
+						</div>
+						{typeEmployee === 'Custom' && (
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-700">Pilih Karyawan</label>
+
+								<CheckboxSelect
+									options={dropdownKaryawan.map((karyawan) => ({
+										id: karyawan.id,
+										full_name: karyawan.full_name,
+									}))}
+									selectedOptions={selectedKaryawan}
+									onChange={setSelectedKaryawan}
+								/>
+							</div>
+						)}
 
 						<div>
 							<label className="mb-1 block text-sm font-medium text-gray-700">Judul Kegiatan</label>
@@ -258,20 +310,6 @@ const DaftarPenilaianPage = () => {
 								value={tenggatWaktu}
 								onChange={(e) => setTenggatWaktu(e.target.value)}
 							/>
-						</div>
-
-						<div>
-							<label className="mb-1 block text-sm font-medium text-gray-700">Prioritas</label>
-							<select
-								className="select select-bordered w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
-								value={prioritas}
-								onChange={(e) => setPrioritas(e.target.value)}
-							>
-								<option value="">-Pilih-</option>
-								<option value="Tinggi">Tinggi</option>
-								<option value="Sedang">Sedang</option>
-								<option value="Rendah">Rendah</option>
-							</select>
 						</div>
 					</div>
 
