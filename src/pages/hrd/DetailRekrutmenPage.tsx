@@ -244,7 +244,7 @@ const DetailRekrutmenPage = () => {
 					</div>
 
 					<div className="mt-6">
-						<h3 className="text-2xl font-semibold text-gray-800">Kesimpulan</h3>
+						<h3 className="text-2xl font-semibold text-gray-800">Deskripsi Diri</h3>
 						<div className="my-2 h-[2px] w-full bg-gray-300"></div>
 						<p className="leading-relaxed text-gray-700">{dataCv?.applicant_description}</p>
 					</div>
@@ -256,7 +256,7 @@ const DetailRekrutmenPage = () => {
 					</div>
 
 					<div className="mt-6">
-						<h3 className="text-2xl font-semibold text-gray-800">Alasan</h3>
+						<h3 className="text-2xl font-semibold text-gray-800">Alasan Melamar</h3>
 						<div className="my-2 h-[2px] w-full bg-gray-300"></div>
 						<p className="leading-relaxed text-gray-700">{dataCv?.applicant_reason}</p>
 					</div>
@@ -309,10 +309,15 @@ const DetailRekrutmenPage = () => {
 					<div className="mt-6">
 						<h3 className="text-2xl font-semibold text-gray-800">Pengalaman</h3>
 						<div className="my-2 h-[2px] w-full bg-gray-300"></div>
-						<div className="leading-relaxed text-gray-700">
+						<div className="space-y-4 leading-relaxed text-gray-700">
 							{dataCv?.applicantjobs.map((item: any, index: any) => (
-								<div key={index} className="mb-2">
-									{item?.description}
+								<div key={index} className="flex items-center gap-2">
+									<div className="h-3 w-3 rounded-full bg-black"></div>
+									<div>
+										<div className="text-lg font-bold text-gray-900">{item.company}</div>
+										<div className="text-md font-medium text-blue-700">{item.position}</div>
+										<p className="mt-1 text-gray-600">{item.description}</p>
+									</div>
 								</div>
 							))}
 						</div>

@@ -59,12 +59,14 @@
 			{
 				"name": "Daftar Penilaian",
 				"url": "/hrd/daftar-penilaian"
-			},
-			{
-				"name": "Data Karyawan",
-				"url": "/hrd/data-karyawan"
 			}
 		]
+	},
+	{
+		"submenu": false,
+		"title": "Data Karyawan",
+		"icon": "<FaPeopleGroup />",
+		"url": "/hrd/data-karyawan"
 	},
 	{
 		"submenu": false,
@@ -73,10 +75,20 @@
 		"url": "/hrd/division"
 	},
 	{
-		"submenu": false,
-		"title": "Rekap Pelatihan",
+		"submenu": true,
+		"title": "Pelatihan",
 		"icon": "<MdOutlineDateRange />",
-		"url": "/hrd/rekap-pelatihan"
+		"url": "",
+		"subtitle": [
+			{
+				"name": "Pengajuan Pelatihan",
+				"url": "/hrd/pengajuan-pelatihan"
+			},
+			{
+				"name": "Daftar Pelatihan",
+				"url": "/hrd/daftar-pelatihan"
+			}
+		]
 	},
 	{
 		"submenu": false,

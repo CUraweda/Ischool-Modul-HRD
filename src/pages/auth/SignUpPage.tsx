@@ -27,7 +27,7 @@ const SignUp: React.FC = () => {
 			email: '',
 			password: '',
 			confirm_password: '',
-			role_id: 11,
+			role_id: 5,
 		},
 		validateOnChange: false,
 		validationSchema: registrationSchema,
