@@ -41,7 +41,6 @@ const PageDivisi: React.FC<{}> = () => {
 				totalRows: response.data.data.totalRows,
 				totalPage: response.data.data.totalPage,
 			}));
-			const dropdownResponse = await Employee.getAllEmployeePage(10000, '', 0, access_token, divisi);
 		} catch (error) {
 			console.error(error);
 		}
