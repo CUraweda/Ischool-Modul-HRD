@@ -527,7 +527,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 					/>
 				</div>
 			</div>
-			<div className="q-mt card mt-5 w-fit bg-base-100 shadow-xl">
+			<div className="q-mt card mt-5 bg-base-100 shadow-xl">
 				<div className="card-body overflow-auto">
 					<table className="table table-zebra mb-14 h-full">
 						<thead>

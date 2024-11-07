@@ -12,6 +12,7 @@ import { BsDiagram3Fill } from 'react-icons/bs';
 import { MdOutlineGrade } from 'react-icons/md';
 import { FaFile } from 'react-icons/fa';
 import { FaListCheck } from 'react-icons/fa6';
+import { FaPeopleGroup } from 'react-icons/fa6';
 import {
 	AiOutlineBook,
 	AiOutlineTeam,
@@ -53,4 +54,5 @@ export const iconMapping: { [key: string]: JSX.Element } = {
 	'<MdOutlineGrade />': <MdOutlineGrade />,
 	'<FaFile />': <FaFile />,
 	'<FaListCheck />': <FaListCheck />,
+	'<FaPeopleGroup />': <FaPeopleGroup />,
 };

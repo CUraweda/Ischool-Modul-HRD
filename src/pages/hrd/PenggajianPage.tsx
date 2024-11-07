@@ -16,7 +16,17 @@ const PenggajianPage = () => {
 		Total: '',
 		Bulan: '',
 	});
-	const [rekapYear, setRekapYear] = useState<any[]>([]);
+	const [chartData, setChartData] = useState({
+		labels: [],
+		datasets: [
+			{
+				label: 'Rincian Biaya Penggajian',
+				data: [],
+				backgroundColor: '#6366f1',
+				borderRadius: 10,
+			},
+		],
+	});
 	const [dataPenggajian, setDataPenggajian] = useState<any[]>([]);
 	const [attendanceData, setAttendanceData] = useState<any[]>([]);
 	const [filterTable, setFilterTable] = useState({
@@ -52,9 +62,22 @@ const PenggajianPage = () => {
 	const getRecapYear = async () => {
 		try {
 			const res = await Penggajian.getYearAccount(access_token);
-			const totals = res.data.data.map((item: { total: number }) => item.total);
+			const data = res.data.data;
 
-			setRekapYear(totals);
+			const monthLabels = data.map((item: any) => item.name.slice(0, 3));
+			const totals = data.map((item: any) => item.total);
+
+			setChartData({
+				labels: monthLabels,
+				datasets: [
+					{
+						label: 'Rincian Biaya Penggajian',
+						data: totals,
+						backgroundColor: '#6366f1',
+						borderRadius: 10,
+					},
+				],
+			});
 		} catch (error) {
 			console.error(error);
 		}
@@ -106,18 +129,6 @@ const PenggajianPage = () => {
 		}).format(data);
 	};
 
-	const barChartData = {
-		labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep'],
-		datasets: [
-			{
-				label: 'Rincian Biaya Penggajian',
-				data: rekapYear,
-				backgroundColor: '#6366f1',
-				borderRadius: 10,
-			},
-		],
-	};
-
 	// const donutChartData = {
 	// 	labels: ['Total Jam Kerja', 'Total Jam Istirahat'],
 	// 	datasets: [
@@ -145,7 +156,6 @@ const PenggajianPage = () => {
 				beginAtZero: true,
 			},
 		},
-		cutout: '87%',
 	};
 
 	// const donutOptions = {
@@ -198,7 +208,7 @@ const PenggajianPage = () => {
 				<div className="card rounded-lg bg-white p-6 shadow-lg">
 					<h2 className="text-lg font-semibold text-gray-800">Rincian Biaya Penggajian</h2>
 					<div className="mt-4" style={{ height: '300px' }}>
-						<Bar data={barChartData} options={barOptions} className="w-full" />
+						<Bar data={chartData} options={barOptions} className="w-full" />
 					</div>
 				</div>
 

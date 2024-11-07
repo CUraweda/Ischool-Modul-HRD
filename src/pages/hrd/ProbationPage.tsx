@@ -41,15 +41,6 @@ const Probationpage = () => {
 		}
 	};
 
-	const CloseRekrutmen = async (id: any) => {
-		try {
-			await Rekrutmen.CloseRekrutment(id);
-			fetchData();
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
 	useEffect(() => {
 		fetchData();
 	}, [search]);
@@ -158,13 +149,6 @@ const Probationpage = () => {
 								</div>
 							</div>
 
-							<div>
-								<div className="text-center text-xs">Status </div>
-								<div className="flex items-center gap-2">
-									<div className="text-sm font-bold">{item.is_open == true ? 'Dibuka' : 'Ditutup'}</div>
-								</div>
-							</div>
-
 							<div className="dropdown dropdown-end">
 								<div tabIndex={0} role="button" className="btn btn-outline btn-xs m-1 h-10">
 									<svg
@@ -207,24 +191,6 @@ const Probationpage = () => {
 											</div>
 											<span className="ml-2 font-semibold" onClick={() => handleCardClick('interview', item.id)}>
 												Daftar Interview
-											</span>
-										</div>
-									</li>
-									<li>
-										<div className="flex items-center p-2">
-											<div className="rounded-full bg-yellow-500 p-1">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-													strokeWidth={2}
-													className="h-2 w-2 rounded-full bg-white"
-												>
-													<circle cx="12" cy="12" r="10" />
-												</svg>
-											</div>
-											<span className="ml-2 font-semibold" onClick={() => CloseRekrutmen(item.id)}>
-												Tutup Penerimaan
 											</span>
 										</div>
 									</li>

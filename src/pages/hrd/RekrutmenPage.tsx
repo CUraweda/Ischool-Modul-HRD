@@ -505,12 +505,7 @@ const RekrutmenPage = () => {
 
 						<div className="col-span-2 my-2 flex items-center gap-2">
 							<div className="text-sm text-gray-700">Apakah Full Time?</div>
-							<input
-								type="checkbox"
-								defaultChecked
-								className="checkbox"
-								onChange={(e) => setFulltime(e.target.checked)}
-							/>
+							<input type="checkbox" className="checkbox" onChange={(e) => setFulltime(e.target.checked)} />
 						</div>
 
 						<div className="col-span-2">

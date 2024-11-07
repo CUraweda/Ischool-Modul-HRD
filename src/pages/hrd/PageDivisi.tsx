@@ -5,14 +5,17 @@ import Swal from 'sweetalert2';
 import { IoMdClose } from 'react-icons/io';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import * as XLSX from 'xlsx';
 
 const PageDivisi: React.FC<{}> = () => {
 	const [modalPopup, setModalPopup] = useState<boolean>(false);
 	const [listDivisi, setListDivisi] = useState<any[]>([]);
+	const [divisi, setDivisi] = useState<Number>(0);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
+	const [dataEmployeeExcel, setDataEmployeeExcel] = useState<any[]>([]);
 	const [dataUpdate, setDataUpdate] = useState<any>(null);
 	const [page, setPage] = useState<number>(0);
-	const [limit, setLimit] = useState<number>(10); // Set default limit
+	const [limit, setLimit] = useState<number>(10);
 	const [filterTable, setFilterTable] = useState({
 		search: '',
 		totalPage: 0,
@@ -29,8 +32,10 @@ const PageDivisi: React.FC<{}> = () => {
 
 	const fetchAllEmployee = async () => {
 		try {
-			const response = await Employee.getAllEmployeePage(limit, filterTable.search, page, access_token);
+			const response = await Employee.getAllEmployeePage(limit, filterTable.search, page, access_token, divisi);
+			const responseExcel = await Employee.getAllEmployeePage(100000, '', 0, access_token, divisi);
 			setDataEmployee(response.data.data.result);
+			setDataEmployeeExcel(responseExcel.data.data.result);
 			setFilterTable((prev) => ({
 				...prev,
 				totalRows: response.data.data.totalRows,
@@ -87,26 +92,33 @@ const PageDivisi: React.FC<{}> = () => {
 		setFilterTable((prev) => ({ ...prev, search: e.target.value }));
 	};
 
+	const exportToExcel = () => {
+		const worksheet = XLSX.utils.json_to_sheet(
+			dataEmployeeExcel.map((item, index) => ({
+				No: index + 1 + page * limit,
+				Nama: item.full_name,
+				Posisi: listDivisi?.find((div) => div.id === item.division_id)?.name ?? '-',
+			}))
+		);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Employee Data');
+		XLSX.writeFile(workbook, 'Data Employee.xlsx');
+	};
+
 	useEffect(() => {
 		fetchDataDivision();
 	}, []);
 
 	useEffect(() => {
 		fetchAllEmployee();
-	}, [limit, filterTable.search, page]);
+	}, [limit, filterTable.search, page, divisi]);
 
 	return (
 		<div className="w-full flex-wrap md:flex">
 			{/* Header and Search */}
-			<div className="flex w-full justify-between">
-				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
-					<ul className="my-auto h-full">
-						<li className="font-bold">
-							<a>Divisi Karyawan</a>
-						</li>
-					</ul>
-				</div>
-				<label className="text-md input input-md input-bordered flex items-center gap-2 md:w-1/3">
+			<div className="mb-3 flex w-full items-center justify-between">
+				<h3 className="font-bold">Divisi</h3>
+				<label className="input input-sm input-bordered flex items-center gap-2">
 					<input
 						type="text"
 						className="grow"
@@ -114,9 +126,44 @@ const PageDivisi: React.FC<{}> = () => {
 						value={filterTable.search}
 						onChange={handleSearchChange}
 					/>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 16 16"
+						fill="currentColor"
+						className="h-4 w-4 opacity-70"
+					>
+						<path
+							fillRule="evenodd"
+							d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+							clipRule="evenodd"
+						/>
+					</svg>
 				</label>
 			</div>
-			{/* Table */}
+
+			<div className="h-[1px] w-full bg-gray-300"></div>
+
+			<div className="mt-6 flex w-full items-center justify-end gap-2">
+				<button onClick={exportToExcel} className="btn btn-primary btn-sm ml-4">
+					Export to Excel
+				</button>
+				<div className="flex items-center gap-2">
+					<select
+						className="select select-bordered select-xs w-full max-w-xs"
+						onChange={(e) => setDivisi(parseInt(e.target.value))}
+					>
+						<option value={0} selected>
+							Filter
+						</option>
+						{listDivisi.map((item, index) => (
+							<option value={item.id} key={index}>
+								{item.name}
+							</option>
+						))}
+					</select>
+				</div>
+			</div>
+
 			<div className="card my-5 h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-md">
 				<table className="table-compact table table-zebra h-full w-full">
 					<thead>
@@ -142,6 +189,7 @@ const PageDivisi: React.FC<{}> = () => {
 						))}
 					</tbody>
 				</table>
+
 				{/* Pagination Controls */}
 				<div className="my-5 flex items-center justify-center">
 					<button
@@ -161,7 +209,6 @@ const PageDivisi: React.FC<{}> = () => {
 					>
 						Next
 					</button>
-					{/* Limit Buttons */}
 					<div className="ml-5">
 						<button onClick={() => setLimit(10)} className="btn btn-sm">
 							10
@@ -178,6 +225,7 @@ const PageDivisi: React.FC<{}> = () => {
 					</div>
 				</div>
 			</div>
+
 			{/* Modal for Updating Division */}
 			{modalPopup && (
 				<dialog className="modal modal-open" onClick={() => setModalPopup(false)}>
@@ -189,28 +237,27 @@ const PageDivisi: React.FC<{}> = () => {
 							</div>
 						</div>
 						<Formik
-							initialValues={{
-								employee_id: dataUpdate.employee_id,
-								division_id: dataUpdate.division_id,
-							}}
+							initialValues={{ employee_id: dataUpdate.employee_id, division_id: dataUpdate.division_id }}
 							validationSchema={validationSchema}
 							onSubmit={handleSubmit}
+							enableReinitialize
 						>
-							<Form className="py-4">
-								<div className="form-control mb-4">
-									<Field as="select" name="division_id" className="select select-bordered">
-										<option value="">Pilih divisi</option>
-										{listDivisi?.map((div) => (
-											<option key={div.id} value={div.id}>
-												{div.name}
+							<Form>
+								<div className="form-control mt-4 w-full">
+									<label className="label font-semibold">Divisi</label>
+									<Field as="select" name="division_id" className="select select-bordered select-sm w-full">
+										<option value="">Pilih Divisi</option>
+										{listDivisi.map((item, index) => (
+											<option key={index} value={item.id}>
+												{item.name}
 											</option>
 										))}
 									</Field>
-									<ErrorMessage name="division_id" component="div" className="text-sm text-red-500" />
+									<ErrorMessage name="division_id" component="div" className="mt-1 text-xs text-red-500" />
 								</div>
 								<div className="modal-action">
-									<button type="submit" className="btn btn-primary">
-										Submit
+									<button type="submit" className="btn btn-primary btn-sm">
+										Simpan
 									</button>
 								</div>
 							</Form>
