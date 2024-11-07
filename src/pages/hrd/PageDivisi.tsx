@@ -13,7 +13,6 @@ const PageDivisi: React.FC<{}> = () => {
 	const [divisi, setDivisi] = useState<Number>(0);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const [dataEmployeeExcel, setDataEmployeeExcel] = useState<any[]>([]);
-	const [dropdownEmployee, setDropdownEmployee] = useState<any[]>([]);
 	const [dataUpdate, setDataUpdate] = useState<any>(null);
 	const [page, setPage] = useState<number>(0);
 	const [limit, setLimit] = useState<number>(10);
@@ -43,7 +42,6 @@ const PageDivisi: React.FC<{}> = () => {
 				totalPage: response.data.data.totalPage,
 			}));
 			const dropdownResponse = await Employee.getAllEmployeePage(10000, '', 0, access_token, divisi);
-			setDropdownEmployee(dropdownResponse.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}

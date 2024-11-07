@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Training, Karyawan } from '@/middlewares/api/hrd';
-// import { Training, Employee } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import Swal from 'sweetalert2';
 import { TbFaceId } from 'react-icons/tb';
@@ -8,7 +7,6 @@ import * as XLSX from 'xlsx';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { FaFileExport } from 'react-icons/fa6';
 import { Formik, Field } from 'formik';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 const PelatihanPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
 	const [filterStatus, setFilterStatus] = useState<any>('');
@@ -19,9 +17,6 @@ const PelatihanPage: React.FC<{}> = () => {
 	const [currentPage, setCurrentPage] = useState<number>(0);
 	const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
 	const [dropdownEmployee, setDropdownEmployee] = useState<any[]>([]);
-	// const [search_query, setSearch_query] = useState<string>('');
-	// const [filterDivision, setFilterDivision] = useState<any>('');
-	// const [ListEmployee, setEmployeeList] = useState<any[]>([]);
 	const [forCreate, setForCreate] = useState<boolean>(false);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
