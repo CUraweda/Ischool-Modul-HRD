@@ -1,9 +1,9 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
-const instance = axios.create({ baseURL: `https://api-hrd.curaweda.com/api/` });
-const apics = axios.create({ baseURL: `https://prod.curaweda.com/api/` });
-// const instance = axios.create({ baseURL: `http://localhost:5005/stg-server1/api/` });
-// const apics = axios.create({ baseURL: `http://localhost:5000/stg-server1/api/` });
+
+const instance = axios.create({ baseURL: import.meta.env.VITE_REACT_API_HRD_URL });
+const apics = axios.create({ baseURL: import.meta.env.VITE_REACT_API_URL });
+
 const token = getSessionStorageItem('access_token');
 
 const Verif = {
