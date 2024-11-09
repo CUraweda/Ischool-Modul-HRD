@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/atoms';
 import { useAppDispatch } from '@/hooks';
 import { registerUser } from '@/middlewares/api';
@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 const registrationSchema = Yup.object().shape({
 	full_name: Yup.string().required('Nama lengkap harus diisi'),
@@ -19,7 +20,13 @@ const registrationSchema = Yup.object().shape({
 
 const SignUp: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate(); // useNavigate hook for navigation
+	const navigate = useNavigate();
+
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+	const toggleShowPassword = () => setShowPassword((prev) => !prev);
+	const toggleShowConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
 
 	const signUpForm = useFormik({
 		initialValues: {
@@ -79,23 +86,40 @@ const SignUp: React.FC = () => {
 					onChange={signUpForm.handleChange}
 					errorMessage={signUpForm.errors.email}
 				/>
-				<Input
-					type="password"
-					label="Password"
-					name="password"
-					value={signUpForm.values.password}
-					onChange={signUpForm.handleChange}
-					errorMessage={signUpForm.errors.password}
-				/>
-				<Input
-					type="password"
-					label="Konfirmasi Password"
-					name="confirm_password"
-					value={signUpForm.values.confirm_password}
-					onChange={signUpForm.handleChange}
-					errorMessage={signUpForm.errors.confirm_password}
-				/>
-
+				<div className="relative">
+					<Input
+						type={showPassword ? 'text' : 'password'}
+						label="Password"
+						name="password"
+						value={signUpForm.values.password}
+						onChange={signUpForm.handleChange}
+						errorMessage={signUpForm.errors.password}
+					/>
+					<button
+						type="button"
+						onClick={toggleShowPassword}
+						className="absolute inset-y-[3.2rem] right-0 px-3 text-gray-500 hover:text-gray-700"
+					>
+						{showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+					</button>
+				</div>
+				<div className="relative">
+					<Input
+						type={showConfirmPassword ? 'text' : 'password'}
+						label="Konfirmasi Password"
+						name="confirm_password"
+						value={signUpForm.values.confirm_password}
+						onChange={signUpForm.handleChange}
+						errorMessage={signUpForm.errors.confirm_password}
+					/>
+					<button
+						type="button"
+						onClick={toggleShowConfirmPassword}
+						className="absolute inset-y-[3.2rem] right-0 px-3 text-gray-500 hover:text-gray-700"
+					>
+						{showConfirmPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+					</button>
+				</div>
 				<button type="submit" disabled={signUpForm.isSubmitting} className="btn btn-primary mt-4 w-full">
 					{signUpForm.isSubmitting ? <span className="loading loading-dots loading-md mx-auto"></span> : 'Sign Up'}
 				</button>
