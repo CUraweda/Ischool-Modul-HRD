@@ -453,9 +453,10 @@ const DetailPenggajianPage = () => {
 							<h3 className="text-lg font-semibold">Gaji Bersih</h3>
 							<p className="text-right font-semibold">
 								{formatSalary(
-									detailBills
-										.filter((item: any) => item.subtraction === false)
-										.reduce((acc: number, item: any) => acc + item.total, 0) -
+									(detailPenggajian?.fixed_salary || 0) +
+										detailBills
+											.filter((item: any) => item.subtraction === false)
+											.reduce((acc: number, item: any) => acc + item.total, 0) -
 										detailBills
 											.filter((item: any) => item.subtraction === true)
 											.reduce((acc: number, item: any) => acc + item.total, 0)
