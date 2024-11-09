@@ -1,8 +1,8 @@
 import { getSessionStorageItem } from '@/utils/storageUtils';
 import axios, { AxiosPromise } from 'axios';
 
-const instance = axios.create({ baseURL: import.meta.env.VITE_REACT_API_HRD_URL });
-const apics = axios.create({ baseURL: import.meta.env.VITE_REACT_API_URL });
+const instance = axios.create({ baseURL: import.meta.env.VITE_SERVER_HRD_URL });
+const apics = axios.create({ baseURL: import.meta.env.VITE_SERVER_MAIN_URL });
 
 const token = getSessionStorageItem('access_token');
 
