@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/atoms';
 import { useAppDispatch } from '@/hooks';
 import { loginUser } from '@/middlewares/api';
@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { setSessionStorageItem } from '@/utils/storageUtils';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 const loginSchema = Yup.object().shape({
 	email: Yup.string().email('Email tidak valid').required('Email harus diisi'),
@@ -17,6 +18,11 @@ const loginSchema = Yup.object().shape({
 const LoginPage: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = useState(false);
+
+	const toggleShowPassword = () => {
+		setShowPassword((prevShow) => !prevShow);
+	};
 
 	const loginForm = useFormik({
 		initialValues: {
@@ -66,18 +72,6 @@ const LoginPage: React.FC = () => {
 							userData.employee ? navigate('/default') : toast.warn('anda tidak memiliki akses');
 							break;
 					}
-
-					// window.location.reload();
-
-					// if (role_id == '5') {
-					// 	navigate('/hrd/dashboard');
-					// } else if (role_id == '11') {
-					// 	navigate('/');
-					// } else if (id_employee != null) {
-					// 	navigate('/default');
-					// } else {
-					// 	toast.warn('anda tidak memiliki akses');
-					// }
 				}
 			} catch (error) {
 				console.error('Login error:', error);
@@ -100,14 +94,23 @@ const LoginPage: React.FC = () => {
 					onChange={loginForm.handleChange}
 					errorMessage={loginForm.errors.email}
 				/>
-				<Input
-					type="password"
-					label="Password"
-					name="password"
-					value={loginForm.values.password}
-					onChange={loginForm.handleChange}
-					errorMessage={loginForm.errors.password}
-				/>
+				<div className="relative">
+					<Input
+						type={showPassword ? 'text' : 'password'}
+						label="Password"
+						name="password"
+						value={loginForm.values.password}
+						onChange={loginForm.handleChange}
+						errorMessage={loginForm.errors.password}
+					/>
+					<button
+						type="button"
+						onClick={toggleShowPassword}
+						className="absolute inset-y-[3.2rem] right-0 px-3 text-gray-500 hover:text-gray-700"
+					>
+						{showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+					</button>
+				</div>
 				<div className="flex">
 					<Link to="/forgot-password" className="btn btn-link ms-auto">
 						Lupa password?
