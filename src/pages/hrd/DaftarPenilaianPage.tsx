@@ -177,11 +177,11 @@ const DaftarPenilaianPage = () => {
 						<tbody>
 							{fetch.map((item, index) => (
 								<tr key={index}>
-									<td>{item.employee.full_name}</td>
-									<td>{item.employee.email ? item.employee.email : '-'}</td>
+									<td>{item.full_name}</td>
+									<td>{item.email ? item.email : '-'}</td>
 									<td className="px-4 py-2">
 										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
-											{item.employee.occupation}
+											{item.occupation}
 										</div>
 									</td>
 									<td>{item.grade}</td>
