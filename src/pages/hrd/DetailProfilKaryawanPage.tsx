@@ -1,4 +1,4 @@
-import { Karyawan, Probation } from '@/middlewares/api';
+import { DownloadFile, Karyawan, Probation } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -61,13 +61,27 @@ const DetailProfilKaryawanPage = () => {
 		openModal('editModal');
 	};
 
-	// const downloadFile = (filePath: string, fileName: string) => {
-	// 	const fileUrl = `${filePath.replace(/\\/g, '/')}`;
-	// 	const link = document.createElement('a');
-	// 	link.href = fileUrl;
-	// 	link.download = fileName;
-	// 	link.click();
-	// };
+	const downloadFile = async (file_path: string, file_type: string) => {
+		try {
+			const response = await DownloadFile.Download(access_token, file_path);
+
+			if (response.status === 200 && response.data) {
+				const blob = new Blob([response.data], { type: file_type });
+				const fileUrl = URL.createObjectURL(blob);
+
+				const link: any = document.createElement('a');
+				link.href = fileUrl;
+				link.download = file_path.split('/').pop() || 'downloaded_file';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			} else {
+				console.error('File download failed or no data available');
+			}
+		} catch (error) {
+			console.error('Error during file download:', error);
+		}
+	};
 
 	let access_token = sessionStorage.getItem('access_token');
 
@@ -200,7 +214,7 @@ const DetailProfilKaryawanPage = () => {
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Jenis Kelamin</div>
 										<div className="text-sm font-bold">
-											{fetch?.gender != null ? (fetch?.gender == 'L' ? 'Laki-laki' : 'Perempuan') : 'Tidak Tersedia'}
+											{fetch?.gender != null ? (fetch?.gender ? fetch?.gender : 'Tidak Tersedia') : 'Tidak Tersedia'}
 										</div>
 									</div>
 									<div className="flex flex-col gap-[0.3rem]">
@@ -259,14 +273,15 @@ const DetailProfilKaryawanPage = () => {
 						<div className="border-r p-4">
 							<div>
 								<div className="text-sm font-bold text-gray-500">Jabatan</div>
-								{fetch?.formpositions.map((item: any, index: any) => (
-									<div key={index}>{item?.employeeposition?.name}</div>
-								))}
+								<div>{fetch?.job_desc}</div>
 							</div>
 						</div>
 						<div className="border-r p-4">
 							<div>
 								<div className="text-sm font-bold text-gray-500">Bidang</div>
+								{fetch?.formpositions.map((item: any, index: any) => (
+									<div key={index}>{item?.employeeposition?.name}</div>
+								))}
 							</div>
 						</div>
 						<div className="p-4">
@@ -426,10 +441,10 @@ const DetailProfilKaryawanPage = () => {
 									</div>
 									<span className="text-lg font-semibold text-gray-500">{file.file_name}</span>
 								</div>
-								{/* <div className="flex items-center gap-4">
+								<div className="flex items-center gap-4">
 									<button
 										className="btn btn-outline btn-xs rounded-full"
-										onClick={() => downloadFile(file.file_path, file.file_name)}
+										onClick={() => downloadFile(file.file_path, file.file_type)}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -446,7 +461,7 @@ const DetailProfilKaryawanPage = () => {
 											/>
 										</svg>
 									</button>
-									<button className="btn btn-outline btn-xs rounded-full">
+									{/* <button className="btn btn-outline btn-xs rounded-full">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
@@ -462,8 +477,8 @@ const DetailProfilKaryawanPage = () => {
 											/>
 											<path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
 										</svg>
-									</button>
-								</div> */}
+									</button> */}
+								</div>
 							</li>
 						))}
 					</ul>

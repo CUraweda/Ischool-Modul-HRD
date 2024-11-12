@@ -94,7 +94,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="rekap-penilaian" element={<RekapPenilaianPage />} />
 							<Route path="rekap-penilaian/detail" element={<DetailRekapPage />} />
 							<Route path="daftar-pelatihan" element={<PelatihanPage />} />
-							<Route path="rekap-pelatihan" element={<RekapPelatihan />} />
+							<Route path="pengajuan-pelatihan" element={<RekapPelatihan />} />
 							<Route path="rekrutmen" element={<RekrutmenPage />} />
 							<Route path="rekrutmen/:id" element={<DetailRekrutmenPage />} />
 							<Route path="employee" element={<ProbationPage />} />

@@ -257,7 +257,7 @@ const DataKaryawanPage = () => {
 					>
 						«
 					</button>
-					<button className="btn join-item btn-sm">Page {page}</button>
+					<button className="btn join-item btn-sm">Page {page + 1}</button>
 					<button
 						className="btn join-item btn-sm"
 						disabled={currentPage === totalPages}

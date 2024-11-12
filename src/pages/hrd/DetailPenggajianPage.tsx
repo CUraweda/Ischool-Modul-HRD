@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Penggajian, Bill, Salary, Employee } from '@/middlewares/api/hrd';
+import { useState, useEffect } from 'react';
+import { Penggajian, Bill, Salary } from '@/middlewares/api/hrd';
 import * as XLSX from 'xlsx';
-// import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { IoMdClose } from 'react-icons/io';
-const DetailPenggajianPage: React.FC<{}> = () => {
-	// const Navigate = useNavigate();
+const DetailPenggajianPage = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
-	const [modalAdd, setModalAdd] = useState(false);
 	const [dataPenggajian, setDataPenggajian] = useState<any[]>([]);
 	const [detailPenggajian, setDetailPenggajian] = useState<any>(null);
-	const [dataSalary, setSalary] = useState<any>(null);
-	const [DataTypes, setTypes] = useState<any>({});
+	const [detailBills, setDetailBills] = useState<any[]>([]);
 	const [DataBill, setDataBill] = useState<any>([]);
-	const [ListEmployee, setListEmployee] = useState<any>(null);
+	const [idEmployee, setId] = useState();
 	const [filterTable, setFilterTable] = useState({
 		search: '',
 		limit: 0,
@@ -48,33 +43,6 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		desc: name,
 	}));
 
-	const currentYear = new Date().getFullYear();
-	const years = Array.from({ length: 51 }, (_, index) => currentYear + index);
-
-	const [formData, setFormData] = useState({
-		salary_id: 0,
-		employee_id: 0,
-		month_id: 1,
-		year: currentYear,
-		temp_total: 0,
-		fixed_salary: 0,
-		variable_salary: 0,
-		loan: 0,
-		cooperative: 0,
-	});
-	const resetForm = () => {
-		setFormData({
-			salary_id: 0,
-			employee_id: 0,
-			month_id: 0,
-			year: 0,
-			temp_total: 0,
-			fixed_salary: 0,
-			variable_salary: 0,
-			loan: 0,
-			cooperative: 0,
-		});
-	};
 	const fetchData = async () => {
 		try {
 			const res = await Penggajian.getAllAccount(
@@ -100,149 +68,43 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 	const getAllSalary = async () => {
 		try {
 			const res = await Salary.getAllSalary(100000, '', 0, access_token);
-			setSalary(res.data.data.result);
 			console.log(res.data.data.result);
 		} catch (err) {
 			console.error(err);
 		}
 	};
-	const createAccount = async (data: any) => {
+	const createAccount = async () => {
 		try {
-			const res = await Penggajian.createAccount(access_token, data);
-			setSalary(res.data.data.result);
+			const res = await Penggajian.createAccount(access_token, {});
+			console.log(res.statusText);
+
+			fetchData();
 			Swal.fire({
 				icon: 'success',
 				title: 'Success',
 				text: 'Data berhasil ditambahkan',
 			});
-			fetchData();
-			resetForm();
-		} catch (err) {
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
 			Swal.fire({
 				icon: 'error',
-				title: 'Oops...',
-				text: 'Terjadi kesalahan saat ditambahkan.',
+				title: 'Error',
+				text: message,
 			});
-			console.error(err);
 		}
 	};
 	const getOne = async (id: any) => {
 		try {
 			const res = await Penggajian.getOneAccount(id, access_token);
-			setDetailPenggajian(res.data.data);
+			setDetailPenggajian(res.data.data.account);
+			setDetailBills(res.data.data.bills);
 			console.log('as', res.data.data);
-			getEmployee(res.data.data.employee_id);
 		} catch (error) {
 			console.error('Error fetching data:', error);
 		}
 	};
-	const getEmployee = async (id: any) => {
-		try {
-			const res = await Employee.getOneEmployee(id, access_token);
-			setListEmployee(res.data.data);
-		} catch (err) {
-			console.error(err);
-		}
-	};
-	// Update handleInputChange to handle salary_id selection
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-		const { name, type, value } = e.target as HTMLInputElement | HTMLSelectElement;
 
-		// Convert value to number if it is numeric
-		let updatedValue: any = value;
-		if (type === 'checkbox') {
-			const target = e.target as HTMLInputElement;
-			updatedValue = target.checked;
-		} else if (['salary_id', 'employee_id', 'month_id', 'year'].includes(name)) {
-			updatedValue = parseInt(value, 10) || 0;
-		} else if (['temp_total', 'fixed_salary', 'variable_salary', 'loan', 'cooperative'].includes(name)) {
-			updatedValue = parseFloat(value) || 0;
-		}
-
-		setFormData((prevFormData) => {
-			const newFormData = {
-				...prevFormData,
-				[name]: updatedValue,
-			};
-
-			// Handle specific logic for salary_id change
-			if (name === 'salary_id') {
-				const selectedSalary = dataSalary.find((s: any) => s.id === updatedValue);
-				if (selectedSalary) {
-					newFormData.fixed_salary = selectedSalary.fixed_salary;
-					newFormData.employee_id = selectedSalary.employee.id;
-					newFormData.temp_total = selectedSalary.fixed_salary;
-					// const year = prevFormData.year;
-					// const month = prevFormData.month_id;
-					// const firstName = selectedSalary.employee.full_name.split(' ')[0];
-					// const uid = `UID${year}${firstName.substring(0, 3).toUpperCase() + selectedSalary.employee.id + month}`;
-					// newFormData.uid = uid;
-				}
-			}
-			// Recalculate temp_total when relevant fields change
-			if (['fixed_salary', 'variable_salary', 'loan', 'cooperative'].includes(name)) {
-				const { fixed_salary, variable_salary, loan, cooperative } = newFormData;
-				newFormData.temp_total = (fixed_salary || 0) + (variable_salary || 0) - (loan || 0) - (cooperative || 0);
-			}
-
-			return newFormData;
-		});
-	};
-	// const deleteAccount = async (id: any) => {
-	// 	try {
-	// 		const res = await Penggajian.deleteAccount(token, id);
-	// 		if (res.status === 200) {
-	// 			Swal.fire({
-	// 				icon: 'success',
-	// 				title: 'Success',
-	// 				text: 'Data berhasil dihapus',
-	// 			});
-	// 			fetchData();
-	// 		} else {
-	// 			// Handle other status codes if needed
-	// 			Swal.fire({
-	// 				icon: 'error',
-	// 				title: 'Oops...',
-	// 				text: 'Terjadi kesalahan saat menghapus data.',
-	// 			});
-	// 		}
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
-
-	// const getTypes = async (id: any) => {
-	// 	if (DataTypes[id]) return;
-
-	// 	try {
-	// 		const res = await Bill.getOneTypes(id);
-	// 		setTypes((prevTypes: any) => ({
-	// 			...prevTypes,
-	// 			[id]: res.data.data.result.name,
-	// 		}));
-	// 	} catch (err) {
-	// 		console.error(err);
-	// 	}
-	// };
-	const getTypes = async () => {
-		const typesMap: any = {};
-
-		// Ambil semua type_id dari DataBill dan lakukan fetch sekali
-		const promises = DataBill.map(async (item: any) => {
-			try {
-				if (!typesMap[item.type_id]) {
-					const res = await Bill.getOneTypes(item.type_id, access_token); // API call
-					typesMap[item.type_id] = res.data.data.name;
-				}
-			} catch (err) {
-				console.error(err);
-			}
-		});
-
-		await Promise.all(promises);
-		setTypes(typesMap);
-		console.log('test', typesMap);
-	};
 	const getBill = async (id: number) => {
 		try {
 			const res = await Bill.getAllBill(0, '', 0, id, access_token);
@@ -252,23 +114,20 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 			console.error(err);
 		}
 	};
-	const filteredData = DataBill.filter((item: any) => item.type_id === 3 || item.type_id === 4);
-	const remainingData = DataBill.filter((item: any) => item.type_id !== 3 && item.type_id !== 4);
+
 	const formatSalary = (salary: number) => {
 		return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(salary);
 	};
-	useEffect(() => {
-		getAllSalary();
-	}, []);
 
 	useEffect(() => {
-		getTypes();
+		getAllSalary();
 		fetchData();
 	}, [DataBill, filterTable.limit, filterTable.month, filterTable.year]);
 	const handleModal = (id: any | null) => {
 		getOne(id);
 		getBill(id);
 		setModalOpen(!isModalOpen);
+		setId(id);
 	};
 	const exportToXLSX = () => {
 		const formattedData = dataPenggajian.map((item, index) => ({
@@ -287,16 +146,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Penggajian');
 		XLSX.writeFile(workbook, 'Data_Penggajian.xlsx');
 	};
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		createAccount(formData);
-		console.log('Submitted Data: ', formData);
-		// Logic untuk mengirim data
-		setModalAdd(false); // Tutup modal setelah submit
-	};
-	// const handleEdit = (id: any) => {
-	// 	Navigate(`/hrd/rekap-gaji/${id}`, { state: { id } });
-	// };
+
 	const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setFilterTable((prev) => ({
 			...prev,
@@ -310,115 +160,22 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 		}));
 	};
 
+	const currentDate = new Date().toLocaleDateString('id-ID', {
+		year: 'numeric',
+		month: 'long',
+	});
+
+	const KirimEmail = async () => {
+		await Penggajian.KirimEmail(idEmployee, null, access_token);
+		Swal.fire({
+			icon: 'success',
+			title: 'Success',
+			text: 'Email berhasil dikirim',
+		});
+	};
+
 	return (
 		<div className="bg min-h-screen p-5">
-			{/* Modal */}
-			{modalAdd && (
-				<div className="modal modal-open">
-					<div className="modal-box relative">
-						<button
-							className="absolute right-2 top-2"
-							onClick={() => {
-								setModalAdd(false), resetForm();
-							}}
-						>
-							<IoMdClose size={20} />
-						</button>
-						<h3 className="text-lg font-bold">Tambah Gaji</h3>
-						<form onSubmit={handleSubmit}>
-							<div className="mt-4">
-								<label className="label">
-									<span className="label-text">Salary Karyawan</span>
-								</label>
-								<select
-									name="salary_id"
-									value={formData.salary_id}
-									onChange={handleInputChange}
-									className="select select-bordered w-full"
-									required
-								>
-									<option value="">Pilih Karyawan</option>
-
-									{dataSalary?.map((salary: any) => (
-										<option key={salary.id} value={salary.id}>
-											{formatSalary(salary.fixed_salary)} - {salary.employee.full_name}
-										</option>
-									))}
-								</select>
-							</div>
-							<div className="mt-4">
-								<label className="label">
-									<span className="label-text">Bulan</span>
-								</label>
-								<select name="month_id" onChange={handleInputChange} className="select select-bordered w-full" required>
-									<option value="" disabled>
-										Pilih Bulan
-									</option>
-									{Month.map((item: any) => (
-										<option key={item.month_id} value={item.month_id}>
-											{item.desc}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<div className="mt-4">
-								<label className="label">
-									<span className="label-text">Tahun</span>
-								</label>
-								<select name="year" onChange={handleInputChange} className="select select-bordered w-full" required>
-									<option value="" disabled>
-										Pilih Tahun
-									</option>
-									{years.map((year) => (
-										<option key={year} value={year}>
-											{year}
-										</option>
-									))}
-								</select>
-							</div>
-
-							{/* <div className="mt-4">
-								<label className="label text-gray-700">Status</label>
-								<select
-									className="select select-bordered w-full"
-									name="status"
-									value={formData.status}
-									onChange={handleInputChange}
-									required
-								>
-									<option value="" disabled>
-										Pilih status
-									</option>
-									<option value="Sudah Dibayar">Sudah Dibayar</option>
-									<option value="Belum Dibayar">Belum Dibayar</option>
-								</select>
-							</div> */}
-
-							{/* <div className="mt-4">
-								<label className="label">
-									<span className="label-text">Sudah Dibayar</span>
-								</label>
-								<input
-									type="checkbox"
-									name="is_paid"
-									checked={formData.is_paid}
-									onChange={handleInputChange}
-									className="checkbox"
-								/>
-							</div> */}
-
-							<div className="modal-action">
-								<button type="submit" className="btn btn-primary">
-									Simpan
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			)}
-
-			{/* Header */}
 			<div className="mb-3 text-xl font-bold">Penggajian</div>
 			<div className="breadcrumbs mb-5 text-sm">
 				<ul>
@@ -483,8 +240,8 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 						<button className="btn btn-outline btn-primary" onClick={() => exportToXLSX()}>
 							Export ke excel
 						</button>
-						<button onClick={() => setModalAdd(true)} className="btn btn-outline btn-primary">
-							Tambah
+						<button onClick={createAccount} className="btn btn-outline btn-primary">
+							Generate Bulan Ini
 						</button>
 					</div>
 				</div>
@@ -518,14 +275,7 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 											{item.status ? item.status : 'Menunggu'}
 										</div>
 									</td>
-									{/* <div className="cursor-pointer font-semibold text-blue-400" onClick={() => deleteAccount(item.id)}>
-											<IoIosTrash />
-											Delete
-										</div>
-										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleEdit(item.id)}>
-											Edit
-										</div> 
-										*/}
+
 									<td>
 										<div className="cursor-pointer font-semibold text-blue-400" onClick={() => handleModal(item.id)}>
 											Lihat Detail
@@ -542,9 +292,8 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							<tr>
 								<th colSpan={6}>Total Jumlah</th>
 								<th>
-									{' '}
 									{dataPenggajian
-										.reduce((total, item) => total + (item.fixed_salary || 0), 0)
+										.reduce((total, item) => total + (item.temp_total || 0), 0)
 										.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
 								</th>
 							</tr>
@@ -608,15 +357,16 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							<div>
 								<div className="flex gap-2">
 									<strong>Nama:</strong>
-									{ListEmployee?.full_name}
+									{detailPenggajian?.employee?.full_name}
 								</div>
 								<div className="flex gap-2">
 									<strong>Jabatan:</strong>
-									{ListEmployee?.occupation}
+									{detailPenggajian?.employee.occupation}
 								</div>
-							</div>
-							<div className="text-right">
-								<p>{/* <strong> {detailPenggajian?.employee.dob.split('T')[0]}</strong> */}</p>
+								<div className="flex gap-2">
+									<strong>Tanggal:</strong>
+									<div>{currentDate}</div>
+								</div>
 							</div>
 						</div>
 
@@ -634,20 +384,19 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 												<span>{formatSalary(detailPenggajian?.fixed_salary)}</span>
 											</p>
 										</div>
-									</div>
-									{/* Kolom pertama untuk id 3 dan 4 */}
-									<div>
-										{filteredData.map((item: any, index: number) => (
-											<div key={index}>
-												<p className="font-semibold">{DataTypes[item.type_id]}</p>
-												<div className="space-y-1 border-l-4 border-blue-500 pl-2">
-													<p className="flex justify-between">
-														<span>{item.description}</span>
-														<span>{formatSalary(item.amount)}</span>
-													</p>
+										{detailBills
+											.filter((item: any) => item.subtraction === false)
+											.map((item: any, index: number) => (
+												<div key={index}>
+													<p className="font-semibold">{item.name}</p>
+													<div className="space-y-1 border-l-4 border-blue-500 pl-2">
+														<p className="flex justify-between">
+															<span>{item.datas[0].description}</span>
+															<span>{formatSalary(item.total)}</span>
+														</p>
+													</div>
 												</div>
-											</div>
-										))}
+											))}
 									</div>
 								</div>
 							</div>
@@ -656,31 +405,70 @@ const DetailPenggajianPage: React.FC<{}> = () => {
 							<div>
 								<h3 className="border-b pb-2 text-lg font-semibold">POTONGAN</h3>
 								<div className="mt-3 space-y-2">
-									{/* <div className="space-y-1 border-l-4 border-red-500 pl-2"> */}
 									<div>
-										{remainingData.map((item: any, index: number) => (
-											<div key={index}>
-												<p className="font-semibold">{DataTypes[item.type_id]}</p>
-												<div className="space-y-1 border-l-4 border-red-500 pl-2">
-													<p className="flex justify-between">
-														<span>{item.description}</span>
-														<span>{formatSalary(item.amount)}</span>
-													</p>
+										{detailBills
+											.filter((item: any) => item.subtraction === true)
+											.map((item: any, index: number) => (
+												<div key={index}>
+													<p className="font-semibold">{item.name}</p>
+													<div className="space-y-1 border-l-4 border-red-500 pl-2">
+														<p className="flex justify-between">
+															<span>{item.datas[0].description}</span>
+															<span>{formatSalary(item.total)}</span>
+														</p>
+													</div>
 												</div>
-											</div>
-										))}
+											))}
 									</div>
 								</div>
 							</div>
 						</div>
-
-						{/* Total */}
+					</div>
+					<div>
 						<div className="mt-6 flex justify-between border-t pt-3">
-							<h3 className="text-lg font-semibold">TOTAL</h3>
-							<p className="text-right font-semibold">{}</p>
+							<h3 className="text-lg font-semibold">Total Pendapatan</h3>
+							<p className="text-right font-semibold">
+								{formatSalary(
+									(detailPenggajian?.fixed_salary || 0) +
+										detailBills
+											.filter((item: any) => item.subtraction === false)
+											.reduce((acc: number, item: any) => acc + item.total, 0)
+								)}
+							</p>
+						</div>
+
+						<div className="mt-6 flex justify-between border-t pt-3">
+							<h3 className="text-lg font-semibold">Total Potongan</h3>
+							<p className="text-right font-semibold">
+								{formatSalary(
+									detailBills
+										.filter((item: any) => item.subtraction === true)
+										.reduce((acc: number, item: any) => acc + item.total, 0)
+								)}
+							</p>
+						</div>
+
+						{/* Gaji Bersih */}
+						<div className="mt-6 flex justify-between border-t pt-3">
+							<h3 className="text-lg font-semibold">Gaji Bersih</h3>
+							<p className="text-right font-semibold">
+								{formatSalary(
+									(detailPenggajian?.fixed_salary || 0) +
+										detailBills
+											.filter((item: any) => item.subtraction === false)
+											.reduce((acc: number, item: any) => acc + item.total, 0) -
+										detailBills
+											.filter((item: any) => item.subtraction === true)
+											.reduce((acc: number, item: any) => acc + item.total, 0)
+								)}
+							</p>
 						</div>
 					</div>
+
 					<div className="modal-action">
+						<label htmlFor="detailPenggajianModal" className="btn btn-primary" onClick={() => KirimEmail()}>
+							Kirim
+						</label>
 						<label htmlFor="detailPenggajianModal" className="btn" onChange={() => setModalOpen(!isModalOpen)}>
 							Tutup
 						</label>

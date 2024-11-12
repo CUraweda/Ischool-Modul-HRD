@@ -45,10 +45,15 @@ const DetailCardProbationPage = () => {
 	};
 
 	const handleInternshipDetails = (startDate: string, endDate: string) => {
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-		const now = new Date();
+		let start = new Date(startDate);
+		let end = new Date(endDate);
 
+		// Jika startDate lebih besar dari endDate, tukar keduanya
+		if (start > end) {
+			[start, end] = [end, start]; // Tukar posisi start dan end
+		}
+
+		const now = new Date();
 		const probationNotStarted = start > now;
 
 		let totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
@@ -63,9 +68,12 @@ const DetailCardProbationPage = () => {
 		const remainingTimeInMillis = end.getTime() - now.getTime();
 		const remainingDaysUntilEnd = Math.ceil(remainingTimeInMillis / (1000 * 60 * 60 * 24));
 
+		// Mengubah format tanggal sesuai dengan format Indonesia (dd/MM/yyyy)
+		const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+
 		setInternshipDetails({
-			startDate: start.toLocaleDateString(),
-			endDate: end.toLocaleDateString(),
+			startDate: start.toLocaleDateString('id-ID', options),
+			endDate: end.toLocaleDateString('id-ID', options),
 			duration: totalMonths > 0 ? `${totalMonths} Bulan ${remainingDays} Hari` : `${remainingDays} Hari`,
 			remainingTime: probationNotStarted
 				? 'Probation belum dimulai'

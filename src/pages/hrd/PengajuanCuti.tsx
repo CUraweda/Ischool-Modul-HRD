@@ -279,7 +279,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 		}
 	};
 	return (
-		<div className="h-screen w-full p-2">
+		<div>
 			{showModal && (
 				<dialog className="modal modal-open" onClick={() => setShowModal(false)}>
 					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -379,7 +379,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 					</div>
 				</dialog>
 			)}
-			<div className="w-full flex-wrap md:flex">
+			<div className="flex-wrap md:flex">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
 						<li className="font-bold">
@@ -413,7 +413,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 			</div>
 
 			<div className="my-5 flex-grow border-t border-gray-400 drop-shadow-sm"></div>
-			<div className="flex w-full justify-between">
+			<div className="flex justify-between">
 				<div className="m-2 flex flex-wrap-reverse gap-4">
 					<button className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
 						Semua
@@ -525,103 +525,93 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 						value={filterDate}
 						onChange={(e) => setFilterDate(e.target.value)}
 					/>
-				</div>{' '}
+				</div>
 			</div>
-			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 pb-28 shadow-xl">
-				<table className="text-md table">
-					<thead>
-						<tr className="text-center font-bold">
-							<th>No</th>
-							<th>Nama</th>
-							<th>Tipe</th>
-							<th>Tanggal</th>
-							<th>Deskripsi</th>
-							<th>Status</th>
-							<th>Catatan</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						{filterData.map((item, index) => (
-							<tr className="hover truncate" key={item.id}>
-								<td>{index + 1 + currentPage * limit}</td>
-								<td>{item.employee.full_name}</td>
-								<td>{item?.type}</td>
-								<td>{item.start_date.split('T')[0]}</td>
-								<td>{item.description}</td>
-								<td>
-									{/* <div
-										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
-											item.status.toLowerCase() === 'disetujui'
-												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.status.toLowerCase() === 'tidak disetujui'
-													? 'bg-[#f96a6a] text-[#6b2e2e]'
-													: item.status.toLowerCase() === 'menunggu'
-														? 'bg-[#f9f46a] text-[#6b2e2e]'
-														: ''
-										}`}
-									>
-										{item.status}
-									</div> */}
-									{item.status}
-								</td>
-								<td className="text-center">
-									<button
-										className="btn btn-square btn-ghost hover:bg-transparent"
-										onClick={() => handleOpenDetailModal(item)}
-									>
-										<MdOutlineEventNote className="text-lg" />
-									</button>
-								</td>
-								<td className="text-center">
-									<div className="dropdown dropdown-end flex-none">
-										<div className="dropdown dropdown-left">
-											<button
-												tabIndex={0}
-												role="button"
-												className="btn btn-square btn-ghost shadow-none outline-none hover:bg-transparent"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													fill="none"
-													viewBox="0 0 24 24"
-													className="inline-block h-4 w-4 stroke-current"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth="2"
-														d="M12 5h.01M12 12h.01M12 19h.01M12 6a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2z"
-													></path>
-												</svg>
-											</button>
-											<ul
-												tabIndex={0}
-												className="menu dropdown-content z-[1] w-52 items-start rounded-box bg-base-100 p-2 shadow"
-											>
-												<h3 className="mb-2 w-full border-b-2 border-slate-300 p-2 text-center">Edit Status</h3>
-												<button
-													className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
-													onClick={() => handleChangeStatus('disetujui', item)}
-												>
-													<div className="h-4 w-4 rounded-full border-2 border-green-400 bg-transparent"></div>
-													<div>Setujui Permintaan</div>
-												</button>
-												<button
-													className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
-													onClick={() => handleChangeStatus('tidak disetujui', item)}
-												>
-													<div className="h-4 w-4 rounded-full border-2 border-red-400 bg-transparent"></div>
-													<div>Tidak Disetujui</div>
-												</button>
-											</ul>
-										</div>
-									</div>
-								</td>
+			<div className="q-mt card mt-5 bg-base-100 shadow-xl">
+				<div className="card-body overflow-auto">
+					<table className="table table-zebra mb-14 h-full">
+						<thead>
+							<tr className="text-center font-bold">
+								<th>No</th>
+								<th>Nama</th>
+								<th>Tipe</th>
+								<th>Tanggal</th>
+								<th>Deskripsi</th>
+								<th>Status</th>
+								<th>Catatan</th>
+								<th>Action</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{filterData.map((item, index) => (
+								<tr className="hover truncate" key={item.id}>
+									<td>{index + 1 + currentPage * limit}</td>
+									<td>{item.employee.full_name}</td>
+									<td>{item?.type}</td>
+									<td>{item.start_date.split('T')[0]}</td>
+									<td>
+										<div className="w-[5rem] overflow-hidden text-ellipsis whitespace-nowrap">{item.description}</div>
+									</td>
+
+									<td>{item.status}</td>
+									<td className="text-center">
+										<button
+											className="btn btn-square btn-ghost hover:bg-transparent"
+											onClick={() => handleOpenDetailModal(item)}
+										>
+											<MdOutlineEventNote className="text-lg" />
+										</button>
+									</td>
+									<td className="text-center">
+										<div className="dropdown dropdown-end flex-none">
+											<div className="dropdown dropdown-left">
+												<button
+													tabIndex={0}
+													role="button"
+													className="btn btn-square btn-ghost shadow-none outline-none hover:bg-transparent"
+												>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 24 24"
+														className="inline-block h-4 w-4 stroke-current"
+													>
+														<path
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="2"
+															d="M12 5h.01M12 12h.01M12 19h.01M12 6a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2zm0 7a1 1 0 100-2 1 1 0 000 2z"
+														></path>
+													</svg>
+												</button>
+												<ul
+													tabIndex={0}
+													className="menu dropdown-content z-[1] w-52 items-start rounded-box bg-base-100 p-2 shadow"
+												>
+													<h3 className="mb-2 w-full border-b-2 border-slate-300 p-2 text-center">Edit Status</h3>
+													<button
+														className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
+														onClick={() => handleChangeStatus('disetujui', item)}
+													>
+														<div className="h-4 w-4 rounded-full border-2 border-green-400 bg-transparent"></div>
+														<div>Setujui Permintaan</div>
+													</button>
+													<button
+														className="btn btn-ghost flex w-full justify-between hover:bg-transparent"
+														onClick={() => handleChangeStatus('tidak disetujui', item)}
+													>
+														<div className="h-4 w-4 rounded-full border-2 border-red-400 bg-transparent"></div>
+														<div>Tidak Disetujui</div>
+													</button>
+												</ul>
+											</div>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<div className="join m-5">
 				<button
