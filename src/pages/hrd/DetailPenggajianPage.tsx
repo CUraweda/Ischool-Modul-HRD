@@ -256,6 +256,9 @@ const DetailPenggajianPage = () => {
 								<th>Gaji Tidak Tetap</th>
 								<th>Pinjaman</th>
 								<th>Koperasi</th>
+								<th>Fasilitas</th>
+								<th>Gaji Lain</th>
+								<th>Potongan Lain</th>
 								<th>Status</th>
 								<th>Detail</th>
 							</tr>
@@ -268,6 +271,9 @@ const DetailPenggajianPage = () => {
 									<td>{formatSalary(item.variable_salary)}</td>
 									<td>{formatSalary(item.loan)}</td>
 									<td>{formatSalary(item.cooperative)}</td>
+									<td>{formatSalary(item.facility)}</td>
+									<td>{formatSalary(item.other_income)}</td>
+									<td>{formatSalary(item.other_cut)}</td>
 									<td>
 										<div
 											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}

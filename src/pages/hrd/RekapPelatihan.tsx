@@ -74,6 +74,22 @@ const RekapPelatihan: React.FC<{}> = () => {
 			console.error(error);
 		}
 	};
+
+	const approveUpdateTraining = async (id: number, data: any) => {
+		try {
+			const res = await TrainingSuggest.approveEditTrainingSuggest(data, id);
+			if (res.status === 201) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil',
+					text: 'Data pelatihan berhasil diupdate',
+				});
+				fetchDataTraining();
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
 	const createTraining = async (data: any) => {
 		try {
 			const res = await TrainingSuggest.createTrainingSuggest(data);
@@ -98,7 +114,11 @@ const RekapPelatihan: React.FC<{}> = () => {
 			notes: data.notes || '-',
 			is_approved: is_approved,
 		};
-		updateTraining(data.id, payload);
+		if (is_approved == true) {
+			approveUpdateTraining(data.id, payload);
+		} else {
+			updateTraining(data.id, payload);
+		}
 	};
 	const handleSubmit = (values: any) => {
 		setmodalCreateUpdate(false);

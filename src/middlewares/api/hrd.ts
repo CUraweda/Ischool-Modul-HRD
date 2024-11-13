@@ -19,7 +19,7 @@ const Dashboard = {
 	DataKaryawan: (access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
-			url: `employee?limit=10000`,
+			url: `employee?limit=10000&sort_name=1`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -89,6 +89,16 @@ const TrainingSuggest = {
 		instance({
 			method: `PUT`,
 			url: `training-suggestion/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+
+	approveEditTrainingSuggest: (data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `training-suggestion/approve/${id}`,
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -282,7 +292,7 @@ const Karyawan = {
 	): AxiosPromise<any> =>
 		instance({
 			method: 'GET',
-			url: `employee?page=${page}&limit=${limit}&search=${search}&status=${status}`,
+			url: `employee?page=${page}&limit=${limit}&search=${search}&status=${status}&sort_name=1`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -324,7 +334,7 @@ const Karyawan = {
 	DaftarPenilaian: (page: any, limit: any, search: string, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `employee-jobdesk?page=${page}&limit=${limit}&search=${search}`,
+			url: `employee?page=${page}&limit=${limit}&search=${search}&sort_name=1`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -595,6 +605,7 @@ const Employee = {
 			params: {
 				limit: limit,
 				search: search_query,
+				sort_name: 1,
 			},
 		}),
 	getAllEmployeePage: (
@@ -630,6 +641,7 @@ const Employee = {
 				limit: limit,
 				search: search_query,
 				page: page,
+				sort_name: 1,
 				...(divisi && { division_id: divisi }),
 			},
 		}),
@@ -774,6 +786,9 @@ const EmployeeDivision = {
 		instance.get('employee', {
 			headers: {
 				Authorization: `Bearer ${token}`,
+			},
+			params: {
+				sort_name: 1,
 			},
 		}),
 
