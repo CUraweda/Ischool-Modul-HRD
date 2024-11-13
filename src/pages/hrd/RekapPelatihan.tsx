@@ -108,10 +108,7 @@ const RekapPelatihan: React.FC<{}> = () => {
 	const handleupdate = (data: any, is_approved: boolean) => {
 		const id = sessionStorage.getItem('employee_id');
 		const payload = {
-			employee_id: data.employee_id,
-			approver_id: id,
-			title: data.title || '-',
-			notes: data.notes || '-',
+			purpose: 'Approved',
 			is_approved: is_approved,
 		};
 		if (is_approved == true) {
