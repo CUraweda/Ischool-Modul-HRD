@@ -106,7 +106,6 @@ const RekapPelatihan: React.FC<{}> = () => {
 		}
 	};
 	const handleupdate = (data: any, is_approved: boolean) => {
-		const id = sessionStorage.getItem('employee_id');
 		const payload = {
 			purpose: 'Approved',
 			is_approved: is_approved,
