@@ -727,6 +727,12 @@ const Bill = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
+	addBill: (data: any): AxiosPromise<any> =>
+		instance.post('employee-bill/add-bill', data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
 	getAllTypes: (limit: number, page: number): AxiosPromise<any> =>
 		instance.get(`bill-type`, {
 			headers: {
