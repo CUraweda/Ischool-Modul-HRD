@@ -205,7 +205,7 @@ const AturGajiPage = () => {
 	};
 	const createDataBill = async (values: any) => {
 		try {
-			const res = await Bill.createBill(values);
+			const res = await Bill.addBill(values);
 			if (res.status === 201) {
 				resetDataBill();
 				Swal.fire({
