@@ -20,7 +20,7 @@ const DetailRekapPage: React.FC = () => {
 	// const [ListEmployee, setListEmployee] = useState<any>(null);
 	const getDifference = async () => {
 		try {
-			const res = await EmployeeJobdesk.getDifference(employee.employee_id);
+			const res = await EmployeeJobdesk.getDifference(employee.id);
 			setPerformance(res.data.data);
 			console.log(res.data.data);
 		} catch (err) {
@@ -54,11 +54,11 @@ const DetailRekapPage: React.FC = () => {
 	};
 	const getEmployee = async () => {
 		try {
-			const jobdesk = await Karyawan.JobdeskList(access_token, employee.employee_id, 0);
+			const jobdesk = await Karyawan.JobdeskList(access_token, employee.id, 0);
 			setJobdeskList(jobdesk.data.data.result);
 			setAvatar(jobdesk.data.data.result[0].employee.user.avatar);
 			console.log(jobdesk.data.data.result[0].employee.user.avatar);
-			const done = await Karyawan.JobdeskList(access_token, employee.employee_id, 1);
+			const done = await Karyawan.JobdeskList(access_token, employee.id, 1);
 			setDoneJobdesk(done.data.data.result);
 		} catch (err) {
 			console.error(err);
@@ -115,7 +115,7 @@ const DetailRekapPage: React.FC = () => {
 						<h3 className="text-lg font-bold">Tambah Jobdesk</h3>
 						<Formik
 							initialValues={{
-								employee_id: employee.employee_id,
+								id: employee.id,
 								name: '',
 								description: '',
 								due_date: '',
@@ -158,7 +158,7 @@ const DetailRekapPage: React.FC = () => {
 										<label className="label">
 											<span className="label-text">Nama Peserta</span>
 										</label>
-										<Field as="select" name="employee_id" className="select select-bordered w-full">
+										<Field as="select" name="id" className="select select-bordered w-full">
 											<option value="" disabled>
 												Pilih Peserta
 											</option>
@@ -222,27 +222,38 @@ const DetailRekapPage: React.FC = () => {
 										<div className="grid grid-flow-col grid-rows-3 gap-5 xl:grid-rows-2">
 											<div>
 												<p className="text-md font-semibold">Nama</p>
-												<p>{employee?.employee?.full_name ?? '-'}</p>
+												<p>{employee?.full_name ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Tgl mulai bekerja</p>
-												<p>{employee?.employee?.work_start_date ?? '-'}</p>
+												<p>{employee?.work_start_date ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Posisi</p>
-												<p>{employee?.employee?.occupation ?? '-'}</p>
+												<p>{employee?.occupation ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Status</p>
-												<p>{employee?.employee?.employee_status ?? '-'}</p>
+												<p>{employee?.employee_status ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Email</p>
-												<p>{employee?.employee?.email ?? '-'}</p>
+												<p>{employee?.email ?? '-'}</p>
 											</div>
 											<div>
 												<p className="text-md font-semibold">Sisa waktu</p>
-												<p>{employee?.internshipDuration ?? '-'}</p>
+												<p>
+													{(() => {
+														const currentDate = new Date();
+														const probationEndDate = employee?.probation_end_date
+															? new Date(employee.probation_end_date)
+															: null;
+														if (!probationEndDate) return '0';
+														const timeDiff = probationEndDate.getTime() - currentDate.getTime();
+														const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+														return daysLeft > 0 ? daysLeft : '0';
+													})()}
+												</p>
 											</div>
 										</div>
 									</div>

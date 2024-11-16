@@ -800,14 +800,8 @@ const EmployeeDivision = {
 		}),
 };
 const Jobdesk = {
-	getAllJobdesk: (
-		limit: number,
-		search_query: any,
-		page: number,
-		id: any,
-		access_token: string | null
-	): AxiosPromise<any> =>
-		instance.get(`employee-jobdesk?employee_id=${id}`, {
+	getAllJobdesk: (limit: number, search_query: any, page: number, access_token: string | null): AxiosPromise<any> =>
+		instance.get(`employee?sort_name=1`, {
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
