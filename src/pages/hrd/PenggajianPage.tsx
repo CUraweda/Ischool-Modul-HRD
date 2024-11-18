@@ -248,7 +248,7 @@ const PenggajianPage = () => {
 									<thead>
 										<tr>
 											<th>Nama</th>
-											<th>Gaji</th>
+											<th>Gaji Tetap</th>
 											<th>Status</th>
 										</tr>
 									</thead>

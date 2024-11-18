@@ -14,6 +14,7 @@ const DaftarPenilaianPage = () => {
 	const [typeEmployee, setTypeEmployee] = useState('');
 	const [judulKegiatan, setJudulKegiatan] = useState('');
 	const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('');
+	const [priority, setPriority] = useState<Number | null>(1);
 	const [tenggatWaktu, setTenggatWaktu] = useState('');
 	const [nilai, setNilai] = useState('');
 	const [editMode, setEditMode] = useState(false);
@@ -45,7 +46,7 @@ const DaftarPenilaianPage = () => {
 			name: judulKegiatan,
 			description: deskripsiKegiatan,
 			due_date: tenggatWaktu,
-			priority: 1,
+			priority: priority,
 			all_employee: typeEmployee == 'Semua' ? true : false,
 			all_asessor: typeEmployee == 'Semua' ? true : false,
 		};
@@ -197,7 +198,7 @@ const DaftarPenilaianPage = () => {
 											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 shadow-xl">
+											<ul tabIndex={0} className="menu dropdown-content z-50 w-52 rounded-box bg-base-100 shadow-xl">
 												<li>
 													<a onClick={() => handleEdit(item)}>Edit Data</a>
 												</li>
@@ -310,6 +311,24 @@ const DaftarPenilaianPage = () => {
 								value={tenggatWaktu}
 								onChange={(e) => setTenggatWaktu(e.target.value)}
 							/>
+						</div>
+
+						<div>
+							<label htmlFor="kirimKepada" className="label">
+								<span className="label-text font-semibold">Prioritas</span>
+							</label>
+							<select
+								id="prioritas"
+								className="select select-bordered w-full"
+								onChange={(e) => setPriority(parseInt(e.target.value))}
+							>
+								<option value={0} disabled>
+									Pilih Prioritas
+								</option>
+								<option value={1}>Rendah</option>
+								<option value={2}>Sedang</option>
+								<option value={3}>Tinggi</option>
+							</select>
 						</div>
 					</div>
 
