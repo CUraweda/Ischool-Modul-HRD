@@ -207,7 +207,7 @@ const PenggajianPage = () => {
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<div className="card rounded-lg bg-white p-6 shadow-lg">
 					<h2 className="text-lg font-semibold text-gray-800">Rincian Biaya Penggajian</h2>
-					<div className="mt-4" style={{ height: '300px' }}>
+					<div className="mt-4">
 						<Bar data={chartData} options={barOptions} className="w-full" />
 					</div>
 				</div>

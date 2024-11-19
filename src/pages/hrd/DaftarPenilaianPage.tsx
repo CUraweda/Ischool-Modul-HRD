@@ -14,7 +14,7 @@ const DaftarPenilaianPage = () => {
 	const [typeEmployee, setTypeEmployee] = useState('');
 	const [judulKegiatan, setJudulKegiatan] = useState('');
 	const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('');
-	const [priority, setPriority] = useState<Number | null>(1);
+	const [priority, setPriority] = useState<Number | null>(0);
 	const [tenggatWaktu, setTenggatWaktu] = useState('');
 	const [nilai, setNilai] = useState('');
 	const [editMode, setEditMode] = useState(false);
