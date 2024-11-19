@@ -73,6 +73,7 @@ const LoginPage: React.FC = () => {
 							break;
 					}
 				}
+				window.location.reload();
 			} catch (error) {
 				console.error('Login error:', error);
 				toast.warn('Email atau password salah');

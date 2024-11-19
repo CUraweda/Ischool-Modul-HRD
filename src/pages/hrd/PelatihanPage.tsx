@@ -48,7 +48,7 @@ const PelatihanPage: React.FC<{}> = () => {
 		}
 	};
 
-	const id = sessionStorage.getItem('role_id');
+	const id = sessionStorage.getItem('employee_id');
 
 	let access_token = sessionStorage.getItem('access_token');
 
