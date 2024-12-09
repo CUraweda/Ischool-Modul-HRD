@@ -38,6 +38,9 @@ const DefaultPage = lazy(() => import('@/pages/DefaultPage'));
 const VerifEmailPage = lazy(() => import('../pages/VerifEmaillPage'));
 const PublicPenilaian = lazy(() => import('../pages/public/PublicPenilaian'));
 const DaftarDinasLuar = lazy(() => import('@/pages/hrd/DaftarDinasLuarPage'));
+const ListItemPenilaian = lazy(() => import('@/pages/hrd/ListItemPenilaian'));
+const DetailListItemPenilaian = lazy(() => import('@/pages/hrd/DetailListItemPenilaian'));
+const ListPenilaian = lazy(() => import('@/pages/hrd/ListPenilaian'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
@@ -112,6 +115,9 @@ const AppRoutes: React.FC = () => {
 							<Route path="customer-care" element={<CustomerCarePage />} />
 							<Route path="division" element={<PageDivisi />} />
 							<Route path="daftar-dinas" element={<DaftarDinasLuar />} />
+							<Route path="item-penilaian" element={<ListItemPenilaian />} />
+							<Route path="detail-penilaian" element={<DetailListItemPenilaian />} />
+							<Route path="list-penilaian" element={<ListPenilaian />} />
 						</Route>
 					</Route>
 

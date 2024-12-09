@@ -15,7 +15,7 @@ const DetailProbationPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, true, true);
+			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, true, true, '');
 			setDataDetailProbation(response.data.data);
 		} catch (error) {
 			console.error(error);
@@ -104,7 +104,7 @@ const DetailProbationPage = () => {
 														<img
 															src={
 																item?.file_path
-																	? `https://api-hrd.curaweda.com/stg-server1/${item.file_path}`
+																	? `https://api-sade-v2-ischool.curaweda.com/api/${item.file_path}`
 																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
 															}
 															alt="Avatar Tailwind CSS Component"

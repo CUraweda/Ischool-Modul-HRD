@@ -142,12 +142,13 @@ const Rekrutmen = {
 		id: string | undefined,
 		access_token: string | null,
 		isPassed: any,
-		isInterview: any
+		isInterview: any,
+		tipe_rekrutmen: string
 	): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
 			url:
-				`applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&search=${search}` +
+				`applicant-form/by-vacancy/${id}?page=${page}&limit=${limit}&status=${tipe_rekrutmen}&search=${search}` +
 				(isPassed ? '&is_passed=1' : '') +
 				(isInterview ? '&is_passed_interview=1' : ''),
 			headers: {
@@ -191,10 +192,10 @@ const Rekrutmen = {
 				Authorization: `Bearer ${access_token}`,
 			},
 		}),
-	LulusRekrutmen: (data: any, id: number): AxiosPromise =>
+	LulusRekrutmen: (data: null, id: number): AxiosPromise =>
 		instance({
 			method: `POST`,
-			url: `applicant-form/first-evaluate/lulus/${id}`,
+			url: `applicant-form/selection-evaluate/lulus/${id}`,
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -203,7 +204,43 @@ const Rekrutmen = {
 	GagalRekrutmen: (data: null, id: number): AxiosPromise =>
 		instance({
 			method: `POST`,
-			url: `applicant-form/first-evaluate/gagal/${id}`,
+			url: `applicant-form/selection-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	LulusPsikotes: (data: null, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/psychology-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	GagalPsikotes: (data: null, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/psychology-evaluate/gagal/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	LulusInterview: (data: any, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/lulus/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	GagalInterview: (data: null, id: number): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `applicant-form/first-evaluate/Gagal/${id}`,
 			data,
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -334,7 +371,7 @@ const Karyawan = {
 	DaftarPenilaian: (page: any, limit: any, search: string, access_token: string | null): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `employee?page=${page}&limit=${limit}&search=${search}&sort_name=1`,
+			url: `employee-jobdesk?page=${page}&limit=${limit}&search=${search}&sort_name=1`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -423,13 +460,23 @@ const Attendance = {
 		search: string,
 		division: any,
 		date: string,
+		tipeDate: string,
 		access_token: string | null
 	): AxiosPromise<any> => {
 		const typeParam = type.length ? type.join(',') : '';
 		const statusParam = status.length ? status.join(',') : '';
 
 		return instance.get(`employee-attendance`, {
-			params: { search, type: typeParam, status: statusParam, division_id: division, date, page, limit },
+			params: {
+				search,
+				type: typeParam,
+				status: statusParam,
+				division_id: division,
+				date,
+				page,
+				limit,
+				iteration: tipeDate,
+			},
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -1017,6 +1064,184 @@ const DownloadFile = {
 		}),
 };
 
+const ItemPenilaian = {
+	DataItemPenilaian: (page: any, limit: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-jobdesk?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataJobdeskGradeGroup: (page: any, limit: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `jobdesk-group-grade?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	CreateJobdeskGradeGroup: (data: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `jobdesk-group-grade/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	UpdateJobdeskGradeGroup: (data: any, id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `jobdesk-group-grade/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DeleteJobdeskGradeGroup: (id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `DELETE`,
+			url: `jobdesk-group-grade/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataJobdeskGrade: (page: any, limit: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `jobdesk-grade?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	CreateJobdeskGrade: (data: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `jobdesk-grade/add`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	UpdateJobdeskGrade: (data: any, id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `jobdesk-grade/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DeleteJobdeskGrade: (id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `DELETE`,
+			url: `jobdesk-grade/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataKaryawan: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee?limit=100000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataAsessor: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-asessor?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataEvaluation: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-evaluation?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataItemEvaluation: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `evaluation-item?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataDivision: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `division?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataJobdeskGradeGroupDropdown: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `jobdesk-group-grade?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DataJobdeskUnit: (access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `jobdesk-unit?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	CreateJobdesk: (data: any): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `employee-jobdesk/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	EditJobdesk: (data: any, id: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `employee-jobdesk/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DeleteJobdesk: (id: any): AxiosPromise =>
+		instance({
+			method: `DELETE`,
+			url: `employee-jobdesk/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}),
+	DataListPenilaian: (page: any, limit: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-evaluation?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	GenerateMonth: (data: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `employee-evaluation/generate-month`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+};
+
 export {
 	Bill,
 	Salary,
@@ -1039,4 +1264,5 @@ export {
 	Verif,
 	DinasLuar,
 	DownloadFile,
+	ItemPenilaian,
 };

@@ -11,6 +11,7 @@ const DetailRekrutmenPage = () => {
 	const [search, setSearch] = useState('');
 	const [planDate, setPlanDate] = useState('');
 	const [portal, setPortal] = useState('');
+	const [typeRekrutmen, setTypeRekrutmen] = useState('Pendaftaran');
 	const [selectedId, setSelectedId] = useState<any>(null);
 
 	let access_token = sessionStorage.getItem('access_token');
@@ -19,7 +20,16 @@ const DetailRekrutmenPage = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await Rekrutmen.DataDetailRekrutmen(0, 20, search, id, access_token, false, false);
+			const response = await Rekrutmen.DataDetailRekrutmen(
+				0,
+				20,
+				search,
+				id,
+				access_token,
+				false,
+				false,
+				typeRekrutmen
+			);
 			setDataDetailRekrutmen(response.data.data);
 		} catch (error) {
 			console.error(error);
@@ -41,19 +51,15 @@ const DetailRekrutmenPage = () => {
 		openModal('cvApplicant');
 	};
 
-	const handleOpenAcceptedDialog = () => {
+	const handleOpenAcceptedDialog = (id: any) => {
+		setSelectedId(id);
 		openModal('dialogAccepted');
 	};
 
-	const handleAccepted = async () => {
+	const AcceptedRekrutmen = async () => {
 		if (!selectedId) return;
-
-		const data = {
-			plan_date: planDate,
-			portal: portal,
-		};
 		try {
-			await Rekrutmen.LulusRekrutmen(data, selectedId);
+			await Rekrutmen.LulusRekrutmen(null, selectedId);
 			fetchData();
 			closeModal('dialogAccepted');
 			Swal.fire({
@@ -72,12 +78,108 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
-	const handleRejected = async () => {
+	const RejectedRekrutmen = async () => {
 		if (!selectedId) return;
 
 		try {
 			await Rekrutmen.GagalRekrutmen(null, selectedId);
 			closeModal('cvApplicant');
+			fetchData();
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil ditolak',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const AcceptedPsikotes = async (id: any) => {
+		if (!selectedId) return;
+
+		try {
+			await Rekrutmen.LulusPsikotes(null, id);
+			fetchData();
+			closeModal('dialogAccepted');
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diterima',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const RejectedPsikotes = async (id: any) => {
+		if (!selectedId) return;
+
+		try {
+			await Rekrutmen.GagalPsikotes(null, id);
+			closeModal('cvApplicant');
+			fetchData();
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil ditolak',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const AcceptedInterview = async () => {
+		if (!selectedId) return;
+
+		const data = {
+			plan_date: planDate,
+			portal: portal,
+		};
+		try {
+			await Rekrutmen.LulusInterview(data, selectedId);
+			fetchData();
+			closeModal('dialogAccepted');
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Applicant berhasil diterima',
+			});
+		} catch (error: any) {
+			console.error(error);
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
+		}
+	};
+
+	const RejectedInterview = async () => {
+		if (!selectedId) return;
+
+		try {
+			await Rekrutmen.GagalInterview(null, selectedId);
+			closeModal('dialogAccepted');
 			fetchData();
 			Swal.fire({
 				icon: 'success',
@@ -121,7 +223,7 @@ const DetailRekrutmenPage = () => {
 		if (id) {
 			fetchData();
 		}
-	}, [id, search]);
+	}, [id, search, typeRekrutmen]);
 
 	const title = localStorage.getItem('title');
 	const subtitle = localStorage.getItem('subtitle');
@@ -153,6 +255,13 @@ const DetailRekrutmenPage = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
+			<select className="select select-bordered select-xs mt-10" onChange={(e) => setTypeRekrutmen(e.target.value)}>
+				<option value="">Filter</option>
+				<option value="Pendaftaran">Rekrutmen</option>
+				<option value="Memasuki Test Psikotes">Psikotes</option>
+				<option value="Menunggu Interview">Interview</option>
+			</select>
+
 			{/* <div className="mt-6 flex justify-between">
 				<div className="flex items-center gap-2">
 					<button className="btn btn-outline btn-info btn-xs">
@@ -177,10 +286,10 @@ const DetailRekrutmenPage = () => {
 				</div>
 			</div> */}
 
-			<div className="card mt-10 w-full bg-base-100 shadow-xl">
+			<div className="card mt-5 w-full bg-base-100 shadow-xl">
 				<div className="card-body">
 					<div className="overflow-x-auto">
-						<table className="table">
+						<table className="table mb-16">
 							<thead>
 								<tr>
 									<th className="text-sm text-black">Nama</th>
@@ -200,7 +309,7 @@ const DetailRekrutmenPage = () => {
 														<img
 															src={
 																item?.file_path
-																	? `https://api-hrd.curaweda.com/stg-server1/${item.file_path}`
+																	? `${import.meta.env.VITE_SERVER_HRD_URL}${item.file_path}`
 																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
 															}
 															alt="Avatar Tailwind CSS Component"
@@ -218,13 +327,37 @@ const DetailRekrutmenPage = () => {
 										<td>{item.createdAt.split('T')[0]}</td>
 										<td className="text-center">{item.status}</td>
 										<th>
-											<button
-												className="btn btn-primary btn-sm"
-												onClick={() => handleOpenPreviewCvDialog(item.id)}
-												disabled={item.is_passed_interview == true}
-											>
-												Buka
-											</button>
+											{typeRekrutmen == 'Pendaftaran' ? (
+												<button
+													className="btn btn-primary btn-sm"
+													onClick={() => handleOpenPreviewCvDialog(item.id)}
+													disabled={item.is_passed_interview == true}
+												>
+													Buka
+												</button>
+											) : typeRekrutmen == 'Memasuki Test Psikotes' ? (
+												<div className="dropdown dropdown-end">
+													<label tabIndex={0} className="btn btn-primary btn-sm">
+														...
+													</label>
+													<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+														<li>
+															<a onClick={() => AcceptedPsikotes(item.id)}>Terima</a>
+														</li>
+														<li>
+															<a onClick={() => RejectedPsikotes(item.id)}>Tolak</a>
+														</li>
+													</ul>
+												</div>
+											) : (
+												<button
+													className="btn btn-primary btn-sm"
+													onClick={() => handleOpenAcceptedDialog(item.id)}
+													disabled={item.is_passed_interview == true}
+												>
+													Buka
+												</button>
+											)}
 										</th>
 									</tr>
 								))}
@@ -364,7 +497,7 @@ const DetailRekrutmenPage = () => {
 							className="btn btn-error text-white transition hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
 							onClick={() => {
 								closeModal('cvApplicant');
-								handleRejected();
+								RejectedRekrutmen();
 							}}
 						>
 							Tolak
@@ -373,7 +506,7 @@ const DetailRekrutmenPage = () => {
 							className="btn btn-success text-white transition hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
 							onClick={() => {
 								closeModal('cvApplicant');
-								handleOpenAcceptedDialog();
+								AcceptedRekrutmen();
 							}}
 						>
 							Terima
@@ -409,8 +542,11 @@ const DetailRekrutmenPage = () => {
 						/>
 					</div>
 
-					<div className="flex items-center justify-end">
-						<button className="btn btn-primary text-white" onClick={handleAccepted}>
+					<div className="flex items-center justify-end gap-2">
+						<button className="btn btn-primary text-white" onClick={() => RejectedInterview()}>
+							Tolak
+						</button>
+						<button className="btn btn-primary text-white" onClick={() => AcceptedInterview()}>
 							Kirim
 						</button>
 					</div>

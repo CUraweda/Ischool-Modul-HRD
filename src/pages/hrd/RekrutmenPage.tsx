@@ -496,6 +496,7 @@ const RekrutmenPage = () => {
 								<option value="" disabled>
 									-Pilih-
 								</option>
+								<option value="SMP">SMP</option>
 								<option value="SMA/SMK">SMA/SMK</option>
 								<option value="S1">S1</option>
 								<option value="S2">S2</option>
@@ -517,6 +518,8 @@ const RekrutmenPage = () => {
 								onChange={(e) => setNote(e.target.value)}
 							></textarea>
 						</div>
+
+						<div className="text-xl font-bold">Kelengkapan Rekrutmen</div>
 
 						{statusCards.map((card, index) => (
 							<div key={index} className="col-span-2">

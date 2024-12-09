@@ -83,6 +83,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 				searchQuery,
 				filterDivision,
 				filterDate,
+				'',
 				access_token
 			);
 			setDataAttendance(result.data.data.result);

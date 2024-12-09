@@ -178,16 +178,16 @@ const DaftarPenilaianPage = () => {
 						<tbody>
 							{fetch.map((item, index) => (
 								<tr key={index}>
-									<td>{item.full_name}</td>
-									<td>{item.email ? item.email : '-'}</td>
+									<td>{item.employee?.full_name}</td>
+									<td>{item?.employee?.email ? item?.employee?.email : '-'}</td>
 									<td className="px-4 py-2">
 										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
-											{item.occupation}
+											{item?.employee?.occupation}
 										</div>
 									</td>
-									<td>{item.grade}</td>
+									<td>{item?.employee?.grade ? item?.employee?.grade : '-'}</td>
 									<td>
-										{item.is_finish == false
+										{item?.employee?.is_finish == false
 											? 'Belum Dikerjakan'
 											: item.is_graded == false
 												? 'Belum Dinilai'

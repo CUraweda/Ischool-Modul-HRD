@@ -59,6 +59,14 @@
 			{
 				"name": "Daftar Penilaian",
 				"url": "/hrd/daftar-penilaian"
+			},
+			{
+				"name": "Rekap Penilaian",
+				"url": "/hrd/rekap-penilaian"
+			},
+			{
+				"name": "Item Penilaian",
+				"url": "/hrd/item-penilaian"
 			}
 		]
 	},
@@ -89,12 +97,6 @@
 				"url": "/hrd/daftar-pelatihan"
 			}
 		]
-	},
-	{
-		"submenu": false,
-		"title": "Rekap Penilaian",
-		"icon": "<MdOutlineGrade />",
-		"url": "/hrd/rekap-penilaian"
 	},
 	{
 		"submenu": true,

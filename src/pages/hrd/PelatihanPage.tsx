@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Training, Karyawan } from '@/middlewares/api/hrd';
+import { Training } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
-import Swal from 'sweetalert2';
 import { TbFaceId } from 'react-icons/tb';
 import * as XLSX from 'xlsx';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { FaFileExport } from 'react-icons/fa6';
-import { Formik, Field } from 'formik';
 const PelatihanPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
 	const [filterStatus, setFilterStatus] = useState<any>('');
@@ -15,9 +13,6 @@ const PelatihanPage: React.FC<{}> = () => {
 	const [selectedItem, setSelectedItem] = useState<any>(null);
 	const [DataAttendance, setDataAttendance] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(0);
-	const [selectedUpdate, setSelectedUpdate] = useState<any>(null);
-	const [dropdownEmployee, setDropdownEmployee] = useState<any[]>([]);
-	const [forCreate, setForCreate] = useState<boolean>(false);
 	const [limit, setLimit] = useState<number>(10);
 	const [totalRows, setTotalRows] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
@@ -28,7 +23,6 @@ const PelatihanPage: React.FC<{}> = () => {
 		{ id: 4, category: 'Status', value: 'Sedang Berjalan' },
 		{ id: 5, category: 'Status', value: 'Selesai' },
 	];
-	const [showModal, setShowModal] = useState<boolean>(false);
 
 	const handleCheckType = (value: string, category: 'Type' | 'Status') => {
 		if (category === 'Type') {
@@ -48,8 +42,6 @@ const PelatihanPage: React.FC<{}> = () => {
 		}
 	};
 
-	const id = sessionStorage.getItem('employee_id');
-
 	let access_token = sessionStorage.getItem('access_token');
 
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
@@ -57,8 +49,6 @@ const PelatihanPage: React.FC<{}> = () => {
 	const getAllAttendance = async () => {
 		try {
 			const result = await Training.getAllTraining(currentPage, limit, filterStatus, filterType, searchQuery, '');
-			const response = await Karyawan.DataKaryawan(0, 10000, '', '', access_token);
-			setDropdownEmployee(response.data.data.result);
 			setDataAttendance(result.data.data.result);
 			setTotalRows(result.data.data.totalRows);
 			setTotalPages(result.data.data.totalPage);
@@ -107,185 +97,11 @@ const PelatihanPage: React.FC<{}> = () => {
 		XLSX.utils.book_append_sheet(workbook, worksheet, 'Rekap Data Pelatihan');
 		XLSX.writeFile(workbook, 'Data_Pelatihan.xlsx');
 	};
-	const requestTraining = async (formData: any) => {
-		try {
-			const response = await Training.requestTraining(formData);
-			if (response.data.code === 201) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Berhasil',
-					text: 'Data berhasil ditambahkan',
-				});
-				getAllAttendance();
-			} else {
-				Swal.fire({
-					icon: 'error',
-					title: 'Gagal',
-					text: 'Data gagal ditambahkan',
-				});
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	const updateTraining = async (id: any, formData: any) => {
-		try {
-			const response = await Training.updateTraining(id, formData);
-			if (response.data.code === 200) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Berhasil',
-					text: 'Data berhasil ditambahkan',
-				});
-				getAllAttendance();
-				setShowModal((showModal) => !showModal);
-			} else {
-				Swal.fire({
-					icon: 'error',
-					title: 'Gagal',
-					text: 'Data gagal ditambahkan',
-				});
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	const handleSubmit = (values: any) => {
-		if (forCreate) {
-			requestTraining(values);
-			setShowModal(false);
-		} else {
-			updateTraining(selectedUpdate?.id, values);
-		}
-	};
-	const showModalHandle = (type: 'add' | 'edit', item?: any) => {
-		setSelectedUpdate(item ?? null); // Set data pelatihan yang ingin diedit
-		setShowModal((showModal) => !showModal);
-		setForCreate(type === 'add');
-	};
 	const handleOpenDetailModal = (item: any) => {
 		setSelectedItem(item);
 	};
 	return (
 		<div className="h-screen w-full p-2">
-			{showModal && (
-				<dialog className="modal modal-open" onClick={() => setShowModal(false)}>
-					<div className="modal-box" onClick={(e) => e.stopPropagation()}>
-						<button
-							className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-							onClick={() => setShowModal(false)}
-						>
-							✕
-						</button>
-						<h3 className="text-lg font-bold">{forCreate ? 'Buat Pengajuan' : 'Ubah Status'}</h3>
-						<Formik
-							initialValues={
-								forCreate
-									? {
-											employee_id: '',
-											proposer_id: parseInt(id ?? '0'),
-											title: '',
-											purpose: '',
-											status: '',
-											location: '',
-											is_active: true,
-											start_date: '',
-											end_date: '',
-										}
-									: {
-											employee_id: selectedUpdate?.employee_id || '',
-											proposer_id: parseInt(id ?? '0'),
-											title: selectedUpdate?.title || '',
-											purpose: selectedUpdate?.purpose || '',
-											status: selectedUpdate?.status || '',
-											location: selectedUpdate?.location || '',
-											is_active: selectedUpdate?.is_active || true,
-											start_date: selectedUpdate?.start_date.split('T')[0],
-											end_date: selectedUpdate?.end_date.split('T')[0],
-										}
-							}
-							onSubmit={handleSubmit}
-						>
-							{({ handleSubmit, setFieldValue }) => (
-								<form onSubmit={handleSubmit}>
-									{/* Input Fields */}
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Pilih Karyawan</span>
-										</label>
-										<Field
-											as="select"
-											name="employee_id"
-											className="input input-bordered w-full"
-											onChange={(e: any) => setFieldValue('employee_id', parseInt(e.target.value))}
-										>
-											<option value={0}>Pilih Karyawan</option>
-											{dropdownEmployee.map((item, index) => (
-												<option value={item.id} key={index}>
-													{item.full_name}
-												</option>
-											))}
-										</Field>
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Nama Pelatihan</span>
-										</label>
-										<Field name="title" className="input input-bordered w-full" />
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Tujuan Pelatihan</span>
-										</label>
-										<Field name="purpose" className="input input-bordered w-full" />
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Status Pelatihan</span>
-										</label>
-										<Field as="select" name="status" className="input input-bordered w-full">
-											<option value="" disabled>
-												Pilih Status
-											</option>
-											<option value="Approved">Disetujui</option>
-											<option value="Rejected">Ditolak</option>
-										</Field>
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Tempat Pelatihan</span>
-										</label>
-										<Field name="location" className="input input-bordered w-full" />
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Mulai Pelatihan</span>
-										</label>
-										<Field type="date" name="start_date" className="input input-bordered w-full" />
-									</div>
-									<div className="my-2 w-full">
-										<label className="label">
-											<span className="label-text">Akhir Pelatihan</span>
-										</label>
-										<Field type="date" name="end_date" className="input input-bordered w-full" />
-									</div>
-
-									{/* Modal Actions */}
-									<div className="modal-action">
-										<button className="btn btn-primary" type="submit">
-											Submit
-										</button>
-										<button type="button" className="btn" onClick={() => setShowModal(false)}>
-											Cancel
-										</button>
-									</div>
-								</form>
-							)}
-						</Formik>
-					</div>
-				</dialog>
-			)}
-
 			<div className="w-full flex-wrap md:flex">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
@@ -318,12 +134,12 @@ const PelatihanPage: React.FC<{}> = () => {
 						Semua
 						<div className="pl-5">{totalRows}</div>
 					</button>
-					<button
+					{/* <button
 						className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm"
 						onClick={() => showModalHandle('add', null)}
 					>
 						Tambah Pelatihan
-					</button>
+					</button> */}
 				</div>
 				<div className="m-2 flex flex-wrap-reverse gap-4">
 					<button
@@ -369,7 +185,7 @@ const PelatihanPage: React.FC<{}> = () => {
 							onChange={(e) => setFilterDate(e.target.value)}
 						/>
 					</div>
-				</div>{' '}
+				</div>
 			</div>
 			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">
 				<table className="text-md table mb-8">
@@ -377,10 +193,10 @@ const PelatihanPage: React.FC<{}> = () => {
 						<tr className="text-center font-bold">
 							<th>No</th>
 							<th>Nama</th>
-							<th>Absen Pelatihan</th>
 							<th>Posisi</th>
 							<th>Status</th>
-							<th>Detail</th>
+							<th>Absen Pelatihan</th>
+							{/* <th>Detail</th> */}
 						</tr>
 					</thead>
 					<tbody>
@@ -388,24 +204,17 @@ const PelatihanPage: React.FC<{}> = () => {
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
 								<td>{item.employee?.full_name}</td>
+								{/* <td className="text-center">
+									<button className="btn btn-ghost" onClick={() => handleOpenDetailModal(item)}>
+										<TbFaceId className="text-xl" />
+									</button>
+								</td> */}
+								<td className="text-center">{item?.employee?.occupation}</td>
+								<td className="text-center">{item.status}</td>
 								<td className="text-center">
 									<button className="btn btn-ghost" onClick={() => handleOpenDetailModal(item)}>
 										<TbFaceId className="text-xl" />
 									</button>
-								</td>
-								<td className="text-center">{item?.employee?.occupation}</td>
-								<td className="text-center">{item.status}</td>
-								<td className="text-center">
-									<div className="dropdown dropdown-end">
-										<label tabIndex={0} className="btn btn-primary btn-sm">
-											...
-										</label>
-										<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
-											<li>
-												<a onClick={() => showModalHandle('edit', item)}>Edit</a>
-											</li>
-										</ul>
-									</div>
 								</td>
 							</tr>
 						))}
