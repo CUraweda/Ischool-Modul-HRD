@@ -1231,6 +1231,14 @@ const ItemPenilaian = {
 				Authorization: `Bearer ${access_token}`,
 			},
 		}),
+	DetailListPenilaiain: (id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `employee-evaluation/detail/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
 	GenerateMonth: (data: any, access_token: any): AxiosPromise =>
 		instance({
 			method: `POST`,

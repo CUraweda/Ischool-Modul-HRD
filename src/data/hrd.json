@@ -61,6 +61,10 @@
 				"url": "/hrd/daftar-penilaian"
 			},
 			{
+				"name": "List Penilaian",
+				"url": "/hrd/list-penilaian"
+			},
+			{
 				"name": "Rekap Penilaian",
 				"url": "/hrd/rekap-penilaian"
 			},

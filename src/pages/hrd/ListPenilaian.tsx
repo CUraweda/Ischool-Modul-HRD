@@ -1,11 +1,12 @@
 import { ItemPenilaian } from '@/middlewares/api';
 import { useState, useEffect } from 'react';
-import Modal, { openModal, closeModal } from '../../components/ModalProps';
+import Modal, { openModal } from '../../components/ModalProps';
 import Swal from 'sweetalert2';
 
 const ListPenilaian = () => {
 	const [fetch, setfetch] = useState<any[]>([]);
 	const [fetchDivision, setFetchDivision] = useState<any[]>([]);
+	const [detailEvaluation, setDetailEvaluation] = useState<DetailEvaluation | null>(null);
 	const [monthId, setMonthId] = useState<number | null>(null);
 	const [divisionId, setDivisionId] = useState<number | null>(null);
 
@@ -60,6 +61,27 @@ const ListPenilaian = () => {
 		},
 	];
 
+	interface JobdeskUnit {
+		id: number;
+		name: string;
+	}
+
+	interface EmployeeJobdesk {
+		id: number;
+		name: string;
+		description: string;
+		status: string;
+		personal_grade: number;
+		partner_grade: number;
+		assesor_grade: number;
+		overall_grade: string;
+		jobdeskunit: JobdeskUnit;
+	}
+
+	interface DetailEvaluation {
+		employeejobdesks: EmployeeJobdesk[];
+	}
+
 	let access_token = sessionStorage.getItem('access_token');
 
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
@@ -70,6 +92,16 @@ const ListPenilaian = () => {
 			setfetch(response.data.data.result);
 			const responseDivision = await ItemPenilaian.DataDivision(access_token);
 			setFetchDivision(responseDivision.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const Detail = async (id: any) => {
+		try {
+			const detail = await ItemPenilaian.DetailListPenilaiain(id, access_token);
+			setDetailEvaluation(detail.data.data);
+			openModal('listPenilaian');
 		} catch (error) {
 			console.error(error);
 		}
@@ -186,9 +218,11 @@ const ListPenilaian = () => {
 									</td>
 									<td className="px-4 py-2">
 										{monthNames?.find((month) => month.value === item.month_end)?.label ?? '-'}
-									</td>{' '}
+									</td>
 									<td className="relative px-4 py-2">
-										<label className="btn btn-primary btn-sm">...</label>
+										<label className="btn btn-primary btn-sm" onClick={() => Detail(item.id)}>
+											...
+										</label>
 									</td>
 								</tr>
 							))}
@@ -196,6 +230,55 @@ const ListPenilaian = () => {
 					</table>
 				</div>
 			</div>
+
+			<Modal id="listPenilaian">
+				{detailEvaluation && (
+					<div className="p-6">
+						<h3 className="mb-6 text-2xl font-bold text-gray-700">Detail Jobdesk</h3>
+						<div className="space-y-6">
+							{detailEvaluation.employeejobdesks.map((jobdesk) => (
+								<div
+									key={jobdesk.id}
+									className="rounded-xl border border-gray-300 bg-white p-5 shadow-lg transition-shadow duration-200 hover:shadow-xl"
+								>
+									<div className="mb-3 flex items-center justify-between">
+										<h4 className="text-lg font-semibold text-gray-800">{jobdesk.name || 'Jobdesk Name'}</h4>
+										<span className={`badge ${jobdesk.status === 'Completed' ? 'badge-success' : 'badge-warning'}`}>
+											{jobdesk.status}
+										</span>
+									</div>
+									<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+										<div>
+											<p className="text-sm text-gray-500">Description</p>
+											<p className="text-gray-700">{jobdesk.description || '-'}</p>
+										</div>
+										<div>
+											<p className="text-sm text-gray-500">Jobdesk Unit</p>
+											<p className="text-gray-700">{jobdesk.jobdeskunit?.name || '-'}</p>
+										</div>
+										<div>
+											<p className="text-sm text-gray-500">Personal Grade</p>
+											<p className="text-gray-700">{jobdesk.personal_grade || '0'}</p>
+										</div>
+										<div>
+											<p className="text-sm text-gray-500">Partner Grade</p>
+											<p className="text-gray-700">{jobdesk.partner_grade || '0'}</p>
+										</div>
+										<div>
+											<p className="text-sm text-gray-500">Assessor Grade</p>
+											<p className="text-gray-700">{jobdesk.assesor_grade || '0'}</p>
+										</div>
+										<div>
+											<p className="text-sm text-gray-500">Overall Grade</p>
+											<p className="text-gray-700">{jobdesk.overall_grade || '-'}</p>
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+			</Modal>
 		</div>
 	);
 };
