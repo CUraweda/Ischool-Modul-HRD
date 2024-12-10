@@ -471,11 +471,11 @@ const DetailProfilKaryawanPage = () => {
 									<label className="mb-1 block text-sm font-medium text-gray-600">Pendidikan Terakhir</label>
 									<input
 										type="text"
+										name="last_education"
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={formData.last_education}
 										onChange={handleInputChange}
 										placeholder="Masukkan pendidikan terakhir"
-										required
 									/>
 								</div>
 
@@ -487,7 +487,7 @@ const DetailProfilKaryawanPage = () => {
 										value={formData.certificate_year}
 										onChange={handleInputChange}
 										placeholder="Masukkan tahun sertifikat"
-										required
+										name="certificate_year"
 									/>
 								</div>
 							</div>
@@ -499,7 +499,7 @@ const DetailProfilKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={formData.is_education}
 										onChange={handleInputChange}
-										required
+										name="is_education"
 									>
 										<option value="" disabled>
 											-Pilih-
@@ -510,15 +510,19 @@ const DetailProfilKaryawanPage = () => {
 								</div>
 
 								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Jurusan</label>
-									<input
-										type="text"
+									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Guru?</label>
+									<select
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.major}
+										value={formData.is_teacher}
 										onChange={handleInputChange}
-										placeholder="Masukkan jurusan"
-										required
-									/>
+										name="is_teacher"
+									>
+										<option value="" disabled>
+											-Pilih-
+										</option>
+										<option value="Yes">Ya</option>
+										<option value="No">Tidak</option>
+									</select>
 								</div>
 							</div>
 
@@ -529,7 +533,7 @@ const DetailProfilKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={formData.employee_status}
 										onChange={handleInputChange}
-										required
+										name="employee_status"
 									>
 										<option value="" disabled>
 											-Pilih-
@@ -547,7 +551,7 @@ const DetailProfilKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										value={formData.work_start_date}
 										onChange={handleInputChange}
-										required
+										name="work_start_date"
 									/>
 								</div>
 							</div>
@@ -559,8 +563,8 @@ const DetailProfilKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										onChange={handleInputChange}
 										value={formData.duty}
-										placeholder="Masukkan jabatan"
-										required
+										placeholder="Masukkan Tugas"
+										name="duty"
 									/>
 								</div>
 
@@ -571,26 +575,9 @@ const DetailProfilKaryawanPage = () => {
 										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 										onChange={handleInputChange}
 										value={formData.job_desc}
-										placeholder="Masukkan Tugas"
-										required
+										placeholder="Masukkan Deskripsi Tugas"
+										name="job_desc"
 									/>
-								</div>
-							</div>
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Guru?</label>
-									<select
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.is_teacher}
-										onChange={handleInputChange}
-										required
-									>
-										<option value="" disabled>
-											-Pilih-
-										</option>
-										<option value="Yes">Ya</option>
-										<option value="No">Tidak</option>
-									</select>
 								</div>
 							</div>
 						</div>
