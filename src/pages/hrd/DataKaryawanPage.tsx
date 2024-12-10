@@ -302,8 +302,8 @@ const DataKaryawanPage = () => {
 			</div>
 
 			<Modal id="addKaryawan">
-				<div className="mx-auto w-full max-w-lg rounded-lg bg-white p-6 shadow-lg">
-					<h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Tambah Penerimaan Baru</h2>
+				<div className="mx-auto w-full p-6">
+					<h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Tambah Karyawan Baru</h2>
 					<form onSubmit={handleCreateKaryawan}>
 						<div className="space-y-6">
 							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

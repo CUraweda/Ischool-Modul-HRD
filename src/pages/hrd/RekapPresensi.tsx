@@ -222,10 +222,8 @@ const PresensiPage: React.FC = () => {
 	const exportToXLSX = () => {
 		const formattedData = filterData.map((item, index) => ({
 			no: index + 1,
-			id: item.id,
 			Nama: item.employee.full_name,
 			Divisi: item.employee.division,
-			uid: item.uid,
 			Deskripsi: item.description,
 			status: item.status,
 			Pukul: item.createdAt.split('T')[1].split('.')[0],

@@ -276,7 +276,7 @@ const DetailPenggajianPage = () => {
 									<td>{formatSalary(item.other_cut)}</td>
 									<td>
 										<div
-											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
+											className={`${item.status !== 'Bayar' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
 										>
 											{item.status ? item.status : 'Menunggu'}
 										</div>
