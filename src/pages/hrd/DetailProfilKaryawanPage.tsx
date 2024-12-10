@@ -339,259 +339,257 @@ const DetailProfilKaryawanPage = () => {
 			<Modal id="editModal">
 				<div className="mx-auto w-full p-6">
 					<h3 className="mb-6 text-center text-2xl font-bold text-gray-700">Edit Profil Karyawan</h3>
-					<form>
-						<div className="space-y-6">
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Nama Lengkap</label>
-									<input
-										type="text"
-										name="full_name"
-										value={formData.full_name}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Email</label>
-									<input
-										type="email"
-										name="email"
-										value={formData.email}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
+					<div className="space-y-6">
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Nama Lengkap</label>
+								<input
+									type="text"
+									name="full_name"
+									value={formData.full_name}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
 							</div>
 
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Telepon</label>
-									<input
-										type="text"
-										name="phone"
-										value={formData.phone}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Jenis Kelamin</label>
-									<select
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.gender}
-										onChange={handleInputChange}
-										required
-									>
-										<option value="" disabled>
-											-Pilih-
-										</option>
-										<option value="Male">Pria</option>
-										<option value="Female">Wanita</option>
-									</select>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
-									<input
-										type="date"
-										name="dob"
-										value={formData.dob}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Tempat Lahir</label>
-									<input
-										type="text"
-										name="pob"
-										value={formData.pob}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Status Pernikahan</label>
-									<input
-										type="text"
-										name="marital_status"
-										value={formData.marital_status}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Agama</label>
-									<input
-										type="text"
-										name="religion"
-										value={formData.religion}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Jurusan</label>
-									<input
-										type="text"
-										name="major"
-										value={formData.major}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Posisi</label>
-									<input
-										type="text"
-										name="occupation"
-										value={formData.occupation}
-										onChange={handleInputChange}
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Pendidikan Terakhir</label>
-									<input
-										type="text"
-										name="last_education"
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.last_education}
-										onChange={handleInputChange}
-										placeholder="Masukkan pendidikan terakhir"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Tahun Sertifikat</label>
-									<input
-										type="number"
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.certificate_year}
-										onChange={handleInputChange}
-										placeholder="Masukkan tahun sertifikat"
-										name="certificate_year"
-									/>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Pendidikan?</label>
-									<select
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.is_education}
-										onChange={handleInputChange}
-										name="is_education"
-									>
-										<option value="" disabled>
-											-Pilih-
-										</option>
-										<option value="Yes">Ya</option>
-										<option value="No">Tidak</option>
-									</select>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Guru?</label>
-									<select
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.is_teacher}
-										onChange={handleInputChange}
-										name="is_teacher"
-									>
-										<option value="" disabled>
-											-Pilih-
-										</option>
-										<option value="Yes">Ya</option>
-										<option value="No">Tidak</option>
-									</select>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Status Karyawan</label>
-									<select
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.employee_status}
-										onChange={handleInputChange}
-										name="employee_status"
-									>
-										<option value="" disabled>
-											-Pilih-
-										</option>
-										<option value="Tetap">Tetap</option>
-										<option value="Probation">Probation</option>
-										<option value="Contract">Kontrak</option>
-									</select>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Mulai</label>
-									<input
-										type="date"
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										value={formData.work_start_date}
-										onChange={handleInputChange}
-										name="work_start_date"
-									/>
-								</div>
-							</div>
-							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Tugas</label>
-									<input
-										type="text"
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										onChange={handleInputChange}
-										value={formData.duty}
-										placeholder="Masukkan Tugas"
-										name="duty"
-									/>
-								</div>
-
-								<div>
-									<label className="mb-1 block text-sm font-medium text-gray-600">Deskripsi Pekerjaan</label>
-									<input
-										type="text"
-										className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
-										onChange={handleInputChange}
-										value={formData.job_desc}
-										placeholder="Masukkan Deskripsi Tugas"
-										name="job_desc"
-									/>
-								</div>
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Email</label>
+								<input
+									type="email"
+									name="email"
+									value={formData.email}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
 							</div>
 						</div>
 
-						<div className="mt-6 w-full">
-							<button
-								type="submit"
-								className="w-full rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors duration-300 hover:bg-blue-600"
-								onClick={EditKaryawan}
-							>
-								Simpan
-							</button>
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Telepon</label>
+								<input
+									type="text"
+									name="phone"
+									value={formData.phone}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Jenis Kelamin</label>
+								<select
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.gender}
+									onChange={handleInputChange}
+									required
+								>
+									<option value="" disabled>
+										-Pilih-
+									</option>
+									<option value="Male">Pria</option>
+									<option value="Female">Wanita</option>
+								</select>
+							</div>
 						</div>
-					</form>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
+								<input
+									type="date"
+									name="dob"
+									value={formData.dob}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Tempat Lahir</label>
+								<input
+									type="text"
+									name="pob"
+									value={formData.pob}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Status Pernikahan</label>
+								<input
+									type="text"
+									name="marital_status"
+									value={formData.marital_status}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Agama</label>
+								<input
+									type="text"
+									name="religion"
+									value={formData.religion}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Jurusan</label>
+								<input
+									type="text"
+									name="major"
+									value={formData.major}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Posisi</label>
+								<input
+									type="text"
+									name="occupation"
+									value={formData.occupation}
+									onChange={handleInputChange}
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Pendidikan Terakhir</label>
+								<input
+									type="text"
+									name="last_education"
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.last_education}
+									onChange={handleInputChange}
+									placeholder="Masukkan pendidikan terakhir"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Tahun Sertifikat</label>
+								<input
+									type="number"
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.certificate_year}
+									onChange={handleInputChange}
+									placeholder="Masukkan tahun sertifikat"
+									name="certificate_year"
+								/>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Pendidikan?</label>
+								<select
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.is_education}
+									onChange={handleInputChange}
+									name="is_education"
+								>
+									<option value="" disabled>
+										-Pilih-
+									</option>
+									<option value="Yes">Ya</option>
+									<option value="No">Tidak</option>
+								</select>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Apakah Guru?</label>
+								<select
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.is_teacher}
+									onChange={handleInputChange}
+									name="is_teacher"
+								>
+									<option value="" disabled>
+										-Pilih-
+									</option>
+									<option value="Yes">Ya</option>
+									<option value="No">Tidak</option>
+								</select>
+							</div>
+						</div>
+
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Status Karyawan</label>
+								<select
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.employee_status}
+									onChange={handleInputChange}
+									name="employee_status"
+								>
+									<option value="" disabled>
+										-Pilih-
+									</option>
+									<option value="Tetap">Tetap</option>
+									<option value="Probation">Probation</option>
+									<option value="Contract">Kontrak</option>
+								</select>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Mulai</label>
+								<input
+									type="date"
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									value={formData.work_start_date}
+									onChange={handleInputChange}
+									name="work_start_date"
+								/>
+							</div>
+						</div>
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Tugas</label>
+								<input
+									type="text"
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									onChange={handleInputChange}
+									value={formData.duty}
+									placeholder="Masukkan Tugas"
+									name="duty"
+								/>
+							</div>
+
+							<div>
+								<label className="mb-1 block text-sm font-medium text-gray-600">Deskripsi Pekerjaan</label>
+								<input
+									type="text"
+									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+									onChange={handleInputChange}
+									value={formData.job_desc}
+									placeholder="Masukkan Deskripsi Tugas"
+									name="job_desc"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<div className="mt-6 w-full">
+						<button
+							type="submit"
+							className="w-full rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors duration-300 hover:bg-blue-600"
+							onClick={EditKaryawan}
+						>
+							Simpan
+						</button>
+					</div>
 				</div>
 			</Modal>
 

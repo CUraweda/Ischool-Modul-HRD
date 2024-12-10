@@ -139,6 +139,9 @@ const DetailPenggajianPage = () => {
 			gaji_tidak_tetap: item.fixed_salary,
 			Pinjaman: item.loan,
 			Koperasi: item.cooperative,
+			Fasilitas: item.facility,
+			GajiLain: item.other_income,
+			PotonganLain: item.other_cut,
 		}));
 
 		const worksheet = XLSX.utils.json_to_sheet(formattedData);
