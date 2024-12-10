@@ -57,10 +57,6 @@
 				"url": "/hrd/daftar-asessor"
 			},
 			{
-				"name": "Daftar Penilaian",
-				"url": "/hrd/daftar-penilaian"
-			},
-			{
 				"name": "List Penilaian",
 				"url": "/hrd/list-penilaian"
 			},
@@ -69,8 +65,12 @@
 				"url": "/hrd/rekap-penilaian"
 			},
 			{
-				"name": "Item Penilaian",
+				"name": "Jobdesk",
 				"url": "/hrd/item-penilaian"
+			},
+			{
+				"name": "Jobdesk Unit",
+				"url": "/hrd/jobdesk-unit"
 			}
 		]
 	},

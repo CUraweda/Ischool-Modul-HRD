@@ -15,7 +15,6 @@ const ListItemPenilaian = () => {
 	const [fetchJobdeskGroup, setFetchJobdeskGroup] = useState<any[]>([]);
 	const [fetchJobdeskUnit, setFetchJobdeskUnit] = useState<any[]>([]);
 
-	const [employeeId, setEmployeeId] = useState<number | string>('');
 	const [name, setName] = useState<string>('');
 	const [description, setDescription] = useState<string>('');
 	const [partnerIds, setPartnerIds] = useState<number | string>('');
@@ -57,7 +56,6 @@ const ListItemPenilaian = () => {
 
 	const CreateJobdesk = async () => {
 		const data = {
-			employee_id: parseInt(employeeId as string, 10),
 			name: name,
 			description: description,
 			partner_ids: `|${partnerIds}|`,
@@ -83,6 +81,8 @@ const ListItemPenilaian = () => {
 			closeModal('addPenilaian');
 		} catch (error) {
 			console.error(error);
+			closeModal('addPenilaian');
+
 			Swal.fire({
 				title: 'Gagal!',
 				text: 'Terjadi kesalahan saat membuat jobdesk.',
@@ -94,7 +94,6 @@ const ListItemPenilaian = () => {
 
 	const EditJobdesk = async (id: number) => {
 		const data = {
-			employee_id: parseInt(employeeId as string, 10),
 			name: name,
 			description: description,
 			partner_ids: `|${partnerIds}|`,
@@ -109,11 +108,20 @@ const ListItemPenilaian = () => {
 		};
 
 		try {
-			await ItemPenilaian.EditJobdesk(data, id); // Update the API function to handle PUT
+			await ItemPenilaian.EditJobdesk(data, id);
+			closeModal('addPenilaian');
 			Swal.fire('Updated!', 'The item has been updated.', 'success');
 			fetchData();
 		} catch (error) {
 			console.error(error);
+			closeModal('addPenilaian');
+
+			Swal.fire({
+				title: 'Gagal!',
+				text: 'Terjadi kesalahan saat membuat jobdesk.',
+				icon: 'error',
+				confirmButtonText: 'OK',
+			});
 		}
 	};
 
@@ -129,7 +137,6 @@ const ListItemPenilaian = () => {
 	};
 
 	const openEditModal = (item: any) => {
-		setEmployeeId(item.employee_id);
 		setName(item.name);
 		setDescription(item.description);
 		setPartnerIds(item.partner_ids);
@@ -146,7 +153,6 @@ const ListItemPenilaian = () => {
 
 	const handleDialog = () => {
 		openModal('addPenilaian');
-		setEmployeeId('');
 		setName('');
 		setDescription('');
 		setPartnerIds('');
@@ -171,7 +177,7 @@ const ListItemPenilaian = () => {
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">
-				<h3 className="font-bold">List Item Penilaian</h3>
+				<h3 className="font-bold">Jobdesk</h3>
 			</div>
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
@@ -235,28 +241,6 @@ const ListItemPenilaian = () => {
 					<h3 className="text-2xl font-bold text-gray-800">
 						{isEditMode ? 'Edit Item Penilaian' : 'Tambah Item Penilaian'}
 					</h3>
-
-					{/* Employee */}
-					<div>
-						<label htmlFor="employee_id" className="block text-sm font-medium text-gray-700">
-							Karyawan
-						</label>
-						<select
-							id="employee_id"
-							className="select select-bordered mt-2 w-full"
-							value={employeeId} // Pastikan employeeId sudah terisi dengan data saat edit
-							onChange={(e) => setEmployeeId(e.target.value)}
-						>
-							<option value="" disabled selected>
-								Pilih Karyawan
-							</option>
-							{fetchEmployee.map((item, index) => (
-								<option value={item.id} key={index}>
-									{item.full_name}
-								</option>
-							))}
-						</select>
-					</div>
 
 					{/* Name */}
 					<div>

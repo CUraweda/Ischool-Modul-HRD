@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
-import { Karyawan } from '@/middlewares/api';
+import { ItemPenilaian, Karyawan } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -29,6 +29,7 @@ const DataKaryawanPage = () => {
 	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState('');
 	const [dataKaryawan, setDataKaryawan] = useState<any[]>([]);
+	const [allDataKaryawan, setAllDataKaryawan] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [page, setPage] = useState(1);
@@ -49,6 +50,9 @@ const DataKaryawanPage = () => {
 			setDataKaryawan(response.data.data.result);
 			setTotalPages(response.data.data.totalPage - 1);
 			setPage(response.data.data.page);
+
+			const responseAllKaryawan = await ItemPenilaian.DataKaryawan(access_token);
+			setAllDataKaryawan(responseAllKaryawan.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
@@ -56,7 +60,7 @@ const DataKaryawanPage = () => {
 
 	const exportToExcel = () => {
 		const worksheet = XLSX.utils.json_to_sheet(
-			dataKaryawan.map((item, index) => ({
+			allDataKaryawan.map((item, index) => ({
 				No: index + 1 + page * itemsPerPage,
 				Nama: item.full_name,
 				Email: item.email,

@@ -80,7 +80,7 @@ const DaftarPenilaianPage = () => {
 		setSelectedKaryawan(item.employee.id);
 		setJudulKegiatan(item.name);
 		setDeskripsiKegiatan(item.description);
-		setTenggatWaktu(item.due_date.split('T')[0]);
+		setTenggatWaktu('');
 		setEditMode(true);
 		setEditId(item.id);
 		openModal('addPenilaian');

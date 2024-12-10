@@ -107,6 +107,15 @@ const ListPenilaian = () => {
 		}
 	};
 
+	const Kalkulasi = async (id: any) => {
+		try {
+			await ItemPenilaian.Kalkulasi({}, id, access_token);
+			fetchData();
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
 	const Generate = async () => {
 		const data = {
 			month_id: monthId,
@@ -220,9 +229,19 @@ const ListPenilaian = () => {
 										{monthNames?.find((month) => month.value === item.month_end)?.label ?? '-'}
 									</td>
 									<td className="relative px-4 py-2">
-										<label className="btn btn-primary btn-sm" onClick={() => Detail(item.id)}>
-											...
-										</label>
+										<div className="dropdown dropdown-end">
+											<label tabIndex={0} className="btn btn-primary btn-sm">
+												...
+											</label>
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+												<li>
+													<a onClick={() => Detail(item.id)}>Detail Jobdesk</a>
+												</li>
+												<li>
+													<a onClick={() => Kalkulasi(item.id)}>Kalkulasi</a>
+												</li>
+											</ul>
+										</div>
 									</td>
 								</tr>
 							))}

@@ -25,9 +25,6 @@ const DetailListItemPenilaian = () => {
 			const response = await ItemPenilaian.DataJobdeskGradeGroup(0, 10000, access_token);
 			setFetch(response.data.data.result);
 
-			const responseGrade = await ItemPenilaian.DataJobdeskGrade(0, 10000, access_token);
-			setFetchGrade(responseGrade.data.data.result);
-
 			const responseUnit = await ItemPenilaian.DataJobdeskUnit(access_token);
 			setFetchJobdeskUnit(responseUnit.data.data.result);
 		} catch (error) {
@@ -49,6 +46,7 @@ const DetailListItemPenilaian = () => {
 			closeModal('addGroup');
 		} catch (error) {
 			console.error(error);
+			closeModal('addGroup');
 			Swal.fire('Error', 'Gagal menambahkan data', 'error');
 		}
 	};
@@ -75,6 +73,7 @@ const DetailListItemPenilaian = () => {
 			closeModal('addGroup');
 		} catch (error) {
 			console.error(error);
+			closeModal('addGroup');
 			Swal.fire('Error', 'Gagal memperbarui data', 'error');
 		}
 	};
@@ -107,15 +106,18 @@ const DetailListItemPenilaian = () => {
 			name: nameGrade,
 			grade: grade,
 			indicator: indicator,
-			group_id: group,
+			group_id: id,
 		};
 		try {
 			await ItemPenilaian.CreateJobdeskGrade(data, access_token);
 			Swal.fire('Success', 'Data berhasil ditambahkan', 'success');
 			fetchData();
-			closeModal('crudGradeModal');
+			closeModal('crudModal');
+			closeModal('itemPenilaian');
 		} catch (error) {
 			console.error(error);
+			closeModal('crudModal');
+			closeModal('itemPenilaian');
 			Swal.fire('Error', 'Gagal menambahkan data', 'error');
 		}
 	};
@@ -135,17 +137,20 @@ const DetailListItemPenilaian = () => {
 			name: nameGrade,
 			grade: grade,
 			indicator: indicator,
-			group_id: group,
-			group_uid: `${group}|${grade}`,
+			group_id: id,
+			group_uid: `${id}|${grade}`,
 			indicator_uid: `${group}|${indicator}`,
 		};
 		try {
 			await ItemPenilaian.UpdateJobdeskGrade(data, id, access_token);
 			Swal.fire('Success', 'Data berhasil diubah', 'success');
 			fetchData();
-			closeModal('crudGradeModal');
+			closeModal('crudModal');
+			closeModal('itemPenilaian');
 		} catch (error) {
 			console.error(error);
+			closeModal('crudModal');
+			closeModal('itemPenilaian');
 			Swal.fire('Error', 'Gagal menambahkan data', 'error');
 		}
 	};
@@ -178,8 +183,11 @@ const DetailListItemPenilaian = () => {
 		fetchData();
 	}, []);
 
-	const handleDialogPenilaian = () => {
+	const handleDialogPenilaian = async (id: any) => {
 		openModal('itemPenilaian');
+		const responseGrade = await ItemPenilaian.DataJobdeskGrade(0, 10000, access_token, id);
+		setFetchGrade(responseGrade.data.data.result);
+		setId(id);
 	};
 
 	const handleDialogCrud = () => {
@@ -210,16 +218,11 @@ const DetailListItemPenilaian = () => {
 				<button className="btn btn-xs" onClick={handleDialog}>
 					<span>+</span> Tambah Nilai Group
 				</button>
-				<div className="flex items-center gap-2">
-					<button className="btn btn-xs" onClick={handleDialogPenilaian}>
-						<span>+</span> Tambah Nilai
-					</button>
-				</div>
 			</div>
 
 			<div className="q-mt card mt-5 w-full bg-base-100 shadow-xl">
 				<div className="card-body overflow-auto">
-					<table className="table table-zebra mb-14 h-full">
+					<table className="table table-zebra mb-24 h-full">
 						<thead>
 							<tr>
 								<th className="text-xs">No</th>
@@ -245,6 +248,9 @@ const DetailListItemPenilaian = () => {
 												</li>
 												<li>
 													<a onClick={() => deleteData(item.id)}>Hapus </a>
+												</li>
+												<li>
+													<a onClick={() => handleDialogPenilaian(item.id)}>Detail Grade</a>
 												</li>
 											</ul>
 										</div>
@@ -346,7 +352,7 @@ const DetailListItemPenilaian = () => {
 								</div>
 
 								{/* Group ID Field */}
-								<div>
+								{/* <div>
 									<label htmlFor="group_id" className="block text-sm font-medium">
 										Group
 									</label>
@@ -363,7 +369,7 @@ const DetailListItemPenilaian = () => {
 											</option>
 										))}
 									</select>
-								</div>
+								</div> */}
 							</form>
 
 							{/* Action Buttons */}

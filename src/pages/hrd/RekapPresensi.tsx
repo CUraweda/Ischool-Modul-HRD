@@ -78,7 +78,7 @@ const PresensiPage: React.FC = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const [selectedItem, setSelectedItem] = useState<any[]>([]);
-	const [typeDate, setTypeDate] = useState('');
+	const [typeDate, setTypeDate] = useState('one_day');
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Masuk' },
 		{ id: 2, category: 'Type', value: 'Keluar' },
@@ -190,6 +190,13 @@ const PresensiPage: React.FC = () => {
 				? prevSelected.filter((name) => name !== employeeName)
 				: [...prevSelected, employeeName]
 		);
+	};
+
+	const addSevenHours = (inputTime: string | undefined): string | null => {
+		if (!inputTime) return null; // Tangani jika inputTime undefined atau null
+		const date = new Date(inputTime);
+		date.setHours(date.getHours() + 7);
+		return date.toISOString(); // Kembalikan waktu dalam format ISO
 	};
 
 	const filterData = attendanceData.filter((item: any) =>
@@ -410,7 +417,7 @@ const PresensiPage: React.FC = () => {
 								<td>{item?.employee?.division?.name}</td>
 								<td>{item?.employee?.full_name}</td>
 								<td>{item?.createdAt.split('T')[0]}</td>
-								<td>{item?.createdAt.split('T')[1].split('.')[0]}</td>
+								<td> {item?.createdAt ? addSevenHours(item?.createdAt)?.split('T')[1]?.split('.')[0] || '-' : '-'}</td>
 								<td className="w-5 truncate text-ellipsis">{item?.description}</td>
 								<td>
 									<div
