@@ -107,14 +107,14 @@ const ListPenilaian = () => {
 		}
 	};
 
-	// const Kalkulasi = async (id: any) => {
-	// 	try {
-	// 		await ItemPenilaian.Kalkulasi({}, id, access_token);
-	// 		fetchData();
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
+	const Kalkulasi = async (id: any) => {
+		try {
+			await ItemPenilaian.Kalkulasi({}, id, access_token);
+			fetchData();
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const Generate = async () => {
 		const data = {
@@ -237,9 +237,9 @@ const ListPenilaian = () => {
 												<li>
 													<a onClick={() => Detail(item.id)}>Detail Jobdesk</a>
 												</li>
-												{/* <li>
+												<li>
 													<a onClick={() => Kalkulasi(item.id)}>Kalkulasi</a>
-												</li> */}
+												</li>
 											</ul>
 										</div>
 									</td>
