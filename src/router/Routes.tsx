@@ -42,6 +42,7 @@ const ListItemPenilaian = lazy(() => import('@/pages/hrd/ListItemPenilaian'));
 const DetailListItemPenilaian = lazy(() => import('@/pages/hrd/DetailListItemPenilaian'));
 const ListPenilaian = lazy(() => import('@/pages/hrd/ListPenilaian'));
 const JobdeskUnit = lazy(() => import('@/pages/hrd/JobdeskUnit'));
+const ListEvaluationItem = lazy(() => import('@/pages/hrd/LIstEvaluasiItem'));
 
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
@@ -120,6 +121,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="detail-penilaian" element={<DetailListItemPenilaian />} />
 							<Route path="list-penilaian" element={<ListPenilaian />} />
 							<Route path="jobdesk-unit" element={<JobdeskUnit />} />
+							<Route path="evaluation-item" element={<ListEvaluationItem />} />
 						</Route>
 					</Route>
 

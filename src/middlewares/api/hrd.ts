@@ -1291,6 +1291,40 @@ const ItemPenilaian = {
 				Authorization: `Bearer ${access_token}`,
 			},
 		}),
+	DataEvaluationItem: (access_token: any, page: any, limit: any, division_id: any): AxiosPromise =>
+		instance({
+			method: `GET`,
+			url: `evaluation-item?page=${page}&limit=${limit}&division_id=${division_id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	CreateEvaluationitem: (data: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `POST`,
+			url: `evaluation-item/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	UpdateeEvaluationitem: (id: any, data: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `PUT`,
+			url: `evaluation-item/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DeleteEvaluationitem: (id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `DELETE`,
+			url: `evaluation-item/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
 };
 
 export {

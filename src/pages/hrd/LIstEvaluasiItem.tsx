@@ -3,14 +3,17 @@ import Swal from 'sweetalert2';
 import Modal, { openModal, closeModal } from '@/components/ModalProps';
 import { ItemPenilaian } from '@/middlewares/api';
 
-const JobdeskUnit = () => {
-	const [units, setUnits] = useState<any[]>([]);
+const ListEvaluasiItem = () => {
+	const [evaluationItem, setEvaluationItem] = useState<any[]>([]);
 	const [divisions, setDivisions] = useState<any[]>([]);
+	const [jobdeskUnit, setJobdeskUnit] = useState<any[]>([]);
+	const [divisionId, setDivisionId] = useState('');
 	const [formData, setFormData] = useState({
 		id: null,
-		name: '',
 		division_id: '',
-		disabled: false,
+		name: '',
+		description: '',
+		unit_id: '',
 		isEditing: false,
 	});
 
@@ -19,14 +22,16 @@ const JobdeskUnit = () => {
 
 	useEffect(() => {
 		fetchUnits();
-	}, []);
+	}, [divisionId]);
 
 	const fetchUnits = async () => {
 		try {
-			const response = await ItemPenilaian.DataUnit(0, 10000, access_token);
-			setUnits(response.data.data.result);
+			const response = await ItemPenilaian.DataEvaluationItem(access_token, 0, 10000, divisionId);
+			setEvaluationItem(response.data.data.result);
 			const responseDivison = await ItemPenilaian.DataDivision(access_token);
 			setDivisions(responseDivison.data.data.result);
+			const responseUnit = await ItemPenilaian.DataJobdeskUnit(access_token);
+			setJobdeskUnit(responseUnit.data.data.result);
 		} catch (error) {
 			console.error(error);
 			Swal.fire('Error', 'Gagal memuat data unit.', 'error');
@@ -37,35 +42,36 @@ const JobdeskUnit = () => {
 		e.preventDefault();
 		try {
 			const payload = {
-				name: formData.name,
 				division_id: parseInt(formData.division_id, 10),
-				disabled: formData.disabled,
+				name: formData.name,
+				description: formData.description,
+				unit_id: parseInt(formData.unit_id),
 			};
 
 			if (formData.isEditing) {
-				await ItemPenilaian.UpdateUnit(formData.id, payload, access_token);
-				Swal.fire('Berhasil', 'Unit berhasil diperbarui.', 'success');
+				await ItemPenilaian.UpdateeEvaluationitem(formData.id, payload, access_token);
+				Swal.fire('Berhasil', 'Item berhasil diperbarui.', 'success');
 			} else {
-				await ItemPenilaian.CreateUnit(payload, access_token);
-				Swal.fire('Berhasil', 'Unit berhasil dibuat.', 'success');
+				await ItemPenilaian.CreateEvaluationitem(payload, access_token);
+				Swal.fire('Berhasil', 'Item berhasil dibuat.', 'success');
 			}
 
 			fetchUnits();
 			closeModal('addJobdesk');
 		} catch (error) {
 			console.error(error);
-			Swal.fire('Error', 'Gagal menyimpan unit.', 'error');
+			Swal.fire('Error', 'Gagal menyimpan Item.', 'error');
 		}
 	};
 
 	const handleDeleteUnit = async (id: any) => {
 		try {
-			await ItemPenilaian.DeleteUnit(id, access_token);
-			Swal.fire('Berhasil', 'Unit berhasil dihapus.', 'success');
+			await ItemPenilaian.DeleteEvaluationitem(id, access_token);
+			Swal.fire('Berhasil', 'Item berhasil dihapus.', 'success');
 			fetchUnits();
 		} catch (error) {
 			console.error(error);
-			Swal.fire('Error', 'Gagal menghapus unit.', 'error');
+			Swal.fire('Error', 'Gagal menghapus Item.', 'error');
 		}
 	};
 
@@ -73,8 +79,9 @@ const JobdeskUnit = () => {
 		setFormData({
 			id: null,
 			name: '',
+			description: '',
 			division_id: '',
-			disabled: false,
+			unit_id: '',
 			isEditing: false,
 		});
 		openModal('addJobdesk');
@@ -84,14 +91,15 @@ const JobdeskUnit = () => {
 		setFormData({
 			id: unit.id,
 			name: unit.name,
+			description: unit.description,
 			division_id: unit.division_id?.toString(),
-			disabled: unit.disabled,
+			unit_id: unit.unit_id,
 			isEditing: true,
 		});
 		openModal('addJobdesk');
 	};
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
 		const { name, value, type } = e.target;
 
 		setFormData((prev) => ({
@@ -108,7 +116,18 @@ const JobdeskUnit = () => {
 
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
-			<div className="mt-6 flex justify-end">
+			<div className="mt-6 flex items-center justify-between">
+				<select className="select select-bordered select-xs" onChange={(e) => setDivisionId(e.target.value)}>
+					<option value="" selected>
+						Filter
+					</option>
+					{divisions.map((item, index) => (
+						<option value={item.id} key={index}>
+							{item.name}
+						</option>
+					))}
+				</select>
+
 				<button className="btn btn-primary" onClick={openAddJobdeskModal}>
 					Tambah
 				</button>
@@ -121,18 +140,20 @@ const JobdeskUnit = () => {
 							<tr>
 								<th>No</th>
 								<th>Nama</th>
+								<th>Deskripsi</th>
 								<th>Divisi</th>
-								<th>Status</th>
+								<th>Unit</th>
 								<th className="flex items-center justify-center">Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							{units.map((unit, index) => (
+							{evaluationItem.map((unit, index) => (
 								<tr key={unit.id}>
 									<td>{index + 1}</td>
 									<td>{unit.name}</td>
-									<td>{unit.division?.name}</td>
-									<td>{unit.disabled ? 'Aktif' : 'Tidak Aktif'}</td>
+									<td>{unit?.description}</td>
+									<td>{unit?.division?.name}</td>
+									<td>{unit?.jobdeskunit?.name}</td>
 									<td className="flex items-center justify-center gap-5">
 										<button onClick={() => openEditJobdeskModal(unit)} className="btn btn-success btn-sm">
 											Edit
@@ -155,19 +176,6 @@ const JobdeskUnit = () => {
 					<form onSubmit={handleSaveUnit}>
 						<div className="form-control mb-4">
 							<label className="label">
-								<span className="label-text">Nama Jobdesk</span>
-							</label>
-							<input
-								type="text"
-								name="name"
-								value={formData.name}
-								onChange={handleChange}
-								className="input input-bordered w-full"
-								required
-							/>
-						</div>
-						<div className="form-control mb-4">
-							<label className="label">
 								<span className="label-text">Divisi</span>
 							</label>
 							<select
@@ -187,18 +195,56 @@ const JobdeskUnit = () => {
 								))}
 							</select>
 						</div>
+
 						<div className="form-control mb-4">
-							<label className="flex items-center">
-								<input
-									type="checkbox"
-									name="disabled"
-									checked={formData.disabled}
-									onChange={handleChange}
-									className="checkbox-primary checkbox"
-								/>
-								<span className="ml-2">Aktifkan Jobdesk</span>
+							<label className="label">
+								<span className="label-text">Nama Item Evaluasi</span>
 							</label>
+							<input
+								type="text"
+								name="name"
+								value={formData.name}
+								onChange={handleChange}
+								className="input input-bordered w-full"
+								required
+							/>
 						</div>
+
+						<div className="form-control mb-4">
+							<label className="label">
+								<span className="label-text">Deskripsi</span>
+							</label>
+							<textarea
+								name="description"
+								value={formData.description}
+								onChange={handleChange}
+								className="textarea textarea-bordered w-full"
+								required
+							/>
+						</div>
+
+						<div className="form-control mb-4">
+							<label className="label">
+								<span className="label-text">Unit</span>
+							</label>
+							<select
+								name="unit_id"
+								value={formData.unit_id}
+								onChange={handleChange}
+								className="select select-bordered w-full"
+								required
+							>
+								<option value="" disabled>
+									Pilih Unit
+								</option>
+								{jobdeskUnit.map((division) => (
+									<option key={division.id} value={division.id}>
+										{division.name}
+									</option>
+								))}
+							</select>
+						</div>
+
 						<div className="flex justify-end gap-4">
 							<button type="button" onClick={() => closeModal('addJobdesk')} className="btn btn-outline">
 								Batal
@@ -214,4 +260,4 @@ const JobdeskUnit = () => {
 	);
 };
 
-export default JobdeskUnit;
+export default ListEvaluasiItem;
