@@ -111,7 +111,7 @@ const ListEvaluasiItem = () => {
 	return (
 		<div>
 			<div className="mb-3 flex items-center justify-between">
-				<h3 className="font-bold">Jobdesk Unit</h3>
+				<h3 className="font-bold">Evaluation Item</h3>
 			</div>
 
 			<div className="h-[1px] w-full bg-gray-300"></div>

@@ -57,6 +57,10 @@
 				"url": "/hrd/daftar-asessor"
 			},
 			{
+				"name": "Evaluation Item",
+				"url": "/hrd/evaluation-item"
+			},
+			{
 				"name": "List Penilaian",
 				"url": "/hrd/list-penilaian"
 			},
