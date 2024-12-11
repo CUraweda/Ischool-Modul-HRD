@@ -65,10 +65,6 @@
 				"url": "/hrd/list-penilaian"
 			},
 			{
-				"name": "Rekap Penilaian",
-				"url": "/hrd/rekap-penilaian"
-			},
-			{
 				"name": "Jobdesk",
 				"url": "/hrd/item-penilaian"
 			},
