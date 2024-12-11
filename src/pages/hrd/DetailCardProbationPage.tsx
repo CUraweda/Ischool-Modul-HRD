@@ -1,5 +1,5 @@
 import image from '../../assets/images/blueAbstractPattern.png';
-import { Bar } from 'react-chartjs-2';
+// import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -8,17 +8,17 @@ import Swal from 'sweetalert2';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-interface ChartDataItem {
-	name: string;
-	raw_grade: number;
-	graded: number;
-}
+// interface ChartDataItem {
+// 	name: string;
+// 	raw_grade: number;
+// 	graded: number;
+// }
 
 const DetailCardProbationPage = () => {
 	const { id2 } = useParams<{ id2: string }>();
 	const [fetch, setFetch] = useState<any | null>(null);
 	const [table, setTable] = useState<any[]>([]);
-	const [chart, setChart] = useState<ChartDataItem[]>([]);
+	// const [chart, setChart] = useState<ChartDataItem[]>([]);
 	const [internshipDetails, setInternshipDetails] = useState({
 		startDate: '',
 		endDate: '',
@@ -37,8 +37,8 @@ const DetailCardProbationPage = () => {
 			handleInternshipDetails(response.data.data.probation_start_date, response.data.data.probation_end_date);
 			const responseTable = await Probation.DetailPresensi(id2, access_token);
 			setTable(responseTable.data.data.result);
-			const responseChart = await Probation.DetailChart(id2, access_token);
-			setChart(responseChart.data.data);
+			// const responseChart = await Probation.DetailChart(id2, access_token);
+			// setChart(responseChart.data.data);
 		} catch (error) {
 			console.error(error);
 		}
@@ -92,71 +92,93 @@ const DetailCardProbationPage = () => {
 	};
 
 	const Finish = async (id: any) => {
-		try {
-			await Probation.FinishProbation(null, id);
-			Swal.fire({
-				icon: 'success',
-				title: 'Sukses',
-				text: 'Applicant berhasil diakhiri',
-			});
-			FetchData();
-		} catch (error: any) {
-			console.error(error);
-			const message = error.response.data.message;
-			Swal.fire({
-				icon: 'error',
-				title: 'Error',
-				text: message,
-			});
-		}
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Anda akan mengakhiri masa percobaan untuk applicant ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Ya, Akhiri!',
+			cancelButtonText: 'Tidak',
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					await Probation.FinishProbation(null, id);
+					Swal.fire({
+						icon: 'success',
+						title: 'Sukses',
+						text: 'Applicant berhasil diakhiri',
+					});
+					FetchData();
+				} catch (error: any) {
+					console.error(error);
+					const message = error.response.data.message;
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: message,
+					});
+				}
+			}
+		});
 	};
 
 	const Contract = async (id: any) => {
-		try {
-			await Probation.ContracthProbation(null, id);
-			Swal.fire({
-				icon: 'success',
-				title: 'Sukses',
-				text: 'Applicant berhasil dikontrak',
-			});
-			FetchData();
-		} catch (error: any) {
-			console.error(error);
-			const message = error.response.data.message;
-			Swal.fire({
-				icon: 'error',
-				title: 'Error',
-				text: message,
-			});
-		}
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Anda akan mengontrak applicant ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Ya, Kontrak!',
+			cancelButtonText: 'Tidak',
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					await Probation.ContracthProbation(null, id);
+					Swal.fire({
+						icon: 'success',
+						title: 'Sukses',
+						text: 'Applicant berhasil dikontrak',
+					});
+					FetchData();
+				} catch (error: any) {
+					console.error(error);
+					const message = error.response.data.message;
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: message,
+					});
+				}
+			}
+		});
 	};
 
 	useEffect(() => {
 		FetchData();
 	}, []);
 
-	const labels = chart.map((item) => item.name);
-	const dataValues = chart.map((item) => item.graded);
+	// const labels = chart.map((item) => item.name);
+	// const dataValues = chart.map((item) => item.graded);
 
-	const data = {
-		labels,
-		datasets: [
-			{
-				label: 'Performance',
-				data: dataValues,
-				backgroundColor: '#6366f1',
-				borderRadius: 10,
-			},
-		],
-	};
+	// const data = {
+	// 	labels,
+	// 	datasets: [
+	// 		{
+	// 			label: 'Performance',
+	// 			data: dataValues,
+	// 			backgroundColor: '#6366f1',
+	// 			borderRadius: 10,
+	// 		},
+	// 	],
+	// };
 
-	const options = {
-		scales: {
-			y: {
-				beginAtZero: true,
-			},
-		},
-	};
+	// const options = {
+	// 	scales: {
+	// 		y: {
+	// 			beginAtZero: true,
+	// 		},
+	// 	},
+	// };
 
 	return (
 		<div className="min-h-screen">
@@ -207,7 +229,7 @@ const DetailCardProbationPage = () => {
 				</div>
 
 				{/* Bottom Section: Two Cards (Table and Chart) */}
-				<div className="col-span-1 rounded-lg bg-white p-6 shadow-lg">
+				<div className="col-span-2 rounded-lg bg-white p-6 shadow-lg">
 					{/* Attendance Table */}
 					<h3 className="text-lg font-semibold">Kehadiran</h3>
 					<div className="mt-4 overflow-x-auto">
@@ -234,11 +256,10 @@ const DetailCardProbationPage = () => {
 					</div>
 				</div>
 
-				<div className="col-span-1 rounded-lg bg-white p-6 shadow-lg">
-					{/* Performance Graph */}
+				{/* <div className="col-span-1 rounded-lg bg-white p-6 shadow-lg">
 					<h3 className="text-lg font-semibold">Kinerja</h3>
 					<Bar data={data} options={options} />
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

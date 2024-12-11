@@ -8,6 +8,7 @@ const DetailProbationPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const [dataDetailProbation, setDataDetailProbation] = useState<any[]>([]);
+	const [imageError, setImageError] = useState(false);
 
 	let access_token = sessionStorage.getItem('access_token');
 
@@ -31,6 +32,10 @@ const DetailProbationPage = () => {
 			fetchData();
 		}
 	}, [id, search]);
+
+	const handleImageError = () => {
+		setImageError(true); // Menandakan gambar gagal dimuat
+	};
 
 	return (
 		<div>
@@ -101,14 +106,15 @@ const DetailProbationPage = () => {
 											<div className="flex items-center gap-3">
 												<div className="avatar">
 													<div className="mask mask-squircle h-12 w-12">
-														{/* <img
+														<img
 															src={
-																item?.file_path
-																	? `https://api-sade-v2-ischool.curaweda.com/api/${item.file_path}`
-																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
+																imageError || !item?.file_path
+																	? 'https://api.dicebear.com/9.x/pixel-art/svg' // Gambar default Dicebear
+																	: `${import.meta.env.VITE_SERVER_HRD_FILE}${item.file_path}`
 															}
-															alt="Avatar Tailwind CSS Component"
-														/> */}
+															alt="User"
+															onError={handleImageError} // Menangani error gambar
+														/>
 													</div>
 												</div>
 												<div>

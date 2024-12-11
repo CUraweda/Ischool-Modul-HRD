@@ -10,6 +10,7 @@ const DaftarInterviewPage = () => {
 	const [id2, setId2] = useState<number | null>();
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
+	const [imageError, setImageError] = useState(false);
 
 	let access_token = sessionStorage.getItem('access_token');
 
@@ -80,6 +81,10 @@ const DaftarInterviewPage = () => {
 	// const handleNavigation = (id2: number) => {
 	// 	navigate(`/hrd/employee/${id}/${id2}`);
 	// };
+
+	const handleImageError = () => {
+		setImageError(true); // Menandakan gambar gagal dimuat
+	};
 
 	useEffect(() => {
 		if (id) {
@@ -158,11 +163,12 @@ const DaftarInterviewPage = () => {
 													<div className="mask mask-squircle h-12 w-12">
 														<img
 															src={
-																item?.file_path
-																	? `https://api-hrd.curaweda.com/stg-server1/${item.file_path}`
-																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
+																imageError || !item?.file_path
+																	? 'https://api.dicebear.com/9.x/pixel-art/svg' // Gambar default Dicebear
+																	: `${import.meta.env.VITE_SERVER_HRD_FILE}${item.file_path}`
 															}
-															alt="Avatar Tailwind CSS Component"
+															alt="User"
+															onError={handleImageError}
 														/>
 													</div>
 												</div>

@@ -102,8 +102,6 @@ const DetailRekrutmenPage = () => {
 	};
 
 	const AcceptedPsikotes = async (id: any) => {
-		if (!selectedId) return;
-
 		try {
 			await Rekrutmen.LulusPsikotes(null, id);
 			fetchData();
@@ -125,8 +123,6 @@ const DetailRekrutmenPage = () => {
 	};
 
 	const RejectedPsikotes = async (id: any) => {
-		if (!selectedId) return;
-
 		try {
 			await Rekrutmen.GagalPsikotes(null, id);
 			closeModal('cvApplicant');
@@ -256,7 +252,6 @@ const DetailRekrutmenPage = () => {
 			<div className="h-[1px] w-full bg-gray-300"></div>
 
 			<select className="select select-bordered select-xs mt-10" onChange={(e) => setTypeRekrutmen(e.target.value)}>
-				<option value="">Filter</option>
 				<option value="Pendaftaran">Rekrutmen</option>
 				<option value="Memasuki Test Psikotes">Psikotes</option>
 				<option value="Menunggu Interview">Interview</option>
@@ -306,14 +301,14 @@ const DetailRekrutmenPage = () => {
 											<div className="flex items-center gap-3">
 												<div className="avatar">
 													<div className="mask mask-squircle h-12 w-12">
-														{/* <img
+														<img
 															src={
 																item?.file_path
-																	? `${import.meta.env.VITE_SERVER_HRD_URL}${item.file_path}`
+																	? `${import.meta.env.VITE_SERVER_HRD_FILE}${item.file_path}`
 																	: 'https://api.dicebear.com/9.x/pixel-art/svg'
 															}
 															alt="Avatar Tailwind CSS Component"
-														/> */}
+														/>
 													</div>
 												</div>
 												<div>

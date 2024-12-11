@@ -15,6 +15,7 @@ const Navbar = () => {
 		localStorage.clear();
 		dispatch(clearUser());
 		navigate('/', { replace: true });
+		window.location.reload();
 	};
 
 	useEffect(() => {

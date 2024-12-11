@@ -74,9 +74,10 @@ const LoginPage: React.FC = () => {
 					}
 				}
 				window.location.reload();
-			} catch (error) {
+			} catch (error: any) {
 				console.error('Login error:', error);
-				toast.warn('Email atau password salah');
+				const message = error.response.data.message;
+				toast.warn(message);
 			} finally {
 				setSubmitting(false);
 			}
@@ -112,17 +113,17 @@ const LoginPage: React.FC = () => {
 						{showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
 					</button>
 				</div>
-				<div className="flex">
+				{/* <div className="flex">
 					<Link to="/forgot-password" className="btn btn-link ms-auto">
 						Lupa password?
 					</Link>
-				</div>
+				</div> */}
 				<button type="submit" disabled={loginForm.isSubmitting} className="btn btn-primary mt-4 w-full">
 					{loginForm.isSubmitting ? <span className="loading loading-dots loading-md mx-auto"></span> : 'Log In'}
 				</button>
 			</form>
 			<p className="mt-16 text-center">
-				Belum punya akun?{' '}
+				Belum punya akun?
 				<Link to="/signup" className="btn btn-link ps-0">
 					Sign Up
 				</Link>
