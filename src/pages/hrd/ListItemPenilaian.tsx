@@ -25,8 +25,8 @@ const ListItemPenilaian = () => {
 	const [evaluationId, setEvaluationId] = useState<number | string>('');
 	const [evaluationItemsId, setEvaluationItemsId] = useState<number | string>('');
 	const [divisionId, setDivisionId] = useState<number | string>('');
-	const [employeeId, setEmployeeId] = useState<number | string>('');
 	const [isEditMode, setIsEditMode] = useState<boolean>(false);
+	const [employeeId, setEmployeeId] = useState<number | null>(null);
 
 	let access_token = sessionStorage.getItem('access_token');
 
@@ -94,8 +94,19 @@ const ListItemPenilaian = () => {
 		}
 	};
 
+	const handleEvaluationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const selectedId = e.target.value;
+		setEvaluationId(selectedId);
+
+		const selectedEvaluation = fetchEvaluation.find((item) => item.id.toString() === selectedId);
+		if (selectedEvaluation) {
+			setEmployeeId(selectedEvaluation.employee.id);
+		}
+	};
+
 	const EditJobdesk = async (id: number) => {
 		const data = {
+			employee_id: employeeId,
 			name: name,
 			description: description,
 			partner_ids: `|${partnerIds}|`,
@@ -140,7 +151,6 @@ const ListItemPenilaian = () => {
 
 	const openEditModal = (item: any) => {
 		setName(item.name);
-		setEmployeeId(item?.employee?.id);
 		setDescription(item.description);
 		setPartnerIds(item.partner_ids);
 		setAssessorIds(item.asessor_ids);
@@ -156,7 +166,6 @@ const ListItemPenilaian = () => {
 
 	const handleDialog = () => {
 		openModal('addPenilaian');
-		setEmployeeId('');
 		setName('');
 		setDescription('');
 		setPartnerIds('');
@@ -245,28 +254,6 @@ const ListItemPenilaian = () => {
 					<h3 className="text-2xl font-bold text-gray-800">
 						{isEditMode ? 'Edit Item Penilaian' : 'Tambah Item Penilaian'}
 					</h3>
-
-					{/* Partner */}
-					<div>
-						<label htmlFor="partner_ids" className="block text-sm font-medium text-gray-700">
-							Karyawan
-						</label>
-						<select
-							id="employee_id"
-							className="select select-bordered mt-2 w-full"
-							value={employeeId} // Pastikan partnerIds sudah terisi dengan data saat edit
-							onChange={(e) => setEmployeeId(e.target.value)}
-						>
-							<option value="" disabled selected>
-								Pilih Partner
-							</option>
-							{fetchEmployee.map((item, index) => (
-								<option value={item.id} key={index}>
-									{item.full_name}
-								</option>
-							))}
-						</select>
-					</div>
 
 					{/* Name */}
 					<div>
@@ -414,7 +401,7 @@ const ListItemPenilaian = () => {
 							id="evaluation_id"
 							className="select select-bordered mt-2 w-full"
 							value={evaluationId} // Pastikan evaluationId sudah terisi dengan data saat edit
-							onChange={(e) => setEvaluationId(e.target.value)}
+							onChange={handleEvaluationChange}
 						>
 							<option value="" disabled selected>
 								Pilih Evaluasi
