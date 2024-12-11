@@ -15,6 +15,10 @@ const Navbar = () => {
 		localStorage.clear();
 		dispatch(clearUser());
 		navigate('/', { replace: true });
+	};
+
+	const clickLogout = () => {
+		logout();
 		window.location.reload();
 	};
 
@@ -54,7 +58,7 @@ const Navbar = () => {
 							tabIndex={0}
 							className="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
 						>
-							<li onClick={logout} className="text-red-500">
+							<li onClick={clickLogout} className="text-red-500">
 								<a>Logout</a>
 							</li>
 						</ul>

@@ -282,8 +282,10 @@ const DetailListItemPenilaian = () => {
 									</svg>
 								</div>
 								<div>
-									<h4 className="text-sm font-semibold text-gray-800">{item?.grade}</h4>
-									<span className="text-xs text-gray-500">{item?.indicator}</span>
+									<h4 className="text-sm font-semibold text-gray-800">
+										{item?.grade}({item?.indicator})
+									</h4>
+									<span className="text-xs text-gray-500">{item?.name}</span>
 								</div>
 							</div>
 							<div className="flex gap-2">

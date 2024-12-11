@@ -461,6 +461,7 @@ const Attendance = {
 		division: any,
 		date: string,
 		tipeDate: string,
+		outstation: string,
 		access_token: string | null
 	): AxiosPromise<any> => {
 		const typeParam = type.length ? type.join(',') : '';
@@ -475,6 +476,7 @@ const Attendance = {
 				date,
 				page,
 				limit,
+				outstation: outstation,
 				iteration: tipeDate,
 			},
 			headers: {
@@ -1223,10 +1225,10 @@ const ItemPenilaian = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	DataListPenilaian: (page: any, limit: any, access_token: any): AxiosPromise =>
+	DataListPenilaian: (page: any, limit: any, access_token: any, divisi: any, month: any): AxiosPromise =>
 		instance({
 			method: `GET`,
-			url: `employee-evaluation?page=${page}&limit=${limit}`,
+			url: `employee-evaluation?page=${page}&limit=${limit}${divisi ? `&division=${divisi}` : ''}${month ? `&month=${month}` : ''}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},

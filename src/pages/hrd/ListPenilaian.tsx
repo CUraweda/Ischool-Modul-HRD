@@ -88,7 +88,7 @@ const ListPenilaian = () => {
 
 	const fetchData = async () => {
 		try {
-			const response = await ItemPenilaian.DataListPenilaian(0, 10, access_token);
+			const response = await ItemPenilaian.DataListPenilaian(0, 10, access_token, divisionId, monthId);
 			setfetch(response.data.data.result);
 			const responseDivision = await ItemPenilaian.DataDivision(access_token);
 			setFetchDivision(responseDivision.data.data.result);
@@ -108,12 +108,36 @@ const ListPenilaian = () => {
 	};
 
 	const Kalkulasi = async (id: any) => {
-		try {
-			await ItemPenilaian.Kalkulasi({}, id, access_token);
-			fetchData();
-		} catch (error) {
-			console.error(error);
-		}
+		// Menambahkan SweetAlert konfirmasi sebelum kalkulasi
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Proses kalkulasi akan dimulai untuk item ini!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Ya, Kalkulasi!',
+			cancelButtonText: 'Tidak',
+		}).then(async (result) => {
+			// Jika pengguna mengonfirmasi
+			if (result.isConfirmed) {
+				try {
+					// Melakukan kalkulasi
+					await ItemPenilaian.Kalkulasi({}, id, access_token);
+					Swal.fire({
+						icon: 'success',
+						title: 'Sukses',
+						text: 'Kalkulasi berhasil dilakukan!',
+					});
+					fetchData(); // Memanggil fungsi fetch data setelah kalkulasi berhasil
+				} catch (error) {
+					console.error(error);
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Terjadi kesalahan saat melakukan kalkulasi.',
+					});
+				}
+			}
+		});
 	};
 
 	const Generate = async () => {
@@ -162,7 +186,7 @@ const ListPenilaian = () => {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [divisionId, monthId]);
 
 	return (
 		<div>

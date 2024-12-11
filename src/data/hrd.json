@@ -37,12 +37,12 @@
 				"url": "/hrd/pengajuan-cuti"
 			},
 			{
-				"name": "Dinas Luar",
-				"url": "/hrd/dinas-luar"
-			},
-			{
 				"name": "Daftar Dinas Luar",
 				"url": "/hrd/daftar-dinas"
+			},
+			{
+				"name": "Presensi Dinas Luar",
+				"url": "/hrd/dinas-luar"
 			}
 		]
 	},

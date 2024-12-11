@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Attendance, Employee } from '@/middlewares/api/hrd';
 import DetailCard from '@/components/DetailCard';
 import Swal from 'sweetalert2';
-import { TbFaceId } from 'react-icons/tb';
+// import { TbFaceId } from 'react-icons/tb';
 import { MdPeopleAlt } from 'react-icons/md';
 import * as XLSX from 'xlsx';
 import { GrStatusUnknown } from 'react-icons/gr';
@@ -84,6 +84,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 				filterDivision,
 				filterDate,
 				'',
+				'1',
 				access_token
 			);
 			setDataAttendance(result.data.data.result);
@@ -168,9 +169,9 @@ const DinasLuarPage: React.FC<{}> = () => {
 				: [...prevSelected, employeeName]
 		);
 	};
-	const handleOpenDetailModal = (item: any) => {
-		setSelectedItem(item);
-	};
+	// const handleOpenDetailModal = (item: any) => {
+	// 	setSelectedItem(item);
+	// };
 	return (
 		<div className="h-screen w-full p-2">
 			<div className="w-full flex-wrap md:flex">
@@ -320,7 +321,7 @@ const DinasLuarPage: React.FC<{}> = () => {
 							<th>Tipe</th>
 							<th>Status</th>
 							<th>Keterangan</th>
-							<th>Bukti Dinas</th>
+							{/* <th>Bukti Dinas</th> */}
 						</tr>
 					</thead>
 					<tbody>
@@ -360,11 +361,11 @@ const DinasLuarPage: React.FC<{}> = () => {
 										{item.status}
 									</div>
 								</td>
-								<td className="text-center">
+								{/* <td className="text-center">
 									<button className="btn btn-ghost" onClick={() => handleOpenDetailModal(item)}>
 										<TbFaceId className="text-xl" />
 									</button>
-								</td>
+								</td> */}
 							</tr>
 						))}
 					</tbody>

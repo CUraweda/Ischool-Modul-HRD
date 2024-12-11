@@ -7,6 +7,7 @@ const ListEvaluasiItem = () => {
 	const [evaluationItem, setEvaluationItem] = useState<any[]>([]);
 	const [divisions, setDivisions] = useState<any[]>([]);
 	const [jobdeskUnit, setJobdeskUnit] = useState<any[]>([]);
+	const [groupGrade, setGroupGrade] = useState<any[]>([]);
 	const [divisionId, setDivisionId] = useState('');
 	const [formData, setFormData] = useState({
 		id: null,
@@ -14,6 +15,7 @@ const ListEvaluasiItem = () => {
 		name: '',
 		description: '',
 		unit_id: '',
+		grading_id: '',
 		isEditing: false,
 	});
 
@@ -32,6 +34,8 @@ const ListEvaluasiItem = () => {
 			setDivisions(responseDivison.data.data.result);
 			const responseUnit = await ItemPenilaian.DataJobdeskUnit(access_token);
 			setJobdeskUnit(responseUnit.data.data.result);
+			const responseGroup = await ItemPenilaian.DataJobdeskGradeGroupDropdown(access_token);
+			setGroupGrade(responseGroup.data.data.result);
 		} catch (error) {
 			console.error(error);
 			Swal.fire('Error', 'Gagal memuat data unit.', 'error');
@@ -46,6 +50,7 @@ const ListEvaluasiItem = () => {
 				name: formData.name,
 				description: formData.description,
 				unit_id: parseInt(formData.unit_id),
+				grading_id: parseInt(formData.grading_id),
 			};
 
 			if (formData.isEditing) {
@@ -82,6 +87,7 @@ const ListEvaluasiItem = () => {
 			description: '',
 			division_id: '',
 			unit_id: '',
+			grading_id: '',
 			isEditing: false,
 		});
 		openModal('addJobdesk');
@@ -94,6 +100,7 @@ const ListEvaluasiItem = () => {
 			description: unit.description,
 			division_id: unit.division_id?.toString(),
 			unit_id: unit.unit_id,
+			grading_id: unit.grading_id,
 			isEditing: true,
 		});
 		openModal('addJobdesk');
@@ -240,6 +247,28 @@ const ListEvaluasiItem = () => {
 								{jobdeskUnit.map((division) => (
 									<option key={division.id} value={division.id}>
 										{division.name}
+									</option>
+								))}
+							</select>
+						</div>
+
+						<div className="form-control mb-4">
+							<label className="label">
+								<span className="label-text">Group Nilai</span>
+							</label>
+							<select
+								name="grading_id"
+								value={formData.grading_id}
+								onChange={handleChange}
+								className="select select-bordered w-full"
+								required
+							>
+								<option value="" disabled>
+									Pilih Group
+								</option>
+								{groupGrade.map((division) => (
+									<option key={division.id} value={division.id}>
+										{division.identifier}
 									</option>
 								))}
 							</select>
