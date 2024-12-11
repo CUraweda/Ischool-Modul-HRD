@@ -132,7 +132,7 @@ const JobdeskUnit = () => {
 									<td>{index + 1}</td>
 									<td>{unit.name}</td>
 									<td>{unit.division?.name}</td>
-									<td>{unit.disabled ? 'Aktif' : 'Tidak Aktif'}</td>
+									<td>{unit.disabled == false ? 'Aktif' : 'Tidak Aktif'}</td>
 									<td className="flex items-center justify-center gap-5">
 										<button onClick={() => openEditJobdeskModal(unit)} className="btn btn-success btn-sm">
 											Edit
@@ -196,7 +196,7 @@ const JobdeskUnit = () => {
 									onChange={handleChange}
 									className="checkbox-primary checkbox"
 								/>
-								<span className="ml-2">Aktifkan Jobdesk</span>
+								<span className="ml-2">Nonaktifkan Jobdesk</span>
 							</label>
 						</div>
 						<div className="flex justify-end gap-4">

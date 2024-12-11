@@ -7,7 +7,7 @@ const DetailListItemPenilaian = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
 	const [fetchGrade, setFetchGrade] = useState<any[]>([]);
 	const [fetchJobdeskUnit, setFetchJobdeskUnit] = useState<any[]>([]);
-	const [identfier, setIdentifier] = useState('');
+	const [identifier, setIdentifier] = useState('');
 	const [group, setGroup] = useState<number | null>(0);
 	const [unitId, setUnitId] = useState<number | string>('');
 	const [disable, setDisable] = useState<any>(false);
@@ -35,7 +35,7 @@ const DetailListItemPenilaian = () => {
 
 	const createData = async () => {
 		const data = {
-			identifier: identfier,
+			identifier: identifier,
 			unit_id: unitId,
 			disabled: disable,
 		};
@@ -62,7 +62,7 @@ const DetailListItemPenilaian = () => {
 
 	const updateData = async () => {
 		const data = {
-			identifier: group,
+			identifier: identifier,
 			unit_id: unitId,
 			disabled: disable,
 		};
@@ -137,8 +137,8 @@ const DetailListItemPenilaian = () => {
 			name: nameGrade,
 			grade: grade,
 			indicator: indicator,
-			group_id: id,
-			grade_uid: `${id}|${grade}`,
+			group_id: group,
+			grade_uid: `${group}|${grade}`,
 			indicator_uid: `${group}|${indicator}`,
 		};
 		try {
@@ -408,7 +408,7 @@ const DetailListItemPenilaian = () => {
 							id="identifier"
 							className="input input-bordered w-full"
 							placeholder="Masukkan identifier"
-							value={identfier}
+							value={identifier}
 							onChange={(e) => setIdentifier(e.target.value)}
 						/>
 					</div>
