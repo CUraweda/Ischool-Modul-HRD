@@ -138,7 +138,7 @@ const DetailListItemPenilaian = () => {
 			grade: grade,
 			indicator: indicator,
 			group_id: id,
-			group_uid: `${id}|${grade}`,
+			grade_uid: `${id}|${grade}`,
 			indicator_uid: `${group}|${indicator}`,
 		};
 		try {
