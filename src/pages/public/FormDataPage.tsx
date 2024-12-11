@@ -331,10 +331,10 @@ const FormDataPage = () => {
 					/>
 				</div>
 				<div className="mb-4">
-					<label className="label text-gray-700">Alamat</label>
+					<label className="label text-gray-700">Alamat Domisili</label>
 					<input
 						type="text"
-						placeholder="Alamat"
+						placeholder="Alamat Domisili"
 						className="input input-bordered w-full"
 						value={address}
 						onChange={(e) => setAddress(e.target.value)}
