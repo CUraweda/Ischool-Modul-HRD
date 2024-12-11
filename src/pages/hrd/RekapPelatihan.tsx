@@ -275,7 +275,6 @@ const RekapPelatihan: React.FC<{}> = () => {
 								location: '',
 								start_date: '',
 								end_date: '',
-								is_approved: true,
 							}}
 							validationSchema={validationSchema}
 							onSubmit={handleSubmit}
@@ -354,13 +353,6 @@ const RekapPelatihan: React.FC<{}> = () => {
 									</label>
 									<Field name="end_date" type="date" className="input input-bordered" />
 									<ErrorMessage name="end_date" component="div" className="text-sm text-red-500" />
-								</div>
-
-								<div className="form-control mb-4">
-									<label className="label cursor-pointer">
-										<span className="label-text">Status</span>
-										<Field type="checkbox" name="is_approved" className="toggle toggle-primary" />
-									</label>
 								</div>
 
 								<div className="modal-action">

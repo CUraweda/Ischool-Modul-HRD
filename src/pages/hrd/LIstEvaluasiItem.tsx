@@ -100,7 +100,7 @@ const ListEvaluasiItem = () => {
 			description: unit.description,
 			division_id: unit.division_id?.toString(),
 			unit_id: unit.unit_id,
-			grading_id: unit.grading_id,
+			grading_id: unit.grading_id !== null ? unit.grading_id : '',
 			isEditing: true,
 		});
 		openModal('addJobdesk');

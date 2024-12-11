@@ -204,7 +204,15 @@ const DetailProfilKaryawanPage = () => {
 		<div className="min-h-screen">
 			<div className="rounded-lg bg-white p-6 shadow-lg">
 				<div className="mb-6 flex items-center">
-					<img src="https://via.placeholder.com/100" alt="Profile" className="h-24 w-24 rounded-full" />
+					<img
+						src={
+							fetch?.user?.avatar
+								? `${import.meta.env.VITE_SERVER_HRD_FILE}${fetch?.user?.avatar}`
+								: 'https://api.dicebear.com/9.x/pixel-art/svg'
+						}
+						alt="Profile"
+						className="h-24 w-24 rounded-full"
+					/>
 					<div className="ml-4 flex w-full justify-between">
 						<div>
 							<h1 className="text-2xl font-bold">{fetch?.full_name}</h1>

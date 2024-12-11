@@ -106,6 +106,37 @@ const ListPenilaian = () => {
 			console.error(error);
 		}
 	};
+	const Delete = async (id: any) => {
+		// Menampilkan SweetAlert konfirmasi
+		Swal.fire({
+			title: 'Apakah Anda yakin?',
+			text: 'Item ini akan dihapus secara permanen!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Ya, Hapus!',
+			cancelButtonText: 'Tidak',
+		}).then(async (result) => {
+			// Jika pengguna mengonfirmasi penghapusan
+			if (result.isConfirmed) {
+				try {
+					await ItemPenilaian.DeleteEvaluation(id, access_token);
+					Swal.fire({
+						icon: 'success',
+						title: 'Berhasil',
+						text: 'Item berhasil dihapus.',
+					});
+					fetchData(); // Memuat ulang data setelah penghapusan
+				} catch (error) {
+					console.error(error);
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Gagal menghapus item.',
+					});
+				}
+			}
+		});
+	};
 
 	const Kalkulasi = async (id: any) => {
 		// Menambahkan SweetAlert konfirmasi sebelum kalkulasi
@@ -225,7 +256,7 @@ const ListPenilaian = () => {
 
 			<div className="q-mt card mt-5 w-full bg-base-100 shadow-xl">
 				<div className="card-body overflow-auto">
-					<table className="table table-zebra h-full w-full">
+					<table className="table table-zebra mb-24 h-full w-full">
 						<thead>
 							<tr>
 								<th className="text-xs">No</th>
@@ -263,6 +294,9 @@ const ListPenilaian = () => {
 												</li>
 												<li>
 													<a onClick={() => Kalkulasi(item.id)}>Kalkulasi</a>
+												</li>
+												<li>
+													<a onClick={() => Delete(item.id)}>Delete</a>
 												</li>
 											</ul>
 										</div>

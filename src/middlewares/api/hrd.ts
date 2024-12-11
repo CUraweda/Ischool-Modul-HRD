@@ -745,7 +745,8 @@ const Bill = {
 		search_query: any,
 		page: number,
 		account_id: any,
-		access_token: string | null
+		access_token: string | null,
+		current_month: string
 	): AxiosPromise<any> =>
 		instance.get('employee-bill', {
 			headers: {
@@ -756,6 +757,7 @@ const Bill = {
 				search_query: search_query,
 				page: page,
 				account_id: account_id,
+				current_month: current_month,
 			},
 		}),
 	getOneBill: (id: number): AxiosPromise<any> =>
@@ -1163,6 +1165,14 @@ const ItemPenilaian = {
 		instance({
 			method: `GET`,
 			url: `employee-evaluation?limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	DeleteEvaluation: (id: any, access_token: any): AxiosPromise =>
+		instance({
+			method: `DELETE`,
+			url: `employee-evaluation/delete/${id}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},

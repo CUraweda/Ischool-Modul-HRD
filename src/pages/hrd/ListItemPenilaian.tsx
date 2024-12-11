@@ -156,6 +156,7 @@ const ListItemPenilaian = () => {
 		setAssessorIds(item.asessor_ids);
 		setStatus(item.status);
 		setGradingId(item.grading_id);
+		setEmployeeId(item.employee.id);
 		setUnitId(item.unit_id);
 		setEvaluationId(item.evaluation_id);
 		setEvaluationItemsId(item.evaluation_items_id);
@@ -214,6 +215,7 @@ const ListItemPenilaian = () => {
 						<thead>
 							<tr>
 								<th className="text-xs">No</th>
+								<th className="text-xs">Nama Karyawan</th>
 								<th className="text-xs">Identifier</th>
 								<th className="text-xs">Deskripsi</th>
 								<th className="text-xs">Unit</th>
@@ -224,6 +226,7 @@ const ListItemPenilaian = () => {
 							{fetch.map((item, index) => (
 								<tr key={item.id}>
 									<td className="px-4 py-2">{index + 1}</td>
+									<td className="px-4 py-2">{item?.employee?.full_name}</td>
 									<td className="px-4 py-2">{item?.name}</td>
 									<td className="px-4 py-2">{item?.description}</td>
 									<td className="px-4 py-2">{item?.jobdeskunit?.name ? item?.jobdeskunit?.name : '-'}</td>
