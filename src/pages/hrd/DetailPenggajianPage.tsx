@@ -107,7 +107,7 @@ const DetailPenggajianPage = () => {
 
 	const getBill = async (id: number) => {
 		try {
-			const res = await Bill.getAllBill(0, '', 0, id, access_token);
+			const res = await Bill.getAllBill(0, '', 0, id, access_token, 'y');
 			setDataBill(res.data.data.result);
 			console.log('test', res.data.data.result);
 		} catch (err) {
