@@ -197,7 +197,7 @@ const DaftarPenilaianPage = () => {
 											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 shadow-xl">
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 shadow-xl z-50">
 												<li>
 													<a onClick={() => handleEdit(item)}>Edit Data</a>
 												</li>
