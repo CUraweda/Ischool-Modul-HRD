@@ -304,7 +304,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchEmployee.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.full_name}
+									{item?.full_name}
 								</option>
 							))}
 						</select>
@@ -326,7 +326,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchAsessor.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.full_name}
+									{item?.full_name}
 								</option>
 							))}
 						</select>
@@ -367,7 +367,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchJobdeskGroup.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.identifier}
+									{item?.identifier}
 								</option>
 							))}
 						</select>
@@ -389,7 +389,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchJobdeskUnit.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.name}
+									{item?.name}
 								</option>
 							))}
 						</select>
@@ -411,7 +411,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchEvaluation.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.employee.full_name}
+									{item?.employee?.full_name}
 								</option>
 							))}
 						</select>
@@ -433,7 +433,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchEvaluationItems.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.name}
+									{item?.name}
 								</option>
 							))}
 						</select>
@@ -455,7 +455,7 @@ const ListItemPenilaian = () => {
 							</option>
 							{fetchDivision.map((item, index) => (
 								<option value={item.id} key={index}>
-									{item.name}
+									{item?.name}
 								</option>
 							))}
 						</select>
