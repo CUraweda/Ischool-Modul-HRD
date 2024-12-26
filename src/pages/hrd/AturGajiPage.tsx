@@ -588,7 +588,7 @@ const AturGajiPage = () => {
 								<button
 									className="btn join-item btn-sm"
 									onClick={() => setFilterTable((prev) => ({ ...prev, page: prev.page - 1 }))}
-									disabled={filterTable.page === 0} // Disable jika halaman pertama
+									disabled={filterTable.page === 0}
 								>
 									Previous
 								</button>
