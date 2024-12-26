@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Training } from '@/middlewares/api/hrd';
-import DetailCard from '@/components/DetailCard';
 import { TbFaceId } from 'react-icons/tb';
 import * as XLSX from 'xlsx';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import { FaFileExport } from 'react-icons/fa6';
+import Modal, { openModal } from '@/components/ModalProps';
 const PelatihanPage: React.FC<{}> = () => {
 	const [filterType, setFilterType] = useState<string[]>([]);
 	const [filterStatus, setFilterStatus] = useState<any>('');
@@ -74,9 +74,6 @@ const PelatihanPage: React.FC<{}> = () => {
 		setSearchQuery(e.target.value);
 		setCurrentPage(0);
 	};
-	const handleDetailClose = () => {
-		setSelectedItem(null);
-	};
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
 		return date.toISOString().split('T')[0];
@@ -99,6 +96,7 @@ const PelatihanPage: React.FC<{}> = () => {
 	};
 	const handleOpenDetailModal = (item: any) => {
 		setSelectedItem(item);
+		openModal('buktiPelatihan');
 	};
 	return (
 		<div className="h-screen w-full p-2">
@@ -195,7 +193,7 @@ const PelatihanPage: React.FC<{}> = () => {
 							<th>Nama</th>
 							<th>Posisi</th>
 							<th>Status</th>
-							<th>Absen Pelatihan</th>
+							<th>Bukti Pelatihan</th>
 							{/* <th>Detail</th> */}
 						</tr>
 					</thead>
@@ -256,8 +254,47 @@ const PelatihanPage: React.FC<{}> = () => {
 					Next
 				</button>
 			</div>
+			<Modal id="buktiPelatihan">
+				<div>
+					<h2 className="text-lg font-semibold text-gray-700">Detail Pelatihan</h2>
+					<div className="flex items-center justify-between border-b pb-3"></div>
 
-			{selectedItem && <DetailCard dataProps={selectedItem} onClose={handleDetailClose} />}
+					<div className="mt-4">
+						{/* Gambar */}
+						<div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-md bg-gray-100">
+							<img
+								src={
+									selectedItem?.trainingattendances[0]?.img_path
+										? `${import.meta.env.VITE_SERVER_HRD_FILE}${selectedItem?.trainingattendances[0]?.img_path}`
+										: 'https://ideas.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png'
+								}
+								alt="Bukti Pelatihan"
+								className="h-full w-full object-cover"
+							/>
+						</div>
+
+						{/* Informasi lainnya */}
+						<div className="mt-4 space-y-3">
+							<div className="flex items-center justify-between">
+								<span className="font-medium text-gray-600">Judul Pelatihan:</span>
+								<p className="text-gray-800">{selectedItem?.title}</p>
+							</div>
+							<div className="flex items-center justify-between">
+								<span className="font-medium text-gray-600">Tanggal Mulai:</span>
+								<p className="text-gray-800">{selectedItem?.start_date.split('T')[0]}</p>
+							</div>
+							<div className="flex items-center justify-between">
+								<span className="font-medium text-gray-600">Tanggal Berakhir:</span>
+								<p className="text-gray-800">{selectedItem?.end_date.split('T')[0]}</p>
+							</div>
+							<div className="flex items-center justify-between">
+								<span className="font-medium text-gray-600">Status:</span>
+								<p className="text-gray-800">{selectedItem?.status}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };

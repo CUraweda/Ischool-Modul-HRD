@@ -524,7 +524,7 @@ const RekrutmenPage = () => {
 						{statusCards.map((card, index) => (
 							<div key={index} className="col-span-2">
 								<div className="mb-4">
-									<label className="mb-1 block text-sm font-medium text-gray-700">Judul</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Kualifikasi</label>
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"

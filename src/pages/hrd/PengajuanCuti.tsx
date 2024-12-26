@@ -526,7 +526,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 				</div>
 			</div>
 			<div className="q-mt card mt-5 bg-base-100 shadow-xl">
-				<div className="card-body overflow-auto">
+				<div className="card-body">
 					<table className="table table-zebra mb-14 h-full">
 						<thead>
 							<tr className="text-center font-bold">
@@ -584,7 +584,7 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 												</button>
 												<ul
 													tabIndex={0}
-													className="menu dropdown-content z-[1] w-52 items-start rounded-box bg-base-100 p-2 shadow"
+													className="menu dropdown-content w-52 items-start rounded-box bg-base-100 p-2 shadow z-[99]"
 												>
 													<h3 className="mb-2 w-full border-b-2 border-slate-300 p-2 text-center">Edit Status</h3>
 													<button

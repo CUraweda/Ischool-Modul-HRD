@@ -44,10 +44,15 @@ const DetailListItemPenilaian = () => {
 			Swal.fire('Success', 'Data berhasil ditambahkan', 'success');
 			fetchData();
 			closeModal('addGroup');
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
 			closeModal('addGroup');
-			Swal.fire('Error', 'Gagal menambahkan data', 'error');
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
@@ -114,11 +119,16 @@ const DetailListItemPenilaian = () => {
 			fetchData();
 			closeModal('crudModal');
 			closeModal('itemPenilaian');
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
 			closeModal('crudModal');
 			closeModal('itemPenilaian');
-			Swal.fire('Error', 'Gagal menambahkan data', 'error');
+			const message = error.response.data.message;
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: message,
+			});
 		}
 	};
 
