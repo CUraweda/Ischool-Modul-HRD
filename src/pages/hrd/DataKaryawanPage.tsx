@@ -267,7 +267,7 @@ const DataKaryawanPage = () => {
 											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow z-50">
 												<li>
 													<a onClick={() => detailProfil(item.id)}>Detail Karyawan</a>
 												</li>
