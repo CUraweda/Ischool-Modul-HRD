@@ -207,7 +207,7 @@ const PenggajianPage = () => {
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<div className="card rounded-lg bg-white p-6 shadow-lg">
 					<h2 className="text-lg font-semibold text-gray-800">Rincian Biaya Penggajian</h2>
-					<div className="mt-4" style={{ height: '300px' }}>
+					<div className="mt-4">
 						<Bar data={chartData} options={barOptions} className="w-full" />
 					</div>
 				</div>
@@ -248,7 +248,7 @@ const PenggajianPage = () => {
 									<thead>
 										<tr>
 											<th>Nama</th>
-											<th>Gaji</th>
+											<th>Gaji Tetap</th>
 											<th>Status</th>
 										</tr>
 									</thead>
@@ -296,14 +296,16 @@ const PenggajianPage = () => {
 												<th>Nama</th>
 												<th>Kehadiran</th>
 												<th>Cuti</th>
+												<th>Izin</th>
 											</tr>
 										</thead>
 										<tbody>
 											{attendanceData.map((item) => (
 												<tr key={item.id}>
 													<td>{item?.full_name}</td>
-													<td>{item?.attendance}</td>
-													<td>{item.vacation}</td>
+													<td>{item?.attendance_count}</td>
+													<td>{item?.cuti_count}</td>
+													<td>{item?.izin_count}</td>
 												</tr>
 											))}
 										</tbody>

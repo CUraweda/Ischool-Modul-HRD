@@ -36,7 +36,7 @@ const RekrutmenPage = () => {
 	const [endDate, setEndDate] = useState('');
 	// const [maxApplicant, setMaxApplicant] = useState<number>();
 	const [academic, setAcademic] = useState('');
-	const [note, setNote] = useState('');
+	// const [note, setNote] = useState('');
 	const [fulltime, setFulltime] = useState<boolean>(false);
 	const [statusCards, setStatusCards] = useState([{ title: '', description: '' }]);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -87,7 +87,7 @@ const RekrutmenPage = () => {
 			end_date: endDate,
 			// max_applicant: maxApplicant,
 			min_academic: academic,
-			notes: note,
+			// notes: note,
 			details: statusData,
 			is_fulltime: fulltime,
 		};
@@ -496,6 +496,7 @@ const RekrutmenPage = () => {
 								<option value="" disabled>
 									-Pilih-
 								</option>
+								<option value="SMP">SMP</option>
 								<option value="SMA/SMK">SMA/SMK</option>
 								<option value="S1">S1</option>
 								<option value="S2">S2</option>
@@ -508,7 +509,7 @@ const RekrutmenPage = () => {
 							<input type="checkbox" className="checkbox" onChange={(e) => setFulltime(e.target.checked)} />
 						</div>
 
-						<div className="col-span-2">
+						{/* <div className="col-span-2">
 							<label className="mb-1 block text-sm font-medium text-gray-700">Note</label>
 							<textarea
 								className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"
@@ -516,12 +517,14 @@ const RekrutmenPage = () => {
 								placeholder="Masukkan catatan tambahan"
 								onChange={(e) => setNote(e.target.value)}
 							></textarea>
-						</div>
+						</div> */}
+
+						<div className="text-xl font-bold">Kelengkapan Rekrutmen</div>
 
 						{statusCards.map((card, index) => (
 							<div key={index} className="col-span-2">
 								<div className="mb-4">
-									<label className="mb-1 block text-sm font-medium text-gray-700">Judul</label>
+									<label className="mb-1 block text-sm font-medium text-gray-700">Kualifikasi</label>
 									<input
 										type="text"
 										className="w-full rounded-lg border border-gray-300 p-2 transition duration-200 focus:border-blue-500 focus:ring focus:ring-blue-200"

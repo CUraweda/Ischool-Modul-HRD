@@ -102,7 +102,7 @@ const AturGajiPage = () => {
 	};
 	const getDataBill = async () => {
 		try {
-			const res = await Bill.getAllBill(0, '', 0, '', access_token);
+			const res = await Bill.getAllBill(0, '', 0, '', access_token, 'y');
 			setDataBill(res.data.data.result);
 			setFilterBill((prev) => ({
 				...prev,

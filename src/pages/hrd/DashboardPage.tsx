@@ -271,7 +271,7 @@ const DashboardPage = () => {
 									pointHoverRadius: 5,
 								},
 								{
-									label: 'Karyawan Tidak Hadir',
+									label: 'Izin',
 									data: chart.map((item) => item.izin),
 									borderColor: 'rgba(255, 111, 97, 1)',
 									backgroundColor: 'rgba(255, 111, 97, 0.2)',

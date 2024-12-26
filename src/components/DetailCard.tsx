@@ -22,7 +22,7 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 		if (dataProps.file_path) {
 			const fetchImage = async () => {
 				try {
-					const response = await fetch(`https://api-hrd.curaweda.com/stg-server1/${dataProps.file_path}`);
+					const response = await fetch(`${import.meta.env.VITE_SERVER_HRD_FILE}${dataProps.file_path}`);
 					const blob = await response.blob();
 					const blobUrl = URL.createObjectURL(blob);
 					setImageSrc(blobUrl);

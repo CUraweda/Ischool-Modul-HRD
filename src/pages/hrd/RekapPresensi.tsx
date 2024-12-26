@@ -78,6 +78,7 @@ const PresensiPage: React.FC = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [dataEmployee, setDataEmployee] = useState<any[]>([]);
 	const [selectedItem, setSelectedItem] = useState<any[]>([]);
+	const [typeDate, setTypeDate] = useState('one_day');
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Masuk' },
 		{ id: 2, category: 'Type', value: 'Keluar' },
@@ -100,6 +101,8 @@ const PresensiPage: React.FC = () => {
 				searchQuery,
 				filterDivision,
 				filterDate,
+				typeDate,
+				'',
 				access_token
 			);
 			setAttendanceData(result.data.data.result);
@@ -190,6 +193,13 @@ const PresensiPage: React.FC = () => {
 		);
 	};
 
+	const addSevenHours = (inputTime: string | undefined): string | null => {
+		if (!inputTime) return null; // Tangani jika inputTime undefined atau null
+		const date = new Date(inputTime);
+		date.setHours(date.getHours() + 7);
+		return date.toISOString(); // Kembalikan waktu dalam format ISO
+	};
+
 	const filterData = attendanceData.filter((item: any) =>
 		selectedItem.length > 0 ? selectedItem.includes(item.employee.full_name) : true
 	);
@@ -201,7 +211,7 @@ const PresensiPage: React.FC = () => {
 		fetchAttendanceData();
 		fetchAllEmployee();
 		fetchAllDivision();
-	}, []);
+	}, [typeDate]);
 
 	useEffect(() => {
 		fetchAttendanceData();
@@ -220,10 +230,8 @@ const PresensiPage: React.FC = () => {
 	const exportToXLSX = () => {
 		const formattedData = filterData.map((item, index) => ({
 			no: index + 1,
-			id: item.id,
 			Nama: item.employee.full_name,
 			Divisi: item.employee.division,
-			uid: item.uid,
 			Deskripsi: item.description,
 			status: item.status,
 			Pukul: item.createdAt.split('T')[1].split('.')[0],
@@ -236,7 +244,7 @@ const PresensiPage: React.FC = () => {
 		XLSX.writeFile(workbook, 'Rekap_Presensi_Data_Export.xlsx');
 	};
 	return (
-		<div className="h-screen w-full p-2">
+		<div className="h-screen w-full">
 			<div className="w-full flex-wrap md:flex">
 				<div className="breadcrumbs items-center text-center text-xl md:w-2/3">
 					<ul className="my-auto h-full">
@@ -274,10 +282,12 @@ const PresensiPage: React.FC = () => {
 			<div className="w-full">
 				<div className="flex w-full justify-between">
 					<div className="m-2 flex flex-wrap-reverse gap-4">
-						<button className="text-md badge btn badge-md btn-xs h-fit rounded-badge bg-[#ffffffc2] drop-shadow-sm">
-							Semua
-							<div className="pl-5">{totalRows}</div>
-						</button>
+						<select className="select select-bordered select-xs" onChange={(e) => setTypeDate(e.target.value)}>
+							<option value="">Filter</option>
+							<option value="one_day">Perhari</option>
+							<option value="week">Perminggu</option>
+							<option value="month">Perbulan</option>
+						</select>
 						<button
 							className="text-md badge btn badge-md btn-xs h-fit truncate rounded-badge bg-[#ffffffc2] drop-shadow-sm"
 							onClick={handleOpenDialogTime}
@@ -304,7 +314,7 @@ const PresensiPage: React.FC = () => {
 							</div>
 							<ul
 								tabIndex={0}
-								className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-auto rounded-box bg-base-100 p-2 shadow"
+								className="menu dropdown-content z-[1] mt-2 h-96 w-52 overflow-auto rounded-box bg-base-100 shadow"
 							>
 								<div className="checkbox-group">
 									{dataEmployee.map((employee) => (
@@ -387,7 +397,7 @@ const PresensiPage: React.FC = () => {
 				</div>
 			</div>
 
-			<div className="card h-fit w-full overflow-x-auto bg-base-100 p-5 shadow-xl">
+			<div className="card h-fit w-full overflow-x-auto bg-base-100 shadow-xl">
 				<table className="table text-sm">
 					<thead>
 						<tr className="text-center">
@@ -408,7 +418,7 @@ const PresensiPage: React.FC = () => {
 								<td>{item?.employee?.division?.name}</td>
 								<td>{item?.employee?.full_name}</td>
 								<td>{item?.createdAt.split('T')[0]}</td>
-								<td>{item?.createdAt.split('T')[1].split('.')[0]}</td>
+								<td> {item?.createdAt ? addSevenHours(item?.createdAt)?.split('T')[1]?.split('.')[0] || '-' : '-'}</td>
 								<td className="w-5 truncate text-ellipsis">{item?.description}</td>
 								<td>
 									<div

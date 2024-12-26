@@ -37,12 +37,12 @@
 				"url": "/hrd/pengajuan-cuti"
 			},
 			{
-				"name": "Dinas Luar",
-				"url": "/hrd/dinas-luar"
-			},
-			{
 				"name": "Daftar Dinas Luar",
 				"url": "/hrd/daftar-dinas"
+			},
+			{
+				"name": "Presensi Dinas Luar",
+				"url": "/hrd/dinas-luar"
 			}
 		]
 	},
@@ -57,8 +57,20 @@
 				"url": "/hrd/daftar-asessor"
 			},
 			{
-				"name": "Daftar Penilaian",
-				"url": "/hrd/daftar-penilaian"
+				"name": "Evaluation Item",
+				"url": "/hrd/evaluation-item"
+			},
+			{
+				"name": "List Penilaian",
+				"url": "/hrd/list-penilaian"
+			},
+			{
+				"name": "Jobdesk",
+				"url": "/hrd/item-penilaian"
+			},
+			{
+				"name": "Jobdesk Unit",
+				"url": "/hrd/jobdesk-unit"
 			}
 		]
 	},
@@ -89,12 +101,6 @@
 				"url": "/hrd/daftar-pelatihan"
 			}
 		]
-	},
-	{
-		"submenu": false,
-		"title": "Rekap Penilaian",
-		"icon": "<MdOutlineGrade />",
-		"url": "/hrd/rekap-penilaian"
 	},
 	{
 		"submenu": true,
