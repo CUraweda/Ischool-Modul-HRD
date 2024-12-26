@@ -2,6 +2,10 @@ import React from 'react';
 import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+const DetailListItemPenilaian = lazy(() => import('@/pages/hrd/DetailListItemPenilaian'));
+const ListPenilaian = lazy(() => import('@/pages/hrd/ListPenilaian'));
+const JobdeskUnit = lazy(() => import('@/pages/hrd/JobdeskUnit'));
+const ListEvaluationItem = lazy(() => import('@/pages/hrd/LIstEvaluasiItem'));
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/auth/SignUpPage'));
 const HrdLayout = lazy(() => import('@/components/layouts/HrdLayout'));
@@ -39,11 +43,6 @@ const VerifEmailPage = lazy(() => import('../pages/VerifEmaillPage'));
 const PublicPenilaian = lazy(() => import('../pages/public/PublicPenilaian'));
 const DaftarDinasLuar = lazy(() => import('@/pages/hrd/DaftarDinasLuarPage'));
 const ListItemPenilaian = lazy(() => import('@/pages/hrd/ListItemPenilaian'));
-const DetailListItemPenilaian = lazy(() => import('@/pages/hrd/DetailListItemPenilaian'));
-const ListPenilaian = lazy(() => import('@/pages/hrd/ListPenilaian'));
-const JobdeskUnit = lazy(() => import('@/pages/hrd/JobdeskUnit'));
-const ListEvaluationItem = lazy(() => import('@/pages/hrd/LIstEvaluasiItem'));
-
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
 
