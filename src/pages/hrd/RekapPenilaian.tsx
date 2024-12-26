@@ -128,7 +128,7 @@ const RekapPenilaianPage = () => {
 									<td>{employee?.full_name}</td>
 									<td>{employee.email ?? '-'}</td>
 									<td>{employee.occupation ?? '-'}</td>
-									<td className="text-center">{employee.grade}</td>
+									<td className="text-center">{employee?.grade ? employee?.grade : '-'}</td>
 									<td className="text-center">
 										<button className="btn btn-primary" onClick={() => handleDetailClick(employee)}>
 											Buka

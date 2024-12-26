@@ -14,6 +14,7 @@ const DaftarPenilaianPage = () => {
 	const [typeEmployee, setTypeEmployee] = useState('');
 	const [judulKegiatan, setJudulKegiatan] = useState('');
 	const [deskripsiKegiatan, setDeskripsiKegiatan] = useState('');
+	const [priority, setPriority] = useState<Number | null>(0);
 	const [tenggatWaktu, setTenggatWaktu] = useState('');
 	const [nilai, setNilai] = useState('');
 	const [editMode, setEditMode] = useState(false);
@@ -45,7 +46,7 @@ const DaftarPenilaianPage = () => {
 			name: judulKegiatan,
 			description: deskripsiKegiatan,
 			due_date: tenggatWaktu,
-			priority: 1,
+			priority: priority,
 			all_employee: typeEmployee == 'Semua' ? true : false,
 			all_asessor: typeEmployee == 'Semua' ? true : false,
 		};
@@ -79,7 +80,7 @@ const DaftarPenilaianPage = () => {
 		setSelectedKaryawan(item.employee.id);
 		setJudulKegiatan(item.name);
 		setDeskripsiKegiatan(item.description);
-		setTenggatWaktu(item.due_date.split('T')[0]);
+		setTenggatWaktu('');
 		setEditMode(true);
 		setEditId(item.id);
 		openModal('addPenilaian');
@@ -177,16 +178,16 @@ const DaftarPenilaianPage = () => {
 						<tbody>
 							{fetch.map((item, index) => (
 								<tr key={index}>
-									<td>{item.full_name}</td>
-									<td>{item.email ? item.email : '-'}</td>
+									<td>{item.employee?.full_name}</td>
+									<td>{item?.employee?.email ? item?.employee?.email : '-'}</td>
 									<td className="px-4 py-2">
 										<div className="rounded-md bg-[#DBEAFF] p-2 text-center text-xs font-semibold text-gray-500">
-											{item.occupation}
+											{item?.employee?.occupation}
 										</div>
 									</td>
-									<td>{item.grade}</td>
+									<td>{item?.employee?.grade ? item?.employee?.grade : '-'}</td>
 									<td>
-										{item.is_finish == false
+										{item?.employee?.is_finish == false
 											? 'Belum Dikerjakan'
 											: item.is_graded == false
 												? 'Belum Dinilai'
@@ -197,7 +198,7 @@ const DaftarPenilaianPage = () => {
 											<label tabIndex={0} className="btn btn-primary btn-sm">
 												...
 											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 shadow-xl z-50">
+											<ul tabIndex={0} className="menu dropdown-content z-50 w-52 rounded-box bg-base-100 shadow-xl">
 												<li>
 													<a onClick={() => handleEdit(item)}>Edit Data</a>
 												</li>
@@ -310,6 +311,24 @@ const DaftarPenilaianPage = () => {
 								value={tenggatWaktu}
 								onChange={(e) => setTenggatWaktu(e.target.value)}
 							/>
+						</div>
+
+						<div>
+							<label htmlFor="kirimKepada" className="label">
+								<span className="label-text font-semibold">Prioritas</span>
+							</label>
+							<select
+								id="prioritas"
+								className="select select-bordered w-full"
+								onChange={(e) => setPriority(parseInt(e.target.value))}
+							>
+								<option value={0} disabled>
+									Pilih Prioritas
+								</option>
+								<option value={1}>Rendah</option>
+								<option value={2}>Sedang</option>
+								<option value={3}>Tinggi</option>
+							</select>
 						</div>
 					</div>
 

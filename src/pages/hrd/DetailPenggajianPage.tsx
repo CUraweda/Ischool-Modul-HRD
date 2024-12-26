@@ -107,7 +107,7 @@ const DetailPenggajianPage = () => {
 
 	const getBill = async (id: number) => {
 		try {
-			const res = await Bill.getAllBill(0, '', 0, id, access_token);
+			const res = await Bill.getAllBill(0, '', 0, id, access_token, 'y');
 			setDataBill(res.data.data.result);
 			console.log('test', res.data.data.result);
 		} catch (err) {
@@ -139,6 +139,9 @@ const DetailPenggajianPage = () => {
 			gaji_tidak_tetap: item.fixed_salary,
 			Pinjaman: item.loan,
 			Koperasi: item.cooperative,
+			Fasilitas: item.facility,
+			GajiLain: item.other_income,
+			PotonganLain: item.other_cut,
 		}));
 
 		const worksheet = XLSX.utils.json_to_sheet(formattedData);
@@ -276,7 +279,7 @@ const DetailPenggajianPage = () => {
 									<td>{formatSalary(item.other_cut)}</td>
 									<td>
 										<div
-											className={`${item.status !== 'sudah' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
+											className={`${item.status !== 'Bayar' ? 'bg-yellow-300' : 'bg-green-300'} rounded-md p-[3px] text-center`}
 										>
 											{item.status ? item.status : 'Menunggu'}
 										</div>

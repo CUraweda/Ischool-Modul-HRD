@@ -278,7 +278,7 @@ const DaftarDinasLuarPage = () => {
 					{/* Active Checkbox */}
 					<div className="flex items-center space-x-3">
 						<label className="label flex cursor-pointer items-center gap-2">
-							<span className="label-text">Status</span>
+							<span className="label-text">Status Aktif</span>
 							<input
 								type="checkbox"
 								className="toggle toggle-primary rounded-md focus:ring-indigo-500 focus:ring-opacity-50"

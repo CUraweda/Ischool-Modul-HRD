@@ -27,9 +27,9 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const listType = [
 		{ id: 1, category: 'Type', value: 'Cuti' },
 		{ id: 2, category: 'Type', value: 'Izin' },
-		{ id: 3, category: 'Status', value: 'Disetujui' },
+		{ id: 3, category: 'Status', value: 'Diterima' },
 		{ id: 4, category: 'Status', value: 'Menunggu' },
-		{ id: 5, category: 'Status', value: 'Tidak Disetujui' },
+		{ id: 5, category: 'Status', value: 'Ditolak' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
 	const getAllVacation = async () => {
@@ -235,10 +235,8 @@ const pengajuanCutiPage: React.FC<{}> = () => {
 	const exportToXLSX = () => {
 		const formattedData = filterData.map((item, index) => ({
 			no: index + 1,
-			id: item.id,
 			Nama: item.employee.full_name,
 			Divisi: item.employee.division,
-			uid: item.uid,
 			Deskripsi: item.description,
 			status: item.status,
 			Pukul: item.createdAt.split('T')[1].split('.')[0],

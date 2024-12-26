@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
-import { Karyawan } from '@/middlewares/api';
+import { ItemPenilaian, Karyawan } from '@/middlewares/api';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
 
 const DataKaryawanPage = () => {
 	// State variables for modal inputs
@@ -28,6 +29,7 @@ const DataKaryawanPage = () => {
 	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState('');
 	const [dataKaryawan, setDataKaryawan] = useState<any[]>([]);
+	const [allDataKaryawan, setAllDataKaryawan] = useState<any[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [page, setPage] = useState(1);
@@ -48,9 +50,41 @@ const DataKaryawanPage = () => {
 			setDataKaryawan(response.data.data.result);
 			setTotalPages(response.data.data.totalPage - 1);
 			setPage(response.data.data.page);
+
+			const responseAllKaryawan = await ItemPenilaian.DataKaryawan(access_token);
+			setAllDataKaryawan(responseAllKaryawan.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const exportToExcel = () => {
+		const worksheet = XLSX.utils.json_to_sheet(
+			allDataKaryawan.map((item, index) => ({
+				No: index + 1 + page * itemsPerPage,
+				Nama: item.full_name,
+				Email: item.email,
+				NoHp: item.phone,
+				NIK: item.nik,
+				Agama: item.religion,
+				Kelamin: item.gender,
+				TempatLahir: item.pob,
+				TanggalLahir: item.dob,
+				Status: item.marital_status,
+				PendidikanTerakhir: item.last_education,
+				Jurusan: item.major,
+				Sertifikat: item.certificate_year,
+				StatusKaryawan: item.employee_status,
+				TanggalKerja: item.work_start_date,
+				Posisi: item.occupation,
+				Pekerjaan: item.duty,
+				DeskripsiPekerjaan: item.job_desc,
+				nilai: item.grade,
+			}))
+		);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, 'Employee Data');
+		XLSX.writeFile(workbook, 'Data Employee.xlsx');
 	};
 
 	const trigerDelete = (id: number) => {
@@ -183,6 +217,9 @@ const DataKaryawanPage = () => {
 				</div>
 
 				<div className="flex items-center gap-2">
+					<button onClick={exportToExcel} className="btn btn-primary btn-sm ml-4">
+						Export to Excel
+					</button>
 					<button className="btn btn-xs" onClick={handleDialog}>
 						<span>+</span> Tambah
 					</button>
@@ -232,7 +269,7 @@ const DataKaryawanPage = () => {
 											</label>
 											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow z-50">
 												<li>
-													<a onClick={() => detailProfil(item.id)}>Edit Profil</a>
+													<a onClick={() => detailProfil(item.id)}>Detail Karyawan</a>
 												</li>
 												<li>
 													<a onClick={() => trigerDelete(item.id)}>Hapus Karyawan</a>
@@ -269,8 +306,8 @@ const DataKaryawanPage = () => {
 			</div>
 
 			<Modal id="addKaryawan">
-				<div className="mx-auto w-full max-w-lg rounded-lg bg-white p-6 shadow-lg">
-					<h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Tambah Penerimaan Baru</h2>
+				<div className="mx-auto w-full p-6">
+					<h2 className="mb-6 text-center text-2xl font-bold text-gray-700">Tambah Karyawan Baru</h2>
 					<form onSubmit={handleCreateKaryawan}>
 						<div className="space-y-6">
 							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
