@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { reduxStore } from './config'; // Ensure you import the correct store configuration
+import { reduxStore } from './config'; // Ensure you import the correct store configuration.
 import AppRoutes from '@/router/Routes';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
