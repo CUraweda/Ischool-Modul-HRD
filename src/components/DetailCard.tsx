@@ -70,7 +70,9 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 							) : fileType === 'pdf' ? (
 								<embed src={fileSrc} type="application/pdf" className="h-[200px] w-full" />
 							) : (
-								<p>Tidak ada file yang bisa ditampilkan</p>
+								<div className="flex items-center justify-center">
+									<p>Tidak ada file yang bisa ditampilkan</p>
+								</div>
 							)}
 						</figure>
 						<div className="text-md card-body">
