@@ -1,6 +1,7 @@
 import image from '../../assets/images/blueAbstractPattern.png';
 // import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import Modal, { openModal, closeModal } from '@/components/ModalProps';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Probation } from '@/middlewares/api';
@@ -18,6 +19,7 @@ const DetailCardProbationPage = () => {
 	const { id2 } = useParams<{ id2: string }>();
 	const [fetch, setFetch] = useState<any | null>(null);
 	const [table, setTable] = useState<any[]>([]);
+	const [endContract, setEndContract] = useState('');
 	// const [chart, setChart] = useState<ChartDataItem[]>([]);
 	const [internshipDetails, setInternshipDetails] = useState({
 		startDate: '',
@@ -87,8 +89,13 @@ const DetailCardProbationPage = () => {
 		if (type === 'finish') {
 			Finish(id);
 		} else {
+			closeModal('contractEnd');
 			Contract(id);
 		}
+	};
+
+	const handleModal = () => {
+		openModal('contractEnd');
 	};
 
 	const Finish = async (id: any) => {
@@ -123,6 +130,9 @@ const DetailCardProbationPage = () => {
 	};
 
 	const Contract = async (id: any) => {
+		const data = {
+			contract_end_date: endContract,
+		};
 		Swal.fire({
 			title: 'Apakah Anda yakin?',
 			text: 'Anda akan mengontrak applicant ini!',
@@ -133,7 +143,7 @@ const DetailCardProbationPage = () => {
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				try {
-					await Probation.ContracthProbation(null, id);
+					await Probation.ContracthProbation(data, id);
 					Swal.fire({
 						icon: 'success',
 						title: 'Sukses',
@@ -192,7 +202,7 @@ const DetailCardProbationPage = () => {
 							<a onClick={() => handleProbation('finish', fetch?.id)}>Akhiri</a>
 						</li>
 						<li>
-							<a onClick={() => handleProbation('contractsss', fetch?.id)}>Kontrak</a>
+							<a onClick={handleModal}>Kontrak</a>
 						</li>
 					</ul>
 				</div>
@@ -261,6 +271,26 @@ const DetailCardProbationPage = () => {
 					<Bar data={data} options={options} />
 				</div> */}
 			</div>
+
+			<Modal id="contractEnd">
+				<div>
+					<div>
+						<label className="mb-1 block text-sm font-medium text-gray-600">Tanggal Berakhir Kontrak</label>
+						<input
+							type="date"
+							name="dob"
+							onChange={(e) => setEndContract(e.target.value)}
+							className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+						/>
+					</div>
+
+					<div className="mt-5 flex w-full justify-end">
+						<button className="btn btn-primary" onClick={() => handleProbation('contract', fetch.id)}>
+							Submit
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	);
 };

@@ -308,7 +308,7 @@ const Probation = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	ContracthProbation: (data: null, id: any): AxiosPromise<any> =>
+	ContracthProbation: (data: any, id: any): AxiosPromise<any> =>
 		instance({
 			method: `PUT`,
 			url: `employee/contract/${id}`,

@@ -158,6 +158,7 @@ const DetailProfilKaryawanPage = () => {
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
+			closeModal('editModal');
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',

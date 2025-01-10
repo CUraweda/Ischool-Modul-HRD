@@ -170,7 +170,7 @@ const PageDivisi: React.FC<{}> = () => {
 						<tr>
 							<th className="text-center">No</th>
 							<th>Nama</th>
-							<th>Posisi</th>
+							<th>Divisi</th>
 							<th className="text-center">Action</th>
 						</tr>
 					</thead>

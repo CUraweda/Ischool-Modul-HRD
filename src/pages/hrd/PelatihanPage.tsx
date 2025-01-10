@@ -191,6 +191,8 @@ const PelatihanPage: React.FC<{}> = () => {
 						<tr className="text-center font-bold">
 							<th>No</th>
 							<th>Nama</th>
+							<th>Tanggal Mulai</th>
+							<th>Tanggal Berakhir</th>
 							<th>Posisi</th>
 							<th>Status</th>
 							<th>Bukti Pelatihan</th>
@@ -202,6 +204,8 @@ const PelatihanPage: React.FC<{}> = () => {
 							<tr className="hover" key={item.id}>
 								<td>{index + 1}</td>
 								<td>{item.employee?.full_name}</td>
+								<td>{item?.start_date.split('T')[0]}</td>
+								<td>{item?.end_date.split('T')[0]}</td>
 								{/* <td className="text-center">
 									<button className="btn btn-ghost" onClick={() => handleOpenDetailModal(item)}>
 										<TbFaceId className="text-xl" />
