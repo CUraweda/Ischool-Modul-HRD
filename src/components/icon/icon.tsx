@@ -21,9 +21,11 @@ import {
 	AiOutlineCalendar,
 	AiOutlineIdcard,
 } from 'react-icons/ai';
+import { FaChalkboardTeacher } from 'react-icons/fa';
 // tambahkan import untuk ikon lainnya di sini
 
 export const iconMapping: { [key: string]: JSX.Element } = {
+	'<FaChalkboardTeacher />': <FaChalkboardTeacher />,
 	'<BsFillHouseFill />': <BsFillHouseFill />,
 	'<FaMoneyBillWave />': <FaMoneyBillWave />,
 	'<IoPersonSharp />': <IoPersonSharp />,

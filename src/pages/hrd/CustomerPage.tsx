@@ -44,6 +44,7 @@ const CustomerCarePage = () => {
 	const [currentReceiverName, setCurrentReceiverName] = useState('');
 	const [mediumDialogOpen, setMediumDialogOpen] = useState(false);
 	const [dataUser, setDataUser] = useState<User[]>([]);
+	const [searchQuery, setSearchQuery] = useState('');
 	// const [typing, setTyping] = useState(false);
 
 	useEffect(() => {
@@ -139,6 +140,8 @@ const CustomerCarePage = () => {
 			console.error(err);
 		}
 	};
+
+	const filteredUsers = dataUser.filter((user) => user.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
 	return (
 		<div>
@@ -240,22 +243,37 @@ const CustomerCarePage = () => {
 					<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
 						<div className="w-1/2 rounded-lg bg-white p-6">
 							<h2 className="mb-4 text-xl">Kirim Pesan</h2>
+
+							{/* Input Pencarian User */}
+							<input
+								type="text"
+								className="input input-bordered mb-4 w-full"
+								placeholder="Cari user..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+							/>
+
 							<div className="max-h-80 overflow-y-auto">
-								{dataUser?.map((user: User, index: number) => (
-									<div
-										key={index}
-										className="flex cursor-pointer items-center p-2 hover:bg-gray-200"
-										onClick={() => newMessage(user)}
-									>
-										<img
-											src="https://thinksport.com.au/wp-content/uploads/2020/01/avatar-.jpg"
-											alt="Avatar"
-											className="h-10 w-10 rounded-full"
-										/>
-										<span className="ml-2">{user.full_name}</span>
-									</div>
-								))}
+								{filteredUsers.length > 0 ? (
+									filteredUsers.map((user, index) => (
+										<div
+											key={index}
+											className="flex cursor-pointer items-center p-2 hover:bg-gray-200"
+											onClick={() => newMessage(user)}
+										>
+											<img
+												src="https://thinksport.com.au/wp-content/uploads/2020/01/avatar-.jpg"
+												alt="Avatar"
+												className="h-10 w-10 rounded-full"
+											/>
+											<span className="ml-2">{user.full_name}</span>
+										</div>
+									))
+								) : (
+									<div className="text-center text-gray-500">User tidak ditemukan</div>
+								)}
 							</div>
+
 							<div className="mt-4 flex justify-end">
 								<button onClick={() => setMediumDialogOpen(false)} className="btn btn-warning">
 									Cancel

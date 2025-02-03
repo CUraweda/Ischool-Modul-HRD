@@ -45,6 +45,7 @@ const DaftarDinasLuar = lazy(() => import('@/pages/hrd/DaftarDinasLuarPage'));
 const ListItemPenilaian = lazy(() => import('@/pages/hrd/ListItemPenilaian'));
 import ProtectedRoute from '@/router/ProtectedRoute';
 import PageDivisi from '@/pages/hrd/PageDivisi';
+import BidangPage from '@/pages/hrd/BidangPage';
 
 const AppRoutes: React.FC = () => {
 	return (
@@ -121,6 +122,7 @@ const AppRoutes: React.FC = () => {
 							<Route path="list-penilaian" element={<ListPenilaian />} />
 							<Route path="jobdesk-unit" element={<JobdeskUnit />} />
 							<Route path="evaluation-item" element={<ListEvaluationItem />} />
+							<Route path="bidang" element={<BidangPage />} />
 						</Route>
 					</Route>
 

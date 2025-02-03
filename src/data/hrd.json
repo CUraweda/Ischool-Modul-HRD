@@ -87,6 +87,12 @@
 		"url": "/hrd/division"
 	},
 	{
+		"submenu": false,
+		"title": "Bidang",
+		"icon": "<FaChalkboardTeacher />",
+		"url": "/hrd/bidang"
+	},
+	{
 		"submenu": true,
 		"title": "Pelatihan",
 		"icon": "<MdOutlineDateRange />",

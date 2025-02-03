@@ -1046,6 +1046,76 @@ const Default = {
 		}),
 };
 
+const Bidang = {
+	GetTableDataBidang: (access_token: string | null, page: any, limit: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-position?page=${page}&limit=${limit}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	TableCreateBidang: (access_token: string | null, data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `employee-position/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	TableUpdateBidang: (access_token: string | null, data: any, id: any): AxiosPromise<any> =>
+		instance({
+			method: `PUT`,
+			url: `employee-position/update/${id}`,
+			data,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	TableDeleteBidang: (access_token: string | null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `employee-position/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	GetDataBidang: (access_token: string | null): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `employee-position?page=0&limit=10000`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	GetDataBidangKaryawan: (access_token: string | null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `GET`,
+			url: `form-position?page=0&limit=10000&employee_id=${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+	CreateBidang: (acces_token: string | null, data: any): AxiosPromise<any> =>
+		instance({
+			method: `POST`,
+			url: `form-position/create`,
+			data,
+			headers: {
+				Authorization: `Bearer ${acces_token}`,
+			},
+		}),
+	DeleteBidang: (access_token: string | null, id: any): AxiosPromise<any> =>
+		instance({
+			method: `DELETE`,
+			url: `form-position/delete/${id}`,
+			headers: {
+				Authorization: `Bearer ${access_token}`,
+			},
+		}),
+};
+
 const DownloadFile = {
 	Download: (access_token: string | null, file_path: string): AxiosPromise =>
 		instance({
@@ -1362,4 +1432,5 @@ export {
 	DinasLuar,
 	DownloadFile,
 	ItemPenilaian,
+	Bidang,
 };

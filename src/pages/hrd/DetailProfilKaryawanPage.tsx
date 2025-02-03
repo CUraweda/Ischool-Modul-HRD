@@ -1,4 +1,4 @@
-import { DownloadFile, Karyawan, Probation } from '@/middlewares/api';
+import { Bidang, DownloadFile, Karyawan, Probation } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,6 +8,8 @@ const DetailProfilKaryawanPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const [fetch, setFetch] = useState<any | null>(null);
 	const [pelatihan, setPelatihan] = useState<any[]>([]);
+	const [bidang, setBidang] = useState<any[]>([]);
+	const [dataBidang, setDataBidang] = useState<any[]>([]);
 	const [file, setFile] = useState<any[]>([]);
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
@@ -30,6 +32,55 @@ const DetailProfilKaryawanPage = () => {
 		major: '',
 		occupation: '',
 	});
+	const [positionId, setPositionId] = useState<number | null>(null);
+
+	const CreateBidang = async () => {
+		const data = {
+			position_id: positionId,
+			employee_id: id,
+			is_active: 'true',
+		};
+
+		try {
+			await Bidang.CreateBidang(access_token, data);
+			fetchBidang();
+			fetchData();
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Bidang berhasil ditambah',
+			});
+			closeModal('bidang');
+		} catch (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Bidang gagal ditambah',
+			});
+		}
+	};
+
+	const DeleteBidang = async (item_id: any) => {
+		try {
+			await Bidang.DeleteBidang(access_token, item_id);
+			fetchBidang();
+			fetchData();
+			Swal.fire({
+				icon: 'success',
+				title: 'Sukses',
+				text: 'Bidang berhasil dihapus',
+			});
+			closeModal('bidang');
+		} catch (error) {
+			console.error(error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Bidang gagal dihapus',
+			});
+		}
+	};
 
 	const dialogPelatihan = () => {
 		openModal('detailPelatihan');
@@ -48,6 +99,24 @@ const DetailProfilKaryawanPage = () => {
 		try {
 			const response = await Probation.DetailProbation(id);
 			setFile(response.data.data.employeeattachments);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const dropdownBidang = async () => {
+		try {
+			const response = await Bidang.GetDataBidang(access_token);
+			setBidang(response.data.data.result);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const fetchBidang = async () => {
+		try {
+			const response = await Bidang.GetDataBidangKaryawan(access_token, id);
+			setDataBidang(response.data.data.result);
 		} catch (error) {
 			console.error(error);
 		}
@@ -193,11 +262,17 @@ const DetailProfilKaryawanPage = () => {
 		}
 	};
 
+	const bidangDialog = () => {
+		openModal('bidang');
+	};
+
 	useEffect(() => {
 		if (id) {
 			fetchData();
 			dataPelatihan();
 			dataFile();
+			dropdownBidang();
+			fetchBidang();
 		}
 	}, [id]);
 
@@ -225,6 +300,9 @@ const DetailProfilKaryawanPage = () => {
 								...
 							</label>
 							<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
+								<li>
+									<a onClick={bidangDialog}>Tambah Bidang</a>
+								</li>
 								<li>
 									<a onClick={editDialog}>Edit Profil</a>
 								</li>
@@ -726,6 +804,57 @@ const DetailProfilKaryawanPage = () => {
 							</div>
 						</div>
 					))}
+				</div>
+			</Modal>
+
+			<Modal id="bidang">
+				<div>
+					<div className="mt-5 flex items-center justify-center gap-4">
+						<select
+							className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
+							required
+							onChange={(e) => setPositionId(parseInt(e.target.value))}
+						>
+							<option value="">Pilih Bidang</option>
+							{bidang.map((item: any, index: any) => (
+								<option key={index} value={item.id}>
+									{item.name}
+								</option>
+							))}
+						</select>
+						<button className="btn btn-outline btn-primary" onClick={CreateBidang}>
+							+
+						</button>
+					</div>
+					{dataBidang.map((item, index) => {
+						const bidangName = bidang.find((b: any) => b.id === item.position_id)?.name || 'Unknown';
+
+						return (
+							<div className="flex items-center justify-between p-4 shadow transition hover:shadow-md" key={index}>
+								<div className="flex items-center gap-3">
+									<div className="rounded-full bg-blue-100 p-2">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="currentColor"
+											className="h-6 w-6 text-blue-500"
+											viewBox="0 0 16 16"
+										>
+											<path d="M2 6h12v2H2z" />
+											<path d="M2 10h9v2H2z" />
+										</svg>
+									</div>
+									<div>
+										<div className="text-gray-500">{bidangName}</div>
+									</div>
+								</div>
+								<div className="flex gap-2">
+									<button className="btn btn-error btn-xs text-white" onClick={() => DeleteBidang(item.id)}>
+										Delete
+									</button>
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			</Modal>
 		</div>
