@@ -210,7 +210,7 @@ const Rekrutmen = {
 				Authorization: `Bearer ${token}`,
 			},
 		}),
-	LulusPsikotes: (data: null, id: number): AxiosPromise =>
+	LulusPsikotes: (data: any, id: number): AxiosPromise =>
 		instance({
 			method: `POST`,
 			url: `applicant-form/psychology-evaluate/lulus/${id}`,

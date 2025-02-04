@@ -13,6 +13,8 @@ const DetailRekrutmenPage = () => {
 	const [portal, setPortal] = useState('');
 	const [typeRekrutmen, setTypeRekrutmen] = useState('Pendaftaran');
 	const [selectedId, setSelectedId] = useState<any>(null);
+	const [portalPsikotes, setPortalPsikotes] = useState('');
+	const [planDatePsikotes, setPlanDatePsikotes] = useState('');
 
 	let access_token = sessionStorage.getItem('access_token');
 
@@ -54,6 +56,11 @@ const DetailRekrutmenPage = () => {
 	const handleOpenAcceptedDialog = (id: any) => {
 		setSelectedId(id);
 		openModal('dialogAccepted');
+	};
+
+	const handleDialogPsikotes = (id: any) => {
+		setSelectedId(id);
+		openModal('psikotes');
 	};
 
 	const AcceptedRekrutmen = async () => {
@@ -101,11 +108,16 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
-	const AcceptedPsikotes = async (id: any) => {
+	const AcceptedPsikotes = async () => {
+		const data = {
+			portal: portalPsikotes,
+			plan_date: planDatePsikotes,
+		};
+
 		try {
-			await Rekrutmen.LulusPsikotes(null, id);
+			await Rekrutmen.LulusPsikotes(data, selectedId);
 			fetchData();
-			closeModal('dialogAccepted');
+			closeModal('psikotes');
 			Swal.fire({
 				icon: 'success',
 				title: 'Sukses',
@@ -114,6 +126,7 @@ const DetailRekrutmenPage = () => {
 		} catch (error: any) {
 			console.error(error);
 			const message = error.response.data.message;
+			closeModal('psikotes');
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
@@ -122,9 +135,9 @@ const DetailRekrutmenPage = () => {
 		}
 	};
 
-	const RejectedPsikotes = async (id: any) => {
+	const RejectedPsikotes = async () => {
 		try {
-			await Rekrutmen.GagalPsikotes(null, id);
+			await Rekrutmen.GagalPsikotes(null, selectedId);
 			closeModal('cvApplicant');
 			fetchData();
 			Swal.fire({
@@ -331,19 +344,13 @@ const DetailRekrutmenPage = () => {
 													Buka
 												</button>
 											) : typeRekrutmen == 'Memasuki Test Psikotes' ? (
-												<div className="dropdown dropdown-end">
-													<label tabIndex={0} className="btn btn-primary btn-sm">
-														...
-													</label>
-													<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
-														<li>
-															<a onClick={() => AcceptedPsikotes(item.id)}>Terima</a>
-														</li>
-														<li>
-															<a onClick={() => RejectedPsikotes(item.id)}>Tolak</a>
-														</li>
-													</ul>
-												</div>
+												<button
+													className="btn btn-primary btn-sm"
+													onClick={() => handleDialogPsikotes(item.id)}
+													disabled={item.is_passed_interview == true}
+												>
+													Buka
+												</button>
 											) : (
 												<button
 													className="btn btn-primary btn-sm"
@@ -542,6 +549,44 @@ const DetailRekrutmenPage = () => {
 							Tolak
 						</button>
 						<button className="btn btn-primary text-white" onClick={() => AcceptedInterview()}>
+							Kirim
+						</button>
+					</div>
+				</div>
+			</Modal>
+
+			<Modal id="psikotes">
+				<div>
+					<div className="form-control mb-4">
+						<label htmlFor="judul" className="label">
+							<span className="label-text font-semibold">Link/Tempat Meeting </span>
+						</label>
+						<input
+							type="text"
+							id="judul"
+							placeholder="Masukkan Link atau Tempat Meeting"
+							className="input input-bordered w-full"
+							onChange={(e) => setPortalPsikotes(e.target.value)}
+						/>
+					</div>
+
+					<div className="form-control mb-4">
+						<label htmlFor="tanggalJam" className="label">
+							<span className="label-text font-semibold">Tanggal dan Jam</span>
+						</label>
+						<input
+							type="datetime-local"
+							id="tanggalJam"
+							className="input input-bordered w-full"
+							onChange={(e) => setPlanDatePsikotes(e.target.value)}
+						/>
+					</div>
+
+					<div className="flex items-center justify-end gap-2">
+						<button className="btn btn-primary text-white" onClick={() => RejectedPsikotes()}>
+							Tolak
+						</button>
+						<button className="btn btn-primary text-white" onClick={() => AcceptedPsikotes()}>
 							Kirim
 						</button>
 					</div>
