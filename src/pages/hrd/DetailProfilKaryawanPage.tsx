@@ -1,4 +1,4 @@
-import { Bidang, DownloadFile, Karyawan, Probation } from '@/middlewares/api';
+import { Bidang, FormPosition, DownloadFile, Karyawan, Probation } from '@/middlewares/api';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -42,7 +42,7 @@ const DetailProfilKaryawanPage = () => {
 		};
 
 		try {
-			await Bidang.CreateBidang(access_token, data);
+			await FormPosition.CreatePosition(access_token, data);
 			fetchBidang();
 			fetchData();
 			Swal.fire({
@@ -63,7 +63,7 @@ const DetailProfilKaryawanPage = () => {
 
 	const DeleteBidang = async (item_id: any) => {
 		try {
-			await Bidang.DeleteBidang(access_token, item_id);
+			await FormPosition.DeletePosition(access_token, item_id);
 			fetchBidang();
 			fetchData();
 			Swal.fire({
