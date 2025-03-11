@@ -206,6 +206,7 @@ const DetailListItemPenilaian = () => {
 		setGrade('');
 		setIndicator(null);
 		setGroup(0);
+		setEditModa(false);
 	};
 
 	const handleDialog = () => {

@@ -261,13 +261,13 @@ const ListItemPenilaian = () => {
 					{/* Name */}
 					<div>
 						<label htmlFor="name" className="block text-sm font-medium text-gray-700">
-							Nama
+							Nama Penilaian
 						</label>
 						<input
 							type="text"
 							id="name"
 							className="input input-bordered mt-2 w-full"
-							placeholder="Masukkan nama"
+							placeholder="Masukkan nama penilaian"
 							value={name} // Pastikan name sudah terisi dengan data saat edit
 							onChange={(e) => setName(e.target.value)}
 						/>

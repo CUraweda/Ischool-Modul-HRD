@@ -1092,7 +1092,7 @@ const Bidang = {
 	GetDataBidangKaryawan: (access_token: string | null, id: any): AxiosPromise<any> =>
 		instance({
 			method: `GET`,
-			url: `form-position?page=0&limit=10000&employee_id=${id}`,
+			url: `employee-position?page=0&limit=10000&employee_id=${id}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
@@ -1100,7 +1100,7 @@ const Bidang = {
 	CreateBidang: (acces_token: string | null, data: any): AxiosPromise<any> =>
 		instance({
 			method: `POST`,
-			url: `form-position/create`,
+			url: `employee-position/create`,
 			data,
 			headers: {
 				Authorization: `Bearer ${acces_token}`,
@@ -1109,7 +1109,7 @@ const Bidang = {
 	DeleteBidang: (access_token: string | null, id: any): AxiosPromise<any> =>
 		instance({
 			method: `DELETE`,
-			url: `form-position/delete/${id}`,
+			url: `employee-position/delete/${id}`,
 			headers: {
 				Authorization: `Bearer ${access_token}`,
 			},
