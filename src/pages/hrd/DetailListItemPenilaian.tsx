@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Modal, { openModal, closeModal } from '../../components/ModalProps';
 import { ItemPenilaian } from '@/middlewares/api';
 import Swal from 'sweetalert2';
+import { FaPen, FaTrash, FaEye } from 'react-icons/fa';
 
 const DetailListItemPenilaian = () => {
 	const [fetch, setFetch] = useState<any[]>([]);
@@ -14,11 +15,33 @@ const DetailListItemPenilaian = () => {
 	const [editMode, setEditModa] = useState<boolean>(false);
 	const [nameGrade, setNameGrade] = useState('');
 	const [grade, setGrade] = useState('');
-	const [indicator, setIndicator] = useState<number | null>(0);
+	const [indicator, setIndicator] = useState<number>(0);
 	const [id, setId] = useState('');
+	const [idUpdate, setIdUpdate] = useState('');
+	const [indicatorError, setIndicatorError] = useState('');
 
 	let access_token = sessionStorage.getItem('access_token');
 	access_token = access_token ? access_token.replace(/"/g, '') : null;
+
+	const handleIndicatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		const indicatorValue = Number(value);
+		setIndicator(indicatorValue);
+
+		// Periksa apakah nilai indikator valid
+		if (isNaN(indicatorValue) || indicatorValue <= 0) {
+			setIndicatorError('Angka harus dalam positif');
+		} else {
+			// Periksa apakah nilai indikator sudah ada di dalam fetchGrade
+			const indicatorExists = fetchGrade.some((item) => item.indicator === indicatorValue);
+
+			if (indicatorExists) {
+				setIndicatorError('Angka tersebut sudah digunakan');
+			} else {
+				setIndicatorError(''); // Jika indikator tidak ada, kosongkan error
+			}
+		}
+	};
 
 	const fetchData = async () => {
 		try {
@@ -113,27 +136,40 @@ const DetailListItemPenilaian = () => {
 			indicator: indicator,
 			group_id: id,
 		};
+
 		try {
 			await ItemPenilaian.CreateJobdeskGrade(data, access_token);
-			Swal.fire('Success', 'Data berhasil ditambahkan', 'success');
-			fetchData();
 			closeModal('crudModal');
-			closeModal('itemPenilaian');
+			closeModal('itemPenilaian'); // Tutup dulu modal sebelum alert
+			fetchData();
+
+			Swal.fire('Success', 'Data berhasil ditambahkan', 'success').then(async () => {
+				openModal('itemPenilaian'); // Buka kembali modal setelah alert ditutup
+
+				// Tunggu sampai data berhasil diambil sebelum melanjutkan
+				const responseGrade = await ItemPenilaian.DataJobdeskGrade(0, 10000, access_token, id);
+
+				// Set data yang diperoleh ke dalam state
+				setFetchGrade(responseGrade.data.data.result);
+			});
 		} catch (error: any) {
 			console.error(error);
 			closeModal('crudModal');
 			closeModal('itemPenilaian');
-			const message = error.response.data.message;
+			const message = error.response?.data?.message || 'Terjadi kesalahan';
+
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
 				text: message,
+			}).then(() => {
+				openModal('itemPenilaian'); // Buka kembali modal setelah alert error ditutup
 			});
 		}
 	};
 
 	const openEditModalGrade = (item: any) => {
-		setId(item.id);
+		setIdUpdate(item.id);
 		setNameGrade(item.name);
 		setGrade(item.grade);
 		setIndicator(item.indicator);
@@ -152,11 +188,19 @@ const DetailListItemPenilaian = () => {
 			indicator_uid: `${group}|${indicator}`,
 		};
 		try {
-			await ItemPenilaian.UpdateJobdeskGrade(data, id, access_token);
-			Swal.fire('Success', 'Data berhasil diubah', 'success');
+			await ItemPenilaian.UpdateJobdeskGrade(data, idUpdate, access_token);
 			fetchData();
 			closeModal('crudModal');
 			closeModal('itemPenilaian');
+			Swal.fire('Success', 'Data berhasil diubah', 'success').then(async () => {
+				openModal('itemPenilaian'); // Buka kembali modal setelah alert ditutup
+
+				// Tunggu sampai data berhasil diambil sebelum melanjutkan
+				const responseGrade = await ItemPenilaian.DataJobdeskGrade(0, 10000, access_token, id);
+
+				// Set data yang diperoleh ke dalam state
+				setFetchGrade(responseGrade.data.data.result);
+			});
 		} catch (error) {
 			console.error(error);
 			closeModal('crudModal');
@@ -165,7 +209,7 @@ const DetailListItemPenilaian = () => {
 		}
 	};
 
-	const deleteGrade = async (id: string) => {
+	const deleteGrade = async (idIndex: string) => {
 		closeModal('itemPenilaian');
 		Swal.fire({
 			title: 'Apakah Anda yakin?',
@@ -178,9 +222,18 @@ const DetailListItemPenilaian = () => {
 		}).then(async (result) => {
 			if (result.isConfirmed) {
 				try {
-					await ItemPenilaian.DeleteJobdeskGrade(id, access_token);
+					await ItemPenilaian.DeleteJobdeskGrade(idIndex, access_token);
 					Swal.fire('Deleted!', 'Data berhasil dihapus.', 'success');
 					fetchData();
+					Swal.fire('Success', 'Data berhasil dihapus', 'success').then(async () => {
+						openModal('itemPenilaian'); // Buka kembali modal setelah alert ditutup
+
+						// Tunggu sampai data berhasil diambil sebelum melanjutkan
+						const responseGrade = await ItemPenilaian.DataJobdeskGrade(0, 10000, access_token, id);
+
+						// Set data yang diperoleh ke dalam state
+						setFetchGrade(responseGrade.data.data.result);
+					});
 				} catch (error) {
 					console.error(error);
 					Swal.fire('Error', 'Gagal menghapus data', 'error');
@@ -204,7 +257,7 @@ const DetailListItemPenilaian = () => {
 		openModal('crudModal');
 		setNameGrade('');
 		setGrade('');
-		setIndicator(null);
+		setIndicator(0);
 		setGroup(0);
 		setEditModa(false);
 	};
@@ -212,6 +265,7 @@ const DetailListItemPenilaian = () => {
 	const handleDialog = () => {
 		setGroup(0);
 		setUnitId('');
+		setIdentifier('');
 		setDisable(false);
 		setEditModa(false);
 		openModal('addGroup');
@@ -248,22 +302,23 @@ const DetailListItemPenilaian = () => {
 									<td className="px-4 py-2">{index + 1}</td>
 									<td className="px-4 py-2">{item?.identifier}</td>
 									<td className="px-4 py-2">{item?.jobdeskunit?.name}</td>
-									<td className="relative px-4 py-2">
-										<div className="dropdown dropdown-end">
-											<label tabIndex={0} className="btn btn-primary btn-sm">
-												...
-											</label>
-											<ul tabIndex={0} className="menu dropdown-content w-52 rounded-box bg-base-100 p-2 shadow">
-												<li>
-													<a onClick={() => openEditModal(item)}>Edit</a>
-												</li>
-												<li>
-													<a onClick={() => deleteData(item.id)}>Hapus </a>
-												</li>
-												<li>
-													<a onClick={() => handleDialogPenilaian(item.id)}>Detail Grade</a>
-												</li>
-											</ul>
+									<td className="px-4 py-2">
+										{/* Action buttons with icons */}
+										<div className="flex gap-3">
+											{/* Edit Button (Pencil Icon) */}
+											<button className="btn btn-primary" onClick={() => openEditModal(item)}>
+												<FaPen size={15} />
+											</button>
+
+											{/* Delete Button (Trash Icon) */}
+											<button className="btn btn-primary" onClick={() => deleteData(item.id)}>
+												<FaTrash size={15} />
+											</button>
+
+											{/* Detail Grade Button (Eye Icon) */}
+											<button className="btn btn-primary" onClick={() => handleDialogPenilaian(item.id)}>
+												<FaEye size={15} />
+											</button>
 										</div>
 									</td>
 								</tr>
@@ -357,11 +412,13 @@ const DetailListItemPenilaian = () => {
 									<input
 										type="number"
 										id="indicator"
-										className="input input-bordered w-full"
+										className={`input input-bordered w-full ${indicatorError ? 'border-red-500' : ''}`} // Add red border if there's an error
 										placeholder="Enter indicator value"
-										value={Number(indicator)}
-										onChange={(e) => setIndicator(Number(e.target.value))}
+										value={indicator}
+										onChange={handleIndicatorChange}
 									/>
+									{/* Display error message if there's an error */}
+									{indicatorError && <p className="mt-2 text-sm text-red-500">{indicatorError}</p>}
 								</div>
 
 								{/* Group ID Field */}

@@ -151,7 +151,7 @@ const JobdeskUnit = () => {
 			{/* Modal */}
 			<Modal id="addJobdesk">
 				<div className="p-6">
-					<h2 className="mb-4 text-lg font-bold">{formData.isEditing ? 'Edit Jobdesk Unit' : 'Tambah Jobdesk Unit'}</h2>
+					<h2 className="mb-4 text-lg font-bold">{formData.isEditing ? 'Edit Unit Nilai' : 'Tambah Unit Nilai'}</h2>
 					<form onSubmit={handleSaveUnit}>
 						<div className="form-control mb-4">
 							<label className="label">
