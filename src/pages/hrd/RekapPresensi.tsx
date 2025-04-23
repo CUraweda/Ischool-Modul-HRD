@@ -234,7 +234,7 @@ const PresensiPage: React.FC = () => {
 			Divisi: item.employee.division,
 			Deskripsi: item.description,
 			status: item.status,
-			Pukul: item.createdAt.split('T')[1].split('.')[0],
+			Pukul: item?.createdAt ? addSevenHours(item?.createdAt)?.split('T')[1]?.split('.')[0] || '-' : '-',
 			Tanggal: formatDate(item.createdAt),
 		}));
 
@@ -375,11 +375,7 @@ const PresensiPage: React.FC = () => {
 									<div className="checkbox-group">
 										{ListDivision.map((item, index) => (
 											<label key={index} className="flex items-center space-x-2">
-												<input
-													type="checkbox"
-													checked={filterDivision.includes(item.name)}
-													onChange={() => setFilterDivision(item.name)}
-												/>
+												<input type="checkbox" onChange={() => setFilterDivision(item.id)} />
 												<span>{item.name}</span>
 											</label>
 										))}
@@ -418,7 +414,7 @@ const PresensiPage: React.FC = () => {
 								<td>{item?.employee?.division?.name}</td>
 								<td>{item?.employee?.full_name}</td>
 								<td>{item?.createdAt.split('T')[0]}</td>
-								<td> {item?.createdAt ? addSevenHours(item?.createdAt)?.split('T')[1]?.split('.')[0] || '-' : '-'}</td>
+								<td>{item?.createdAt ? addSevenHours(item?.createdAt)?.split('T')[1]?.split('.')[0] || '-' : '-'}</td>
 								<td className="w-5 truncate text-ellipsis">{item?.description}</td>
 								<td>
 									<div
@@ -480,7 +476,7 @@ const PresensiPage: React.FC = () => {
 				<button className="btn join-item btn-sm" onClick={() => setLimit(100)}>
 					100
 				</button>
-				<button className="btn join-item btn-sm" onClick={() => setLimit(0)}>
+				<button className="btn join-item btn-sm" onClick={() => setLimit(1000000000000)}>
 					All
 				</button>
 				<button

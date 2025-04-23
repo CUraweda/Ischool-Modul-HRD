@@ -179,7 +179,9 @@ const ListEvaluasiItem = () => {
 			{/* Modal */}
 			<Modal id="addJobdesk">
 				<div className="p-6">
-					<h2 className="mb-4 text-lg font-bold">{formData.isEditing ? 'Edit Jobdesk' : 'Tambah Jobdesk'}</h2>
+					<h2 className="mb-4 text-lg font-bold">
+						{formData.isEditing ? 'Edit Item Evaluasi' : 'Tambah Item Evaluasi'}
+					</h2>
 					<form onSubmit={handleSaveUnit}>
 						<div className="form-control mb-4">
 							<label className="label">

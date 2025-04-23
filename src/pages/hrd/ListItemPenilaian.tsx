@@ -254,9 +254,7 @@ const ListItemPenilaian = () => {
 
 			<Modal id="addPenilaian">
 				<div className="space-y-6 p-6">
-					<h3 className="text-2xl font-bold text-gray-800">
-						{isEditMode ? 'Edit Item Penilaian' : 'Tambah Item Penilaian'}
-					</h3>
+					<h3 className="text-2xl font-bold text-gray-800">{isEditMode ? 'Edit Jobdesk' : 'Tambah Jobdesk'}</h3>
 
 					{/* Name */}
 					<div>
