@@ -325,7 +325,13 @@ const DetailProfilKaryawanPage = () => {
 									<div className="flex flex-col gap-[0.3rem]">
 										<div className="text-sm font-bold text-gray-500">Jenis Kelamin</div>
 										<div className="text-sm font-bold">
-											{fetch?.gender ? (fetch?.gender == 'L' ? 'Laki-Laki' : 'Perempuan') : 'Tidak Tersedia'}
+											{fetch?.gender
+												? fetch?.gender == 'L'
+													? 'Laki-Laki'
+													: fetch?.gender == 'Laki-Laki'
+														? 'Laki-Laki'
+														: 'Perempuan'
+												: 'Tidak Tersedia'}
 										</div>
 									</div>
 									<div className="flex flex-col gap-[0.3rem]">
@@ -468,6 +474,7 @@ const DetailProfilKaryawanPage = () => {
 								<select
 									className="w-full rounded-lg border border-gray-300 p-3 shadow-sm transition-all duration-200 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200"
 									value={formData.gender}
+									name="gender"
 									onChange={handleInputChange}
 									required
 								>

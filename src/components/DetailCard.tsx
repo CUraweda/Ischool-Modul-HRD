@@ -66,9 +66,9 @@ const DetailCard: React.FC<DetailDialogProps> = ({ dataProps, onClose }) => {
 					<div className="mt-5">
 						<figure className="rounded-xl">
 							{fileType === 'image' ? (
-								<img src={fileSrc} alt="Detail Image" className="h-[200px] w-full object-cover" />
+								<img src={fileSrc} alt="Detail Image" className="w-full object-cover" />
 							) : fileType === 'pdf' ? (
-								<embed src={fileSrc} type="application/pdf" className="h-[200px] w-full" />
+								<embed src={fileSrc} type="application/pdf" className="w-full" />
 							) : (
 								<div className="flex items-center justify-center">
 									<p>Tidak ada file yang bisa ditampilkan</p>
