@@ -84,7 +84,7 @@ const PresensiPage: React.FC = () => {
 		{ id: 2, category: 'Type', value: 'Keluar' },
 		{ id: 3, category: 'Status', value: 'Tepat Waktu' },
 		{ id: 4, category: 'Status', value: 'Terlambat' },
-		{ id: 5, category: 'Status', value: 'Diluar Jadwal' },
+		{ id: 5, category: 'Status', value: 'Terlalu Cepat' },
 	];
 	const [ListDivision, setListDivision] = useState<any[]>([]);
 
@@ -421,7 +421,7 @@ const PresensiPage: React.FC = () => {
 										className={`text-md badge badge-md h-fit truncate rounded-md px-3 drop-shadow-sm ${
 											item.status === 'Tepat Waktu'
 												? 'bg-[#8ef96ac2] text-[#3d6b2e]'
-												: item.status === 'Diluar Jadwal'
+												: item.status === 'Terlalu Cepat'
 													? 'bg-[#f96a6a] text-[#6b2e2e]'
 													: item.status === 'Terlambat'
 														? 'bg-[#f9f46a] text-[#6b2e2e]'

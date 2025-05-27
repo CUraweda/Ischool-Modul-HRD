@@ -611,7 +611,7 @@ const Training = {
 };
 const WorkTime = {
 	getWorkTime: (): AxiosPromise<any> =>
-		instance.get('worktime', {
+		instance.get('worktime?limit=100000', {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

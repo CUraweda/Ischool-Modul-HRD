@@ -233,7 +233,7 @@ const DetailPenggajianPage = () => {
 						</div>
 						<div>
 							<select onChange={handleYearChange} value={filterTable.year} className="select select-bordered w-full">
-								{[2022, 2023, 2024].map((year) => (
+								{[2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
 									<option key={year} value={year}>
 										{year}
 									</option>
